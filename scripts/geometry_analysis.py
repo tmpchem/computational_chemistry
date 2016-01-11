@@ -378,14 +378,6 @@ def get_inertial_coords(geom, moi):
         moveaxes[p][order[p]] = 1.0
     coords = np.dot(coords, moveaxes)
     geom[1] = coords
-    moi = get_moi(geom)
-    moi_eigv = la.eigvals(moi)
-    same12 = are_same(moi_eigv[0], moi_eigv[1], mom_thresh, mom_min)
-    same23 = are_same(moi_eigv[1], moi_eigv[2], mom_thresh, mom_min)
-    allsame = same12 * same23
-    if (allsame):
-        origdist = get_origdist(geom)
-        print origdist
     return geom
 
 ## TOPOLOGY FUNCTIONS ##
