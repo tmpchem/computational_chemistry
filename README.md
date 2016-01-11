@@ -1,1 +1,0 @@
-echo # computational_chemistry
