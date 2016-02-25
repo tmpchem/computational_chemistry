@@ -1,6 +1,6 @@
 import os, sys
 # change this string to your local mmlib path
-sys.path.append('C:\Users\Trent\Documents\TMPChem\Coding\compchem\scripts\molecular_mechanics')
+sys.path.append('C:\Users\Trent\Documents\TMPChem\Coding\scripts\molecular_mechanics')
 from mmlib import *
 
 #############################################################################
