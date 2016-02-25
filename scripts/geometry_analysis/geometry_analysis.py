@@ -18,12 +18,12 @@ import numpy.linalg as la
 
 ## CONSTANTS ##
 
-# threshold beyond average of covalent radiii to determine bond cutoff
+# threshold beyond average of covalent radii to determine bond cutoff
 bond_thresh = 1.2
 
 # conversion from radians to degrees and vice versa
 rad2deg = 180.0 / math.pi
-deg2rad = 1.0 / rad2deg
+deg2rad = math.pi / 180.0
 
 # threshold for degenerate principal moments of inertia (1 part per 10**n)
 mom_thresh = 3
