@@ -101,6 +101,8 @@ def get_inputs():
         sys.exit()
     else:
         xyz_file_name = sys.argv[1]
+        xyz_name = xyz_file_name.split('/')[-1].split('.')[0]
+        print '\ngeometry analysis for %s\n' % (xyz_name)
         return xyz_file_name
 
 # print geometry to screen
@@ -131,7 +133,9 @@ def print_bond_tree(geom, bond_tree, comment):
 def print_bonds(geom, bonds):
     at_types = geom[0]
     n_bonds = len(bonds)
-    print '%i bond(s) found (Angstrom)' % (n_bonds)
+    print '%i bond length(s) found (Angstrom)' % (n_bonds)
+    if (n_bonds > 0):
+        print ' atoms            elements         values'
     for q in range(n_bonds):
         n1, n2  = bonds[q][0:2]
         r12 = bonds[q][2]
@@ -144,7 +148,9 @@ def print_bonds(geom, bonds):
 def print_angles(geom, angles):
     at_types = geom[0]
     n_angles = len(angles)
-    print '%i angle(s) found (degrees)' % (n_angles)
+    print '%i bond angle(s) found (degrees)' % (n_angles)
+    if (n_angles > 0):
+        print ' atoms            elements         values'
     for q in range(n_angles):
         n1, n2, n3 = angles[q][0:3]
         a123 = angles[q][3]
@@ -157,7 +163,9 @@ def print_angles(geom, angles):
 def print_torsions(geom, torsions):
     at_types = geom[0]
     n_torsions = len(torsions)
-    print '%i torsion(s) found (degrees)' % (n_torsions)
+    print '%i torsion angle(s) found (degrees)' % (n_torsions)
+    if (n_torsions > 0):
+        print ' atoms            elements         values'
     for q in range(n_torsions):
         n1, n2, n3, n4 = torsions[q][0:4]
         t1234 = torsions[q][4]
@@ -170,7 +178,9 @@ def print_torsions(geom, torsions):
 def print_outofplanes(geom, outofplanes):
     at_types = geom[0]
     n_outofplanes = len(outofplanes)
-    print '%i out-of-plane(s) found (degrees)' % (n_outofplanes)
+    print '%i out-of-plane angle(s) found (degrees)' % (n_outofplanes)
+    if (n_outofplanes > 0):
+        print ' atoms            elements         values'
     for q in range(n_outofplanes):
         n1, n2, n3, n4 = outofplanes[q][0:4]
         o1234 = outofplanes[q][4]
@@ -181,17 +191,18 @@ def print_outofplanes(geom, outofplanes):
     
 # print center of mass coordinates
 def print_com(com):
-    print 'molecular center of mass (Angstrom)\n(X,Y,Z):',
+    print 'molecular center of mass (Angstrom)\n   ',
+    print '       X             Y             Z\n  ',
     for p in range(3):
-        print '%12.6f' % (com[p]),
+        print ' %12.6f' % (com[p]),
     print '\n\n',
 
 # print moment of inertia tensor
 def print_moi(moi):
-    print 'molecular moment of inertia tensor (amu * A^2):\n',
-    print '         X             Y             Z\n',
+    print 'molecular moment of inertia tensor (amu * A^2)\n',
+    print '           X             Y             Z\n',
     for p in range(3):
-        print xyz[p],
+        print '%-2s' % (xyz[p]),
         for q in range(3):
             print ' %12.6f' % (moi.item((p, q))),
         print '\n',
@@ -199,7 +210,7 @@ def print_moi(moi):
     
 # print principal moments of inertia (eigenvalues of tensor)
 def print_prinmom(prinmom):
-    print 'principal moments of inertia (amu * A^2):\n',
+    print 'principal moments of inertia (amu * A^2)\n  ',
     for p in range(3):
         print ' %12.6f' % (prinmom[p]),
     print '\n\n',
@@ -210,10 +221,10 @@ def print_moltype(moltype):
     
 # print rotational constants in mhz and wavenumber (cm^-1)
 def print_rotfreq(freqmhz, freqcm1):
-    print 'rotational frequencies (MHz):\n',
+    print 'rotational frequencies (MHz)\n  ',
     for p in range(len(freqmhz)):
         print ' %12.4e' % (freqmhz[p]),
-    print '\n\nrotational frequencies (cm^-1):\n',
+    print '\n\nrotational frequencies (cm^-1)\n  ',
     for p in range(len(freqcm1)):
         if (freqcm1[p] < 10**(-1)):
             print ' %12.4e' % (freqcm1[p]),
@@ -532,4 +543,6 @@ print_rotfreq(rotmhz, rotcm1)
 moi_geom = get_inertial_coords(com_geom, moi)
 print_geom(moi_geom, 'principal moment aligned geometry')
 
+print 'geometry analysis completed successfully\n'
 # end of program
+
