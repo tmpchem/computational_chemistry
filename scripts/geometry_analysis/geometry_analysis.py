@@ -96,7 +96,7 @@ def get_geom(xyz_file_name):
 # input syntax and usage warnings
 def get_inputs():
     if (not len(sys.argv) == 2):
-        print 'Usage: geometry_analysis.py XYZ_FILE\n'
+        print '\nUsage: geometry_analysis.py XYZ_FILE\n'
         print '  XYZ_FILE: coordinates of target molecule\n'
         sys.exit()
     else:
@@ -220,16 +220,13 @@ def print_moltype(moltype):
     print 'this molecule is %s\n\n' % (moltype),
     
 # print rotational constants in mhz and wavenumber (cm^-1)
-def print_rotfreq(freqmhz, freqcm1):
-    print 'rotational frequencies (MHz)\n  ',
-    for p in range(len(freqmhz)):
-        print ' %12.4e' % (freqmhz[p]),
-    print '\n\nrotational frequencies (cm^-1)\n  ',
-    for p in range(len(freqcm1)):
-        if (freqcm1[p] < 10**(-1)):
-            print ' %12.4e' % (freqcm1[p]),
+def print_rotfreq(freq, units):
+    print 'rotational frequencies (%s)\n  ' % (units),
+    for p in range(len(freq)):
+        if (freq[p] < 10**(-1)):
+            print ' %12.*e' % (3 - int(math.log(freq[p], 10.0)), freq[p]),
         else:
-            print ' %12.4f' % (freqcm1[p]),
+            print ' %12.*f' % (6 - int(math.log(freq[p], 10.0)), freq[p]),
     print '\n\n',
     
 ## MATH FUNCTIONS ##
@@ -435,6 +432,7 @@ def get_angles(geom, bond_tree):
                 k = bond_tree[j][b]
                 a123 = get_a123(coords[i], coords[j], coords[k])
                 angles.append([i, j, k, a123])
+    angles = sorted(angles, key=lambda angle:angle[0])
     return angles
 
 # determine atoms which form torsion angles from bond tree
@@ -459,6 +457,7 @@ def get_torsions(geom, bond_tree):
                         continue
                     t1234 = get_t1234(coords[i], coords[j], coords[k], coords[l])
                     torsions.append([i, j, k, l, t1234])
+    torsions = sorted(torsions, key=lambda torsion:torsion[0])
     return torsions
 
 # determine atoms which form out-of-plane angles from bond tree
@@ -480,6 +479,7 @@ def get_outofplanes(geom, bond_tree):
                         continue
                     o1234 = get_o1234(coords[i], coords[j], coords[k], coords[l])
                     outofplanes.append([i, j, k, l, o1234])
+    outofplanes = sorted(outofplanes, key=lambda outofplane:outofplane[0])
     return outofplanes
 
 # determine molecule type based on principal moments of inertia
@@ -494,11 +494,11 @@ def get_moltype(geom, pm):
     elif (onezero):
         moltype = 'linear'
     elif (same13):
-        moltype = 'spherical top'
+        moltype = 'a spherical top'
     elif (same12 or same23):
-        moltype = 'symmetric top'
+        moltype = 'a symmetric top'
     else:
-        moltype = 'asymmetric top'
+        moltype = 'an asymmetric top'
     return moltype
 
 ## MAIN BLOCK ##
@@ -537,7 +537,8 @@ rotmhz, rotcm1 = get_rotfreq(prinmom)
 print_moi(moi)
 print_prinmom(prinmom)
 print_moltype(moltype)
-print_rotfreq(rotmhz, rotcm1)
+print_rotfreq(rotmhz, 'MHz')
+print_rotfreq(rotcm1, 'cm^-1')
 
 # rotate molecule to inertial frame and print
 moi_geom = get_inertial_coords(com_geom, moi)
