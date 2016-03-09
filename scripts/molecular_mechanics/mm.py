@@ -1,6 +1,5 @@
 import os, sys
-# change this string to your local mmlib path
-sys.path.append('C:\Users\Trent\Documents\TMPChem\Coding\scripts\molecular_mechanics')
+sys.path.append('/'.join(os.path.realpath(__file__).split('/')[:-1]))
 from mmlib import *
 
 #############################################################################
@@ -8,8 +7,7 @@ from mmlib import *
 #                                                                           #
 # This program takes in a set of molecular xyz coordinates and charges,     #
 # determines bonded topology and parameters, calculates amber94 molecular   #
-# mechanics energy components, and prints resulting values. Update line 3   #
-# of this file to your local mmlib directory to run.                        #
+# mechanics energy components, and prints resulting values.                 #
 #                                                                           #
 # AMBER FF94 from Cornell et. al, J. Am. Chem. Soc. 1995, 117, 5179-5197.   #
 # Atom types in Table 1. Bonded and Non-bonded parameters in Table 14.      #
@@ -40,3 +38,4 @@ mol.get_energy()
 mol.print_data()
 
 # end of program
+
