@@ -82,9 +82,9 @@ def print_bonds_file(outfile, mol):
 # print bond angle topology and angle parameters from an array
 def print_angles(mol):
     if (mol.n_angles > 0):
-        print '\n ------------------- Bond Angle Data ---------------------'
+        print '\n ------------------- Bond Angle Data -----------------------'
         print '     |   k_a    a_eq     a_ijk    types     energy   atoms'
-        print   ' ---------------------------------------------------------'
+        print   ' -----------------------------------------------------------'
     else:
         print '\n No Bond Angles Detected'
     for p in range(mol.n_angles):
@@ -104,9 +104,9 @@ def print_angles_file(outfile, mol):
 # print torsion topology and torsion parameters from an array
 def print_torsions(mol):
     if (mol.n_torsions > 0):
-        print '\n ------------------- Torsion Angle Data ----------------------'
+        print '\n ------------------- Torsion Angle Data -------------------------'
         print '     |   Vn/2  gamma   t_ijkl n p     types      energy   atoms'
-        print   ' -------------------------------------------------------------'
+        print   ' ----------------------------------------------------------------'
     else:
         print '\n No Torsion Angles Detected'
     for p in range(mol.n_torsions):
