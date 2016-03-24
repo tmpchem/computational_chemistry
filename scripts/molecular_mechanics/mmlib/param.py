@@ -71,7 +71,7 @@ bond_params = {         'C CA': [469.0, 1.409], 'C CB': [447.0, 1.419],
   'O2P ': [525.0, 1.480], 'OHP ': [230.0, 1.610], 'OSP ': [230.0, 1.610],
   'OWHW': [553.0,0.9572], 'S S ': [166.0, 2.038]}
 
-# angle parameters, [Ka (*kcal/mol / radian^2), Theta_eq (Angstrom)]
+# angle parameters, [Ka (*kcal/mol / radian^2), Theta_eq (degrees)]
 angle_params = {             'C CACA': [ 63.0, 120.00], 'C CAHA': [ 35.0, 120.00],
   'C CBCB': [ 63.0, 119.20], 'C CBNB': [ 70.0, 130.00], 'C CMCM': [ 63.0, 120.70],
   'C CMCT': [ 70.0, 119.70], 'C CMH4': [ 35.0, 119.70], 'C CMHA': [ 35.0, 119.70],
