@@ -1,5 +1,6 @@
 import math
-import fileio, param, geomcalc, topology, energy
+import numpy as np
+import fileio, param, geomcalc, topology, energy, gradient
 
 # molecule.py: classes for handling molecular mechanics data
 
@@ -18,6 +19,8 @@ class atom:
         self.covrad = param.get_cov_rad(self.element)
         self.e_nonbonded = 0.0
         self.e_bonded = 0.0
+        self.g_nonbonded = np.zeros(3)
+        self.g_bonded = np.zeros(3)
     # set new atom type
     def set_attype(self, attype):
         self.attype = attype
@@ -55,7 +58,8 @@ class bond:
         self.r_ij = r_ij
         self.r_eq = r_eq
         self.k_b = k_b
-        self.e_bond = 0.0
+        self.e = 0.0
+        self.g = 0.0
     # set new atomic index 1
     def set_at1(self, at1):
         self.at1 = at1
@@ -82,7 +86,8 @@ class angle:
         self.a_ijk = a_ijk
         self.a_eq = a_eq
         self.k_a = k_a
-        self.e_angle = 0.0
+        self.e = 0.0
+        self.g = 0.0
     # set new atomic index 1
     def set_at1(self, at1):
         self.at1 = at1
@@ -112,10 +117,11 @@ class torsion:
         self.at4 = at4
         self.t_ijkl = t_ijkl
         self.v_n = v_n
-        self.gamma = gamma
-        self.nfold = nfold
+        self.gam = gamma
+        self.n = nfold
         self.paths = paths
-        self.e_torsion = 0.0
+        self.e = 0.0
+        self.g = 0.0
     # set new atomic index 1
     def set_at1(self, at1):
         self.at1 = at1
@@ -136,7 +142,7 @@ class torsion:
         self.v_n = v_n
     # set new torsion phase factor parameter (degrees)
     def set_gamma(self, gamma):
-        self.gamma = gamma
+        self.gam = gamma
     # set new torsion angular frequency parameter (unitless)
     def set_nfold(self, nfold):
         self.nfold = nfold
@@ -154,9 +160,10 @@ class outofplane:
         self.at4 = at4
         self.o_ijkl = o_ijkl
         self.v_n = v_n
-        self.gamma = gamma
+        self.gam = gamma
         self.nfold = nfold
-        self.e_outofplane = 0.0
+        self.e = 0.0
+        self.g = 0.0
     # set new atomic index 1
     def set_at1(self, at1):
         self.at1 = at1
@@ -177,7 +184,7 @@ class outofplane:
         self.v_n = v_n
     # set new outofplane phase factor parameter (degrees)
     def set_gamma(self, gamma):
-        self.gamma = gamma
+        self.gam = gamma
     # set new outofplane angular frequency parameter (unitless)
     def set_nfold(self, nfold):
         self.nfold = nfold
@@ -215,6 +222,16 @@ class molecule:
         self.read_in_data(self.infile)
         self.get_topology()
 
+        self.g_bonds = np.zeros((self.n_atoms, 3))
+        self.g_angles = np.zeros((self.n_atoms, 3))
+        self.g_torsions = np.zeros((self.n_atoms, 3))
+        self.g_outofplanes = np.zeros((self.n_atoms, 3))
+        self.g_bonded = np.zeros((self.n_atoms, 3)) 
+        self.g_vdw = np.zeros((self.n_atoms, 3)) 
+        self.g_elst = np.zeros((self.n_atoms, 3)) 
+        self.g_nonbonded = np.zeros((self.n_atoms, 3)) 
+        self.g_total = np.zeros((self.n_atoms, 3)) 
+
     # read in data from input file
     def read_in_data(self, infile_name):
         fileio.get_geom(self)
@@ -237,6 +254,19 @@ class molecule:
         energy.get_e_nonbonded(self)
         energy.get_e_totals(self)
 
+    # calculate analytic energy gradient of molecule
+    def get_analytic_gradient(self):
+        gradient.get_g_bonds(self)
+        gradient.get_g_angles(self)
+        gradient.get_g_torsions(self)
+        gradient.get_g_outofplanes(self)
+        gradient.get_g_nonbonded(self)
+        gradient.get_g_totals(self)
+
+    # calculate numerical energy gradient of molecule
+    def get_numerical_gradient(self):
+        gradient.get_g_numerical(self)
+
     # print energy / topology to screen
     def print_data(self):
         fileio.print_energy(self)
@@ -245,3 +275,4 @@ class molecule:
         fileio.print_angles(self)
         fileio.print_torsions(self)
         fileio.print_outofplanes(self)
+

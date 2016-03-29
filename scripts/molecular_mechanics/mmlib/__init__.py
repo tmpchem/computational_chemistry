@@ -4,6 +4,6 @@ import geomcalc
 import topology
 import energy
 import molecule
-#import gradient
+import gradient
 #import dynamics
 #import test

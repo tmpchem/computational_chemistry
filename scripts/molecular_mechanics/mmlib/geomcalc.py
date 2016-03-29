@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 # geomcalc.py: functions for calculating molecular coordinate data
 
@@ -24,7 +25,7 @@ def get_r_ij(coords_i, coords_j):
 # calculate unit vector between two points
 def get_u_ij(coords_i, coords_j):
     r_ij = get_r_ij(coords_i, coords_j)
-    u_ij = [0.0 for m in range(3)]
+    u_ij = np.zeros(3)
     for m in range(3):
         u_ij[m] = (coords_j[m] - coords_i[m]) / r_ij
     return u_ij
@@ -40,12 +41,13 @@ def get_udp(uvec_i, uvec_j):
 
 # calculate cross product between two unit vectors
 def get_ucp(uvec_i, uvec_j):
-    ucp = [0.0 for m in range(3)]
+    ucp = np.zeros(3)
     cos_ijk = get_udp(uvec_i, uvec_j)
     sin_ijk = math.sqrt(1 - cos_ijk**2)
-    ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1]) / sin_ijk 
-    ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2]) / sin_ijk 
-    ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0]) / sin_ijk 
+    if (sin_ijk > 0.0):
+        ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1]) / sin_ijk 
+        ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2]) / sin_ijk 
+        ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0]) / sin_ijk 
     return ucp
 
 # calculate angle between three points
