@@ -38,6 +38,36 @@ def get_geom(mol):
         new_atom.set_covrad(param.get_cov_rad(at_element))
         mol.atoms.append(new_atom)
 
+# print atomic coordinates for a set of atoms
+def print_coords(mol, comment):
+    print '%i\n%s\n' % (mol.n_atoms, comment),
+    for i in range(mol.n_atoms):
+        print '%-2s' % (mol.atoms[i].attype),
+        for j in range(3):
+            print ' %12.6f' % (mol.atoms[i].coords[j]),
+        print '\n',
+    print '\n',
+
+# print atomic energy gradient for a set of atoms
+def print_gradient(mol, grad_type, comment):
+    if   (grad_type == 'total'): grad = mol.g_total
+    elif (grad_type == 'nonbonded'): grad = mol.g_nonbonded
+    elif (grad_type == 'bonded'): grad = mol.g_bonded
+    elif (grad_type == 'vdw'): grad = mol.g_vdw
+    elif (grad_type == 'elst'): grad = mol.g_elst
+    elif (grad_type == 'bonds'): grad = mol.g_bonds
+    elif (grad_type == 'angles'): grad = mol.g_angles
+    elif (grad_type == 'torsions'): grad = mol.g_torsions
+    elif (grad_type == 'outofplanes'): grad = mol.g_outofplanes
+    else: print 'Error: grad type (%s) not recognized!' % (grad_type)
+    print '\n%s\n' % (comment),
+    for i in range(mol.n_atoms):
+        print '%-2s' % (mol.atoms[i].attype),
+        for j in range(3):
+            print ' %12.6f' % (grad[i][j]),
+        print '\n',
+    print '\n',
+
 # print geometry and non-bonded parameters for a set of atoms
 def print_geom(mol):
     print '\n ------------- Molecular Geoemetry and Non-bonded Parameters --------------'

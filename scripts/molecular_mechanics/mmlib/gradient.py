@@ -45,22 +45,30 @@ def get_gdir_inter(coords1, coords2):
 
 # calculate bond angle energy gradient directions between bonded atoms
 def get_gdir_angle(coords1, coords2, coords3):
+    r_ji = geomcalc.get_r_ij(coords2, coords1)
+    r_jk = geomcalc.get_r_ij(coords2, coords3)
     u_ji = geomcalc.get_u_ij(coords2, coords1)
     u_jk = geomcalc.get_u_ij(coords2, coords3)
     cp    = geomcalc.get_ucp(u_ji, u_jk)
-    gdir1 = geomcalc.get_ucp(u_ji, cp)
-    gdir3 = geomcalc.get_ucp(cp, u_jk)
+    gdir1 = geomcalc.get_ucp(u_ji, cp) / r_ji
+    gdir3 = geomcalc.get_ucp(cp, u_jk) / r_jk
     gdir2 = -1.0 * (gdir1 + gdir3)
     return gdir1, gdir2, gdir3
 
 # calculate torsion angle energy gradient directions boetween bonded atoms
 def get_gdir_torsion(coords1, coords2, coords3, coords4):
+    r_kl = geomcalc.get_r_ij(coords3, coords4)
+    r_ij = geomcalc.get_r_ij(coords1, coords2)
     u_ji = geomcalc.get_u_ij(coords2, coords1)
     u_jk = geomcalc.get_u_ij(coords2, coords3)
     u_kj = geomcalc.get_u_ij(coords3, coords2)
     u_kl = geomcalc.get_u_ij(coords3, coords4)
+    a_ijk = geomcalc.get_a_ijk(coords1, coords2, coords3)
+    a_lkj = geomcalc.get_a_ijk(coords4, coords3, coords2)
     gdir1 = geomcalc.get_ucp(u_ji, u_jk)
     gdir4 = geomcalc.get_ucp(u_kl, u_kj)
+    gdir1 /= r_ij * math.sin(geomcalc.deg2rad() * a_ijk)
+    gdir4 /= r_kl * math.sin(geomcalc.deg2rad() * a_lkj)
     gdir2 = -0.5 * (gdir1 + gdir4)
     gdir3 = 1.0 * gdir2
     return gdir1, gdir2, gdir3, gdir4
@@ -160,7 +168,12 @@ def get_g_totals(mol):
 
 # update total system numerical energy gradient values
 def get_g_numerical(mol):
-    mol.g_total = np.zeros((mol.n_atoms, 3))
+    mol.g_bonds = np.zeros((mol.n_atoms, 3))
+    mol.g_angles = np.zeros((mol.n_atoms, 3))
+    mol.g_torsions = np.zeros((mol.n_atoms, 3))
+    mol.g_outofplanes = np.zeros((mol.n_atoms, 3))
+    mol.g_vdw = np.zeros((mol.n_atoms, 3))
+    mol.g_elst = np.zeros((mol.n_atoms, 3))
     for i in range(mol.n_atoms):
         for j in range(3):
             q = mol.atoms[i].coords[j]
@@ -168,10 +181,19 @@ def get_g_numerical(mol):
             qm = q - 0.5*num_disp
             mol.atoms[i].coords[j] = qp
             mol.get_energy()
-            ep = mol.e_total
+            ep_bond, ep_ang = mol.e_bonds, mol.e_angles
+            ep_tor, ep_oop = mol.e_torsions, mol.e_outofplanes
+            ep_vdw, ep_elst = mol.e_vdw, mol.e_elst
             mol.atoms[i].coords[j] = qm
             mol.get_energy()
-            em = mol.e_total
+            em_bond, em_ang = mol.e_bonds, mol.e_angles
+            em_tor, em_oop = mol.e_torsions, mol.e_outofplanes
+            em_vdw, em_elst = mol.e_vdw, mol.e_elst
             mol.atoms[i].coords[j] = q
-            mol.g_total[i][j] = (ep - em) / num_disp
+            mol.g_bonds[i][j] = (ep_bond - em_bond) / num_disp
+            mol.g_angles[i][j] = (ep_ang - em_ang) / num_disp
+            mol.g_torsions[i][j] = (ep_tor - em_tor) / num_disp
+            mol.g_outofplanes[i][j] = (ep_oop - em_oop) / num_disp
+            mol.g_vdw[i][j] = (ep_vdw - em_vdw) / num_disp
+            mol.g_elst[i][j] = (ep_elst - em_elst) / num_disp
 

@@ -266,6 +266,7 @@ class molecule:
     # calculate numerical energy gradient of molecule
     def get_numerical_gradient(self):
         gradient.get_g_numerical(self)
+        gradient.get_g_totals(self)
 
     # print energy / topology to screen
     def print_data(self):
