@@ -29,7 +29,7 @@ def get_file_string_array(file_name):
     try:
         file = open(file_name, "r")
     except IOError: 
-        print 'Error: file (%s) not found!\n' % (file_name)
+        print('Error: file (%s) not found!\n' % (file_name))
         sys.exit()
     lines = file.readlines() 
     file.close()
@@ -41,8 +41,8 @@ def get_file_string_array(file_name):
 # input syntax and usage warnings
 def get_input():
     if (not len(sys.argv) == 2):
-        print '\nUsage: zmat2xyz.py ZMAT_FILE\n'
-        print '  ZMAT_FILE: z-matrix file of target molecule\n'
+        print('\nUsage: zmat2xyz.py ZMAT_FILE\n')
+        print('  ZMAT_FILE: z-matrix file of target molecule\n')
         sys.exit()
     else:
         zmat_file_name = sys.argv[1]
@@ -89,7 +89,7 @@ def get_local_axes(coords1, coords2, coords3):
     u21 = get_u12(coords1, coords2)
     u23 = get_u12(coords2, coords3)
     if (abs(get_udp(u21, u23)) >= 1.0):
-      print 'Error: Co-linear atoms in an internal coordinate definition'
+      print('\nError: Co-linear atoms in an internal coordinate definition')
       sys.exit()
     u23c21 = get_ucp(u23, u21)
     u21c23c21 = get_ucp(u21, u23c21)
@@ -158,28 +158,28 @@ class molecule:
 
     # print z-matrix to screen
     def print_zmat(self, comment):
-        print '%i\n%s\n' % (self.n_atoms, comment),
+        print('%i\n%s\n' % (self.n_atoms, comment), end='')
         for i in range(self.n_atoms):
-            print '%-2s' % (self.atoms[i].attype),
+            print('%-2s' % (self.atoms[i].attype), end='')
             if (i >= 1):
-                print ' %3i' % (self.atoms[i].rnum+1),
-                print '%8.4f' % (self.atoms[i].rval),
+                print(' %3i' % (self.atoms[i].rnum+1), end='')
+                print('%8.4f' % (self.atoms[i].rval), end='')
             if (i >= 2):
-                print ' %3i' % (self.atoms[i].anum+1),
-                print '%8.3f' % (rad2deg * self.atoms[i].aval),
+                print(' %3i' % (self.atoms[i].anum+1), end='')
+                print('%8.3f' % (rad2deg * self.atoms[i].aval), end='')
             if (i >= 3):
-                print ' %3i' % (self.atoms[i].tnum+1),
-                print '%8.3f' % (rad2deg * self.atoms[i].tval),
-            print '\n',
+                print(' %3i' % (self.atoms[i].tnum+1), end='')
+                print('%8.3f' % (rad2deg * self.atoms[i].tval), end='')
+            print('\n', end='')
 
     # print xyz coordinates to screen
     def print_coords(self, comment):
-        print '%i\n%s\n' % (self.n_atoms, comment),
+        print('%i\n%s\n' % (self.n_atoms, comment), end='')
         for i in range(self.n_atoms):
-            print '%-2s' % (self.atoms[i].attype),
+            print('%-2s' % (self.atoms[i].attype), end='')
             for j in range(3):
-                print ' %12.6f' % (self.atoms[i].coords[j]),
-            print '\n',
+                print(' %12.6f' % (self.atoms[i].coords[j]), end='')
+            print('\n', end='')
 
     # obtain cartesian xyz-coordinates from z-matrix values
     def zmat2xyz(self):

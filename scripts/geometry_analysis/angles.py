@@ -26,7 +26,7 @@ def get_file_string_array(file_name):
     try:
         file = open(file_name, "r")
     except IOError:
-        print 'Error: file (%s) not found!\n' % (file_name)
+        print('Error: file (%s) not found!\n' % (file_name))
         sys.exit()
     lines = file.readlines()
     file.close()
@@ -51,8 +51,8 @@ def get_geom(xyz_file_name):
 # input syntax and usage warnings
 def get_inputs():
     if (not len(sys.argv) == 2):
-        print 'Usage: geometry_analysis.py XYZ_FILE\n'
-        print '  XYZ_FILE: coordinates of target molecule\n'
+        print('Usage: geometry_analysis.py XYZ_FILE\n')
+        print('  XYZ_FILE: coordinates of target molecule\n')
         sys.exit()
     else:
         xyz_file_name = sys.argv[1]
@@ -62,51 +62,51 @@ def get_inputs():
 def print_geom(geom, comment):
     at_types, coords = geom[0:2]
     n_atoms = len(at_types)
-    print '%i\n%s\n' % (n_atoms, comment),
+    print('%i\n%s\n' % (n_atoms, comment), end='')
     for i in range(n_atoms):
-        print '%-2s' % (at_types[i]),
+        print('%-2s' % (at_types[i]), end='')
         for j in range(3):
-            print ' %12.6f' % (coords[i][j]),
-        print '\n',
-    print '\n',
+            print(' %12.6f' % (coords[i][j]), end='')
+        print('\n', end='')
+    print('\n', end='')
 
 # print bond tree to screen
 def print_bond_tree(geom, bond_tree, comment):
     at_types = geom[0]
     n_atoms = len(at_types)
-    print '%s\n' % (comment),
+    print('%s\n' % (comment), end='')
     for i in range(n_atoms):
-        print ' %4i %-2s -' % (i+1, at_types[i]),
+        print(' %4i %-2s -' % (i+1, at_types[i]), end='')
         for j in range(len(bond_tree[i])):
-            print ' %i' % (bond_tree[i][j] + 1),
-        print '\n',
-    print '\n',
+            print(' %i' % (bond_tree[i][j] + 1), end='')
+        print('\n', end='')
+    print('\n', end='')
     
 # print list of bond lengths to screen
 def print_bonds(geom, bonds):
     at_types = geom[0]
     n_bonds = len(bonds)
-    print '%i bond(s) found (Angstrom)' % (n_bonds)
+    print('%i bond(s) found (Angstrom)' % (n_bonds))
     for q in range(n_bonds):
         n1, n2  = bonds[q][0:2]
         r12 = bonds[q][2]
         nstr = '%i-%i' % (n1+1, n2+1)
         tstr = '(%s-%s) ' % (at_types[n1], at_types[n2])
-        print ' %-15s  %-13s    %6.4f\n' % (nstr, tstr, r12),
-    print '\n',
+        print(' %-15s  %-13s    %6.4f\n' % (nstr, tstr, r12), end='')
+    print('\n', end='')
     
 # print list of bond angles to screen
 def print_angles(geom, angles):
     at_types = geom[0]
     n_angles = len(angles)
-    print '%i angle(s) found (degrees)' % (n_angles)
+    print('%i angle(s) found (degrees)' % (n_angles))
     for q in range(n_angles):
         n1, n2, n3 = angles[q][0:3]
         a123 = angles[q][3]
         nstr = '%i-%i-%i' % (n1+1, n2+1, n3+1)
         tstr = '(%s-%s-%s) ' % (at_types[n1], at_types[n2], at_types[n3])
-        print ' %-15s  %-13s   %7.3f\n' % (nstr, tstr, a123),
-    print '\n',
+        print(' %-15s  %-13s   %7.3f\n' % (nstr, tstr, a123), end='')
+    print('\n', end='')
 
 ## MATH FUNCTIONS ##
 

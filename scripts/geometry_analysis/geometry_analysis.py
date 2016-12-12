@@ -71,7 +71,7 @@ def get_file_string_array(file_name):
     try:
         file = open(file_name, "r")
     except IOError:
-        print 'Error: file (%s) not found!\n' % (file_name)
+        print('Error: file (%s) not found!\n' % (file_name))
         sys.exit()
     lines = file.readlines()
     file.close()
@@ -96,138 +96,138 @@ def get_geom(xyz_file_name):
 # input syntax and usage warnings
 def get_inputs():
     if (not len(sys.argv) == 2):
-        print '\nUsage: geometry_analysis.py XYZ_FILE\n'
-        print '  XYZ_FILE: coordinates of target molecule\n'
+        print('\nUsage: geometry_analysis.py XYZ_FILE\n')
+        print('  XYZ_FILE: coordinates of target molecule\n')
         sys.exit()
     else:
         xyz_file_name = sys.argv[1]
         xyz_name = xyz_file_name.split('/')[-1].split('.')[0]
-        print '\ngeometry analysis for %s\n' % (xyz_name)
+        print('\ngeometry analysis for %s\n' % (xyz_name))
         return xyz_file_name
 
 # print geometry to screen
 def print_geom(geom, comment):
     at_types, coords = geom[0:2]
     n_atoms = len(at_types)
-    print '%i\n%s\n' % (n_atoms, comment),
+    print('%i\n%s\n' % (n_atoms, comment), end='')
     for i in range(n_atoms):
-        print '%-2s' % (at_types[i]),
+        print('%-2s' % (at_types[i]),end='')
         for j in range(3):
-            print ' %12.6f' % (coords[i][j]),
-        print '\n',
-    print '\n',
+            print( ' %12.6f' % (coords[i][j]), end='')
+        print('\n', end='')
+    print('\n', end='')
 
 # print bond tree to screen
 def print_bond_tree(geom, bond_tree, comment):
     at_types = geom[0]
     n_atoms = len(at_types)
-    print '%s\n' % (comment),
+    print('%s\n' % (comment), end='')
     for i in range(n_atoms):
-        print ' %4i %-2s -' % (i+1, at_types[i]),
+        print(' %4i %-2s -' % (i+1, at_types[i]), end='')
         for j in range(len(bond_tree[i])):
-            print ' %i' % (bond_tree[i][j] + 1),
-        print '\n',
-    print '\n',
-    
+            print(' %i' % (bond_tree[i][j] + 1), end='')
+        print('\n', end='')
+    print('\n', end='')
+
 # print list of bond lengths to screen
 def print_bonds(geom, bonds):
     at_types = geom[0]
     n_bonds = len(bonds)
-    print '%i bond length(s) found (Angstrom)' % (n_bonds)
+    print('%i bond length(s) found (Angstrom)' % (n_bonds))
     if (n_bonds > 0):
-        print ' atoms            elements         values'
+        print(' atoms            elements         values')
     for q in range(n_bonds):
         n1, n2  = bonds[q][0:2]
         r12 = bonds[q][2]
         nstr = '%i-%i' % (n1+1, n2+1)
         tstr = '(%s-%s) ' % (at_types[n1], at_types[n2])
-        print ' %-15s  %-13s    %6.4f\n' % (nstr, tstr, r12),
-    print '\n',
+        print(' %-15s  %-13s    %6.4f\n' % (nstr, tstr, r12), end='')
+    print('\n', end='')
     
 # print list of bond angles to screen
 def print_angles(geom, angles):
     at_types = geom[0]
     n_angles = len(angles)
-    print '%i bond angle(s) found (degrees)' % (n_angles)
+    print('%i bond angle(s) found (degrees)' % (n_angles))
     if (n_angles > 0):
-        print ' atoms            elements         values'
+        print(' atoms            elements         values')
     for q in range(n_angles):
         n1, n2, n3 = angles[q][0:3]
         a123 = angles[q][3]
         nstr = '%i-%i-%i' % (n1+1, n2+1, n3+1)
         tstr = '(%s-%s-%s) ' % (at_types[n1], at_types[n2], at_types[n3])
-        print ' %-15s  %-13s   %7.3f\n' % (nstr, tstr, a123),
-    print '\n',
+        print(' %-15s  %-13s   %7.3f\n' % (nstr, tstr, a123), end='')
+    print('\n', end='')
 
 # print list of torsion angles to screen
 def print_torsions(geom, torsions):
     at_types = geom[0]
     n_torsions = len(torsions)
-    print '%i torsion angle(s) found (degrees)' % (n_torsions)
+    print('%i torsion angle(s) found (degrees)' % (n_torsions))
     if (n_torsions > 0):
-        print ' atoms            elements         values'
+        print(' atoms            elements         values')
     for q in range(n_torsions):
         n1, n2, n3, n4 = torsions[q][0:4]
         t1234 = torsions[q][4]
         nstr = '%i-%i-%i-%i' % (n1+1, n2+1, n3+1, n4+1)
         tstr = '(%s-%s-%s-%s) ' % (at_types[n1], at_types[n2], at_types[n3], at_types[n4])
-        print ' %-15s  %-13s  %8.3f\n' % (nstr, tstr, t1234),
-    print '\n',
+        print(' %-15s  %-13s  %8.3f\n' % (nstr, tstr, t1234), end='')
+    print('\n', end='')
 
 # print list of out-of-plane angles to screen
 def print_outofplanes(geom, outofplanes):
     at_types = geom[0]
     n_outofplanes = len(outofplanes)
-    print '%i out-of-plane angle(s) found (degrees)' % (n_outofplanes)
+    print('%i out-of-plane angle(s) found (degrees)' % (n_outofplanes))
     if (n_outofplanes > 0):
-        print ' atoms            elements         values'
+        print(' atoms            elements         values')
     for q in range(n_outofplanes):
         n1, n2, n3, n4 = outofplanes[q][0:4]
         o1234 = outofplanes[q][4]
         nstr = '%i-%i-%i-%i' % (n1+1, n2+1, n3+1, n4+1)
         tstr = '(%s-%s-%s-%s) ' % (at_types[n1], at_types[n2], at_types[n3], at_types[n4])
-        print ' %-15s  %-13s  %8.3f\n' % (nstr, tstr, o1234),
-    print '\n',
+        print(' %-15s  %-13s  %8.3f\n' % (nstr, tstr, o1234), end='')
+    print('\n', end='')
     
 # print center of mass coordinates
 def print_com(com):
-    print 'molecular center of mass (Angstrom)\n   ',
-    print '       X             Y             Z\n  ',
+    print('molecular center of mass (Angstrom)\n   ', end='')
+    print('       X             Y             Z\n  ', end='')
     for p in range(3):
-        print ' %12.6f' % (com[p]),
-    print '\n\n',
+        print(' %12.6f' % (com[p]), end='')
+    print('\n')
 
 # print moment of inertia tensor
 def print_moi(moi):
-    print 'molecular moment of inertia tensor (amu * A^2)\n',
-    print '           X             Y             Z\n',
+    print('molecular moment of inertia tensor (amu * A^2)\n', end='')
+    print('           X             Y             Z\n', end='')
     for p in range(3):
-        print '%-2s' % (xyz[p]),
+        print('%-2s' % (xyz[p]), end='')
         for q in range(3):
-            print ' %12.6f' % (moi.item((p, q))),
-        print '\n',
-    print '\n',
+            print(' %12.6f' % (moi.item((p, q))), end='')
+        print('\n', end='')
+    print('\n', end='')
     
 # print principal moments of inertia (eigenvalues of tensor)
 def print_prinmom(prinmom):
-    print 'principal moments of inertia (amu * A^2)\n  ',
+    print('principal moments of inertia (amu * A^2)\n  ', end='')
     for p in range(3):
-        print ' %12.6f' % (prinmom[p]),
-    print '\n\n',
+        print(' %12.6f' % (prinmom[p]), end='')
+    print('\n')
 
 # print molecule type
 def print_moltype(moltype):
-    print 'this molecule is %s\n\n' % (moltype),
+    print('this molecule is %s\n\n' % (moltype), end='')
     
 # print rotational constants in mhz and wavenumber (cm^-1)
 def print_rotfreq(freq, units):
-    print 'rotational frequencies (%s)\n  ' % (units),
+    print('rotational frequencies (%s)\n  ' % (units), end='')
     for p in range(len(freq)):
         if (freq[p] < 10**(-1)):
-            print ' %12.*e' % (3 - int(math.log(freq[p], 10.0)), freq[p]),
+            print(' %12.*e' % (3 - int(math.log(freq[p], 10.0)), freq[p]), end='')
         else:
-            print ' %12.*f' % (6 - int(math.log(freq[p], 10.0)), freq[p]),
-    print '\n\n',
+            print(' %12.*f' % (6 - int(math.log(freq[p], 10.0)), freq[p]), end='')
+    print('\n')
     
 ## MATH FUNCTIONS ##
 
@@ -544,6 +544,6 @@ print_rotfreq(rotcm1, 'cm^-1')
 moi_geom = get_inertial_coords(com_geom, moi)
 print_geom(moi_geom, 'principal moment aligned geometry')
 
-print 'geometry analysis completed successfully\n'
+print('geometry analysis completed successfully\n')
 # end of program
 
