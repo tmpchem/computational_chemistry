@@ -15,7 +15,7 @@ at_masses = {    'H' : 1.00794, 'C' : 12.0107, 'O' : 15.9994, 'N' : 14.0067,
 
 # covalent (or ionic) radii by atomic element (Angstroms) from
 # "Inorganic Chemistry" 3rd ed, Housecroft, Appendix 6, pgs 1013-1014
-cov_radii = {  'H' : 0.37, 'C' : 0.77, 'O' : 0.73, 'N' : 0.75, 'F' : 0.71,
+cov_radii = { 'H' : 0.37, 'C' : 0.77, 'O' : 0.73, 'N' : 0.75, 'F' : 0.71,
   'P' : 1.10, 'S' : 1.03, 'Cl': 0.99, 'Br': 1.14, 'I' : 1.33, 'He': 0.30,
   'Ne': 0.84, 'Ar': 1.00, 'Li': 1.02, 'Be': 0.27, 'B' : 0.88, 'Na': 1.02,
   'Mg': 0.72, 'Al': 1.30, 'Si': 1.18, 'K' : 1.38, 'Ca': 1.00, 'Sc': 0.75,
@@ -39,7 +39,8 @@ vdw_params = {            'C' : [1.9080, 0.0860], 'CA': [1.9080, 0.0860],
   'OS': [1.6837, 0.1700], 'OW': [1.7683, 0.1520], 'P' : [2.1000, 0.2000],
   'S' : [2.0000, 0.2500], 'SH': [2.0000, 0.2500], 'N' : [1.8240, 0.1700],
   'NA': [1.8240, 0.1700], 'NB': [1.8240, 0.1700], 'NC': [1.8240, 0.1700],
-  'N*': [1.8240, 0.1700], 'N2': [1.8240, 0.1700], 'N3': [1.8750, 0.1700]}
+  'N*': [1.8240, 0.1700], 'N2': [1.8240, 0.1700], 'N3': [1.8750, 0.1700],
+  'He': [1.5800, 0.0112], 'Ar': [1.8436, 0.4466], 'HH': [1.5000, 0.0000]}
 
 # bond parameters, [Kb (*kcal/mol / Angstrom^2), R_eq (Angstrom)]
 bond_params = {         'C CA': [469.0, 1.409], 'C CB': [447.0, 1.419],
@@ -62,14 +63,14 @@ bond_params = {         'C CA': [469.0, 1.409], 'C CB': [447.0, 1.419],
   'CTCT': [310.0, 1.526], 'CTF ': [367.0, 1.380], 'CTH1': [340.0, 1.090],
   'CTH2': [340.0, 1.090], 'CTH3': [340.0, 1.090], 'CTHC': [340.0, 1.090],
   'CTHP': [340.0, 1.090], 'CTN ': [337.0, 1.449], 'CTN*': [337.0, 1.475],
-  'CTN2': [1.350, 337.0], 'CTN3': [367.0, 1.471], 'CTOH': [320.0, 1.410],
+  'CTN2': [337.0, 1.350], 'CTN3': [367.0, 1.471], 'CTOH': [320.0, 1.410],
   'CTOS': [320.0, 1.410], 'CTS ': [227.0, 1.810], 'CTSH': [237.0, 1.810],
   'CVH4': [367.0, 1.080], 'CVNB': [410.0, 1.394], 'CWH4': [367.0, 1.080],
   'CWNA': [410.0, 1.394], 'H N ': [434.0, 1.010], 'H N*': [434.0, 1.010],
   'H N2': [434.0, 1.010], 'H N3': [434.0, 1.010], 'H NA': [434.0, 1.010],
   'HOOH': [553.0, 0.960], 'HOOS': [553.0, 0.960], 'HSSH': [274.0, 1.336],
   'O2P ': [525.0, 1.480], 'OHP ': [230.0, 1.610], 'OSP ': [230.0, 1.610],
-  'OWHW': [553.0,0.9572], 'S S ': [166.0, 2.038]}
+  'OWHW': [553.0,0.9572], 'S S ': [166.0, 2.038], 'HHHH': [100.0, 0.740]}
 
 # angle parameters, [Ka (*kcal/mol / radian^2), Theta_eq (degrees)]
 angle_params = {             'C CACA': [ 63.0, 120.00], 'C CAHA': [ 35.0, 120.00],
@@ -208,7 +209,7 @@ def get_vdw_param(at_type):
     try:
         vdw = vdw_params[at_type]
     except KeyError:
-        print 'Error: atom type (%s) not found!' % (at_type)
+        print('Error: atom type (%s) not found!' % (at_type))
         sys.exit()
     return vdw
 
@@ -217,7 +218,7 @@ def get_at_mass(element):
     try:
         at_mass = at_masses[element]
     except KeyError:
-        print 'Error: atomic mas for element (%s) not found!' % (element)
+        print('Error: atomic mass for element (%s) not found!' % (element))
         sys.exit()
     return at_mass
 
@@ -226,7 +227,7 @@ def get_cov_rad(element):
     try:
         cov_rad = cov_radii[element]
     except KeyError:
-        print 'Error: covalent radius for element (%s) not found!' % (element)
+        print('Error: covalent radius for element (%s) not found!' % (element))
         sys.exit()
     return cov_rad
 
@@ -240,7 +241,7 @@ def get_bond_param(at1_type, at2_type):
             bond_types = '%-2s%-2s' % (at2_type, at1_type)
             bond = bond_params[bond_types]
         except KeyError:
-            print 'Error: bond type (%s, %s) not recognized!' % (at1_type, at2_type)
+            print('Error: bond type (%s, %s) not recognized!' % (at1_type, at2_type))
             sys.exit()
     return bond
 
@@ -254,7 +255,7 @@ def get_angle_param(at1_type, at2_type, at3_type):
             angle_types = '%-2s%-2s%-2s' % (at3_type, at2_type, at1_type)
             angle = angle_params[angle_types]
         except KeyError:
-            print 'Error: angle type (%s, %s, %s) not recognized!' % (at1_type, at2_type, at3_type)
+            print('Error: angle type (%s, %s, %s) not recognized!' % (at1_type, at2_type, at3_type))
             sys.exit()
     return angle
 
@@ -273,7 +274,7 @@ def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
             torsion23 = torsion23_params[torsion23_types]
             torsion.append(torsion23)
         except KeyError:
-            print 'Error: torsion (X-%s-%s-X) not recognized!' % (at2_type, at3_type)
+            print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type, at3_type))
             sys.exit()
   
     # four-atom torsion potentials

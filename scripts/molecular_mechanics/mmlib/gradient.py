@@ -29,7 +29,7 @@ def get_g_outofplane(o_ijkl, v_n, gamma, n_fold):
 # calculate van der waals interaction gradient magnitude between atom pair
 def get_g_vdw_ij(r_ij, eps_ij, ro_ij):
     rrel_ij = ro_ij / r_ij
-    g_vdw_ij = -12 * eps_ij * (rrel_ij**13 - rrel_ij**7)
+    g_vdw_ij = -12.0 * eps_ij * (rrel_ij**13 - rrel_ij**7)
     return g_vdw_ij
 
 # calculate electrostatics interaction gradient magnitude between atom pair
@@ -59,18 +59,25 @@ def get_gdir_angle(coords1, coords2, coords3):
 def get_gdir_torsion(coords1, coords2, coords3, coords4):
     r_kl = geomcalc.get_r_ij(coords3, coords4)
     r_ij = geomcalc.get_r_ij(coords1, coords2)
+    r_jk = geomcalc.get_r_ij(coords2, coords3)
+    r_ik = geomcalc.get_r_ij(coords1, coords3)
+    r_jl = geomcalc.get_r_ij(coords2, coords4)
     u_ji = geomcalc.get_u_ij(coords2, coords1)
     u_jk = geomcalc.get_u_ij(coords2, coords3)
     u_kj = geomcalc.get_u_ij(coords3, coords2)
     u_kl = geomcalc.get_u_ij(coords3, coords4)
     a_ijk = geomcalc.get_a_ijk(coords1, coords2, coords3)
     a_lkj = geomcalc.get_a_ijk(coords4, coords3, coords2)
+    s_ijk = math.sin(geomcalc.deg2rad() * a_ijk)
+    s_lkj = math.sin(geomcalc.deg2rad() * a_lkj)
+    c_ijk = math.cos(geomcalc.deg2rad() * a_ijk)
+    c_lkj = math.cos(geomcalc.deg2rad() * a_lkj)
     gdir1 = geomcalc.get_ucp(u_ji, u_jk)
     gdir4 = geomcalc.get_ucp(u_kl, u_kj)
-    gdir1 /= r_ij * math.sin(geomcalc.deg2rad() * a_ijk)
-    gdir4 /= r_kl * math.sin(geomcalc.deg2rad() * a_lkj)
-    gdir2 = -0.5 * (gdir1 + gdir4)
-    gdir3 = 1.0 * gdir2
+    gdir1 /= r_ij * s_ijk
+    gdir4 /= r_kl * s_lkj
+    gdir2  =  gdir1*(r_jk - r_ij)*c_ijk/(r_jk) - gdir4*c_lkj * r_kl / r_jk
+    gdir3  =  gdir4*(r_jk - r_kl)*c_lkj/(r_jk) - gdir1*c_ijk * r_ij / r_jk
     return gdir1, gdir2, gdir3, gdir4
 
 # update bond lengths and calculate bond length energy gradients

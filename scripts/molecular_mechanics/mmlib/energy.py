@@ -5,6 +5,9 @@ import math, geomcalc
 # conversion of elst energy into kcal/mol
 def ceu2kcal(): return 332.06375
 
+# conversion of kinetic energy into kcal/mol
+def kin2kcal(): return 2.39005736 * 10**-3
+
 # calculate bond length energy between bonded atoms
 def get_e_bond(r_ij, r_eq, k_b):
     e_bond = k_b * (r_ij - r_eq)**2
@@ -35,6 +38,13 @@ def get_e_vdw_ij(r_ij, eps_ij, ro_ij):
 def get_e_elst_ij(r_ij, q_i, q_j, epsilon):
     e_elst_ij = ceu2kcal() * ( q_i * q_j ) / ( epsilon * r_ij )
     return e_elst_ij
+
+# calculate kinetic energy of an atom
+def get_e_kinetic_i(mass, vels):
+    e_kin_i = 0.0
+    for i in range(3):
+        e_kin_i += kin2kcal() * 0.5 * mass * vels[i]**2
+    return e_kin_i
 
 # calculate non-bonded interactions between all atoms
 def get_e_nonbonded(mol):
@@ -100,10 +110,20 @@ def get_e_outofplanes(mol):
         oop.e = get_e_outofplane(oop.o_ijkl, oop.v_n, oop.gam, oop.n)
         mol.e_outofplanes += oop.e
         
+# calculate kinetic energy
+def get_e_kinetic(mol):
+    mol.e_kinetic = 0.0
+    for p in range(mol.n_atoms):
+        mass = mol.atoms[p].mass
+        vels = mol.atoms[p].vels
+        e_kin = get_e_kinetic_i(mass, vels)
+        mol.e_kinetic += e_kin
+
 # update total system energy values
 def get_e_totals(mol):
     mol.e_bonded  = mol.e_bonds + mol.e_angles
     mol.e_bonded += mol.e_torsions + mol.e_outofplanes
     mol.e_nonbonded = mol.e_vdw + mol.e_elst
-    mol.e_total = mol.e_bonded + mol.e_nonbonded
+    mol.e_potential = mol.e_bonded + mol.e_nonbonded
+    mol.e_total = mol.e_kinetic + mol.e_potential
 

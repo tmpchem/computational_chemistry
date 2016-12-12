@@ -47,15 +47,15 @@ def run_tests():
         TEST_PASS = are_equal(int_energy, reference_energy, 10**test_thresh)
 
         if (TEST_PASS):
-            print 'Test %i PASS %15.10f (%s)' % (i + 1, int_energy, tests[i])
+            print('Test %i PASS %15.10f (%s)' % (i + 1, int_energy, tests[i]))
         else:
-            print 'Test %i FAIL %15.10f (%s)' % (i + 1, int_energy, tests[i])
+            print('Test %i FAIL %15.10f (%s)' % (i + 1, int_energy, tests[i]))
 
     ALL_SUCCESS *= TEST_PASS
 
     if (ALL_SUCCESS):
-        print 'All Tests PASS'
+        print('All Tests PASS')
     else:
-        print 'Some Tests FAIL'
+        print('Some Tests FAIL')
 
     return ALL_SUCCESS
