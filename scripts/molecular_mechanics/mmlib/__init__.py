@@ -1,9 +1,9 @@
-import fileio
-import param
-import geomcalc
-import topology
-import energy
-import molecule
-import gradient
-import dynamics
-#import test
+from mmlib import fileio
+from mmlib import param
+from mmlib import geomcalc
+from mmlib import topology
+from mmlib import energy
+from mmlib import molecule
+from mmlib import gradient
+#from mmlib import dynamics
+#from mmlib import test
