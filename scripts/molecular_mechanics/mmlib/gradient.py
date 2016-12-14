@@ -2,8 +2,6 @@ import math
 from mmlib import energy, geomcalc, molecule
 import numpy as np
 
-# gradient.py: functions for calculating molecular mechanics energy gradient
-
 # numerical displacement distance (Angstrom)
 num_disp = 1.0 * 10**-6
 
@@ -30,7 +28,7 @@ def get_g_outofplane(o_ijkl, v_n, gamma, n_fold):
 # calculate van der waals interaction gradient magnitude between atom pair
 def get_g_vdw_ij(r_ij, eps_ij, ro_ij):
     rrel_ij = ro_ij / r_ij
-    g_vdw_ij = -12.0 * eps_ij * (rrel_ij**13 - rrel_ij**7)
+    g_vdw_ij = -12.0 * (eps_ij / ro_ij) * (rrel_ij**13 - rrel_ij**7)
     return g_vdw_ij
 
 # calculate electrostatics interaction gradient magnitude between atom pair
@@ -61,8 +59,6 @@ def get_gdir_torsion(coords1, coords2, coords3, coords4):
     r_kl = geomcalc.get_r_ij(coords3, coords4)
     r_ij = geomcalc.get_r_ij(coords1, coords2)
     r_jk = geomcalc.get_r_ij(coords2, coords3)
-    r_ik = geomcalc.get_r_ij(coords1, coords3)
-    r_jl = geomcalc.get_r_ij(coords2, coords4)
     u_ji = geomcalc.get_u_ij(coords2, coords1)
     u_jk = geomcalc.get_u_ij(coords2, coords3)
     u_kj = geomcalc.get_u_ij(coords3, coords2)
@@ -73,12 +69,32 @@ def get_gdir_torsion(coords1, coords2, coords3, coords4):
     s_lkj = math.sin(geomcalc.deg2rad() * a_lkj)
     c_ijk = math.cos(geomcalc.deg2rad() * a_ijk)
     c_lkj = math.cos(geomcalc.deg2rad() * a_lkj)
-    gdir1 = geomcalc.get_ucp(u_ji, u_jk)
-    gdir4 = geomcalc.get_ucp(u_kl, u_kj)
-    gdir1 /= r_ij * s_ijk
-    gdir4 /= r_kl * s_lkj
-    gdir2  =  gdir1*(r_jk - r_ij)*c_ijk/(r_jk) - gdir4*c_lkj * r_kl / r_jk
-    gdir3  =  gdir4*(r_jk - r_kl)*c_lkj/(r_jk) - gdir1*c_ijk * r_ij / r_jk
+    gdir1 = geomcalc.get_ucp(u_ji, u_jk) / (r_ij*s_ijk)
+    gdir4 = geomcalc.get_ucp(u_kl, u_kj) / (r_kl*s_lkj)
+    gdir2 = gdir1*(r_ij/r_jk*c_ijk - 1.0) - gdir4*(r_kl/r_jk*c_lkj)
+    gdir3 = gdir4*(r_kl/r_jk*c_lkj - 1.0) - gdir1*(r_ij/r_jk*c_ijk)
+    return gdir1, gdir2, gdir3, gdir4
+
+# calculate outofplane angle energy gradient directions between bonded atoms
+def get_gdir_outofplane(coords1, coords2, coords3, coords4, oop):
+    r_ki = geomcalc.get_r_ij(coords3, coords1)
+    r_kj = geomcalc.get_r_ij(coords3, coords2)
+    r_kl = geomcalc.get_r_ij(coords3, coords4)
+    u_ki = geomcalc.get_u_ij(coords3, coords1)
+    u_kj = geomcalc.get_u_ij(coords3, coords2)
+    u_kl = geomcalc.get_u_ij(coords3, coords4)
+    cp_kjkl = geomcalc.get_cp(u_kj, u_kl)
+    cp_klki = geomcalc.get_cp(u_kl, u_ki)
+    cp_kikj = geomcalc.get_cp(u_ki, u_kj)
+    a_ikj = geomcalc.get_a_ijk(coords1, coords3, coords2)
+    s_ikj = math.sin(geomcalc.deg2rad() * a_ikj)
+    c_ikj = math.cos(geomcalc.deg2rad() * a_ikj)
+    c_oop = math.cos(geomcalc.deg2rad() * oop)
+    t_oop = math.tan(geomcalc.deg2rad() * oop)
+    gdir1 = (1.0/r_ki)*(cp_kjkl/(c_oop*s_ikj) - (t_oop/s_ikj**2)*(u_ki - c_ikj*u_kj))
+    gdir2 = (1.0/r_kj)*(cp_klki/(c_oop*s_ikj) - (t_oop/s_ikj**2)*(u_kj - c_ikj*u_ki))
+    gdir4 = (1.0/r_kl)*(cp_kikj/(c_oop*s_ikj) - (t_oop*u_kl))
+    gdir3 = -1.0*(gdir1 + gdir2 + gdir4)
     return gdir1, gdir2, gdir3, gdir4
 
 # update bond lengths and calculate bond length energy gradients
@@ -136,12 +152,12 @@ def get_g_outofplanes(mol):
         c3 = mol.atoms[oop.at3].coords
         c4 = mol.atoms[oop.at4].coords
         oop.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
-        tor.g = get_g_outofplane(oop.o_ijkl, oop.v_n, oop.gam, oop.n)
-        dir1, dir2, dir3, dir4 = get_gdir_torsion(c1, c2, c3, c4)
-        mol.g_torsions[oop.at1] += oop.g * dir1
-        mol.g_torsions[oop.at2] += oop.g * dir2
-        mol.g_torsions[oop.at3] += oop.g * dir3
-        mol.g_torsions[oop.at4] += oop.g * dir4
+        oop.g = get_g_outofplane(oop.o_ijkl, oop.v_n, oop.gam, oop.n)
+        dir1, dir2, dir3, dir4 = get_gdir_outofplane(c1,c2,c3,c4,oop.o_ijkl)
+        mol.g_outofplanes[oop.at1] += oop.g * dir1
+        mol.g_outofplanes[oop.at2] += oop.g * dir2
+        mol.g_outofplanes[oop.at3] += oop.g * dir3
+        mol.g_outofplanes[oop.at4] += oop.g * dir4
 
 # calculate non-bonded interaction energy gradients between all atoms
 def get_g_nonbonded(mol):

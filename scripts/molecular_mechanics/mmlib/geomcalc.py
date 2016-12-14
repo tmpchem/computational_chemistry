@@ -39,7 +39,7 @@ def get_udp(uvec_i, uvec_j):
     udp = max(udp, -1.0)
     return udp
 
-# calculate cross product between two unit vectors
+# calculate unit cross product between two unit vectors
 def get_ucp(uvec_i, uvec_j):
     ucp = np.zeros(3)
     cos_ijk = get_udp(uvec_i, uvec_j)
@@ -48,6 +48,17 @@ def get_ucp(uvec_i, uvec_j):
         ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1]) / sin_ijk 
         ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2]) / sin_ijk 
         ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0]) / sin_ijk 
+    return ucp
+
+# calculate cross product between two unit vectors
+def get_cp(uvec_i, uvec_j):
+    ucp = np.zeros(3)
+    cos_ijk = get_udp(uvec_i, uvec_j)
+    sin_ijk = math.sqrt(1 - cos_ijk**2)
+    if (sin_ijk > 0.0):
+        ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1])
+        ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2])
+        ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0])
     return ucp
 
 # calculate angle between three points

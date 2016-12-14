@@ -232,22 +232,22 @@ class molecule:
         self.e_kinetic = 0.0
         self.e_total = 0.0
 
-        self.g_bonds = np.zeros((self.n_atoms, 3))
-        self.g_angles = np.zeros((self.n_atoms, 3))
-        self.g_torsions = np.zeros((self.n_atoms, 3))
-        self.g_outofplanes = np.zeros((self.n_atoms, 3))
-        self.g_bonded = np.zeros((self.n_atoms, 3)) 
-        self.g_vdw = np.zeros((self.n_atoms, 3)) 
-        self.g_elst = np.zeros((self.n_atoms, 3)) 
-        self.g_nonbonded = np.zeros((self.n_atoms, 3)) 
-        self.g_total = np.zeros((self.n_atoms, 3)) 
-        
         if (self.filetype == 'xyzq'):
             self.read_in_xyzq()
             self.get_topology()
         elif (self.filetype == 'prm'):
             self.read_in_prm()
             
+        self.g_bonds = np.zeros((self.n_atoms, 3))
+        self.g_angles = np.zeros((self.n_atoms, 3))
+        self.g_torsions = np.zeros((self.n_atoms, 3))
+        self.g_outofplanes = np.zeros((self.n_atoms, 3))
+        self.g_bonded = np.zeros((self.n_atoms, 3))
+        self.g_vdw = np.zeros((self.n_atoms, 3))
+        self.g_elst = np.zeros((self.n_atoms, 3))
+        self.g_nonbonded = np.zeros((self.n_atoms, 3))
+        self.g_total = np.zeros((self.n_atoms, 3))
+
     # read in xyzq data from input file
     def read_in_xyzq(self):
         fileio.get_geom(self)
