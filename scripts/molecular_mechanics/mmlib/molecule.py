@@ -1,6 +1,6 @@
 import sys, math
 import numpy as np
-import fileio, param, geomcalc, topology, energy, gradient
+from mmlib import fileio, param, geomcalc, topology, energy, gradient
 
 # molecule.py: classes for handling molecular mechanics data
 
@@ -170,7 +170,7 @@ class outofplane:
         self.o_ijkl = o_ijkl
         self.v_n = v_n
         self.gam = gamma
-        self.nfold = nfold
+        self.n = nfold
         self.e = 0.0
         self.g = 0.0
     # set new atomic index 1
@@ -203,6 +203,7 @@ class molecule:
     # constructor
     def __init__(self, infile_name):
         self.infile = infile_name
+        self.filetype = self.infile.split('.')[-1]
         self.name = self.infile.split('/')[-1].split('.')[0]
         self.atoms = []
         self.bonds = []
@@ -231,9 +232,6 @@ class molecule:
         self.e_kinetic = 0.0
         self.e_total = 0.0
 
-        self.read_in_data()
-        self.get_topology()
-
         self.g_bonds = np.zeros((self.n_atoms, 3))
         self.g_angles = np.zeros((self.n_atoms, 3))
         self.g_torsions = np.zeros((self.n_atoms, 3))
@@ -243,10 +241,20 @@ class molecule:
         self.g_elst = np.zeros((self.n_atoms, 3)) 
         self.g_nonbonded = np.zeros((self.n_atoms, 3)) 
         self.g_total = np.zeros((self.n_atoms, 3)) 
-
-    # read in data from input file
-    def read_in_data(self):
+        
+        if (self.filetype == 'xyzq'):
+            self.read_in_xyzq()
+            self.get_topology()
+        elif (self.filetype == 'prm'):
+            self.read_in_prm()
+            
+    # read in xyzq data from input file
+    def read_in_xyzq(self):
         fileio.get_geom(self)
+
+    # read in prm data from input file
+    def read_in_prm(self):
+        fileio.get_prm(self)
 
     # determine bonded topology of molecule
     def get_topology(self):
@@ -275,7 +283,7 @@ class molecule:
         elif (grad_type == 'numerical'):
           self.get_numerical_gradient()
         else:
-          print 'Error: grad type (%s) not recognized!' % (grad_type)
+          print('Error: grad type (%s) not recognized!' % (grad_type))
           sys.exit()
 
     # calculate analytic energy gradient of molecule

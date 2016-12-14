@@ -1,4 +1,5 @@
-import math, energy, geomcalc, molecule
+import math
+from mmlib import energy, geomcalc, molecule
 import numpy as np
 
 # gradient.py: functions for calculating molecular mechanics energy gradient

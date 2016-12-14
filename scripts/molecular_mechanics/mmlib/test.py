@@ -1,4 +1,4 @@
-import fileio, topology, energy
+from mmlib import fileio, topology, energy
 
 # threshold energy exponent for passing tests
 test_thresh = -8

@@ -1,4 +1,5 @@
-import math, geomcalc
+import math
+from mmlib import geomcalc
 
 # energy.py: functions for calculating molecular mechanics energy of molecules 
 

@@ -1,4 +1,4 @@
-import energy, gradient, molecule, fileio
+from mmlib import energy, gradient, molecule, fileio
 import math
 import numpy as np
 import numpy.random
