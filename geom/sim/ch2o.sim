@@ -1,0 +1,10 @@
+MOLECULE         ../prm/ch2o.prm
+TEMPERATURE               298.15
+BOUNDARY   1.0  10.0  10.0  10.0
+TOTALTIME              50.000 ps
+TIMESTEP               0.0001 ps
+GEOMTIME                0.001 ps
+GEOMOUT         ../traj/ch2o.xyz
+ENERGYTIME              0.001 ps
+ENERGYOUT    ../../data/ch2o.dat
+STATUSTIME               5.000 s

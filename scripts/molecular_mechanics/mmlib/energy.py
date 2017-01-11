@@ -3,10 +3,10 @@ from mmlib import geomcalc
 
 # energy.py: functions for calculating molecular mechanics energy of molecules 
 
-# conversion of elst energy into kcal/mol
+# conversion of elst energy from ceu to kcal/mol
 def ceu2kcal(): return 332.06375
 
-# conversion of kinetic energy into kcal/mol
+# conversion of kinetic energy from amu*A^2/ps^2 to kcal/mol
 def kin2kcal(): return 2.39005736 * 10**-3
 
 # calculate bond length energy between bonded atoms
@@ -21,24 +21,32 @@ def get_e_angle(a_ijk, a_eq, k_a):
 
 # calculate torsion angle energy between bonded atoms
 def get_e_torsion(t_ijkl, v_n, gamma, n_fold, paths):
-    e_torsion = v_n * (1 + math.cos(geomcalc.deg2rad() * (n_fold * t_ijkl - gamma))) / paths
+    e_torsion = v_n * (1.0 + math.cos(geomcalc.deg2rad() * (n_fold * t_ijkl - gamma))) / paths
     return e_torsion
 
 # calculate out-of-plane angle (improper torsion) energy bewteen bonded atoms
 def get_e_outofplane(o_ijkl, v_n, gamma, n_fold):
-    e_outofplane = v_n * (1 + math.cos(geomcalc.deg2rad() * (n_fold * o_ijkl - gamma)))
+    e_outofplane = v_n * (1.0 + math.cos(geomcalc.deg2rad() * (n_fold * o_ijkl - gamma)))
     return e_outofplane
 
 # calculate van der waals interaction between atom pair
 def get_e_vdw_ij(r_ij, eps_ij, ro_ij):
     r6_ij = (ro_ij / r_ij) ** 6
-    e_vdw_ij = eps_ij * ( r6_ij**2 - 2 * r6_ij )
+    e_vdw_ij = eps_ij * ( r6_ij**2 - 2.0 * r6_ij )
     return e_vdw_ij
 
 # calculate electrostatics interaction between atom pair
 def get_e_elst_ij(r_ij, q_i, q_j, epsilon):
     e_elst_ij = ceu2kcal() * ( q_i * q_j ) / ( epsilon * r_ij )
     return e_elst_ij
+
+# calculate boundary energy of an atom
+def get_e_bound_i(k_box, bounds, coords):
+    e_bound_i = 0.0
+    for j in range(3):
+        scale = 1.0 if (abs(coords[j]) >= bounds[j]) else 0.0
+        e_bound_i += scale * k_box * (abs(coords[j]) - bounds[j])**2
+    return e_bound_i
 
 # calculate kinetic energy of an atom
 def get_e_kinetic_i(mass, vels):
@@ -110,21 +118,41 @@ def get_e_outofplanes(mol):
         oop.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
         oop.e = get_e_outofplane(oop.o_ijkl, oop.v_n, oop.gam, oop.n)
         mol.e_outofplanes += oop.e
-        
+
+# update box boundary energies
+def get_e_bound(mol):
+    mol.e_bound = 0.0
+    k_box = mol.k_box
+    bound = mol.bound
+    for i in range(mol.n_atoms):
+        atom = mol.atoms[i]
+        k_box = mol.k_box
+        atom.e_bound = get_e_bound_i(k_box, bound, atom.coords)
+        mol.e_bound += atom.e_bound
+
 # calculate kinetic energy
-def get_e_kinetic(mol):
+def get_e_kinetic(mol, kintype):
     mol.e_kinetic = 0.0
-    for p in range(mol.n_atoms):
-        mass = mol.atoms[p].mass
-        vels = mol.atoms[p].vels
-        e_kin = get_e_kinetic_i(mass, vels)
-        mol.e_kinetic += e_kin
+    if (kintype == 'nokinetic'):
+        pass
+    elif (kintype == 'leapfrog'):
+        for p in range(mol.n_atoms):
+            mass = mol.atoms[p].mass
+            vels = 0.5*(mol.atoms[p].vels + mol.atoms[p].pvels)
+            e_kin = get_e_kinetic_i(mass, vels)
+            mol.e_kinetic += e_kin
+    else:
+        for p in range(mol.n_atoms):
+            mass = mol.atoms[p].mass
+            vels = mol.atoms[p].vels
+            e_kin = get_e_kinetic_i(mass, vels)
+            mol.e_kinetic += e_kin
 
 # update total system energy values
 def get_e_totals(mol):
     mol.e_bonded  = mol.e_bonds + mol.e_angles
     mol.e_bonded += mol.e_torsions + mol.e_outofplanes
     mol.e_nonbonded = mol.e_vdw + mol.e_elst
-    mol.e_potential = mol.e_bonded + mol.e_nonbonded
+    mol.e_potential = mol.e_bonded + mol.e_nonbonded + mol.e_bound
     mol.e_total = mol.e_kinetic + mol.e_potential
 

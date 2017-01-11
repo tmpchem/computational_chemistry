@@ -20,8 +20,12 @@ class atom:
         self.covrad = param.get_cov_rad(self.element)
         self.vels = np.zeros(3)
         self.accs = np.zeros(3)
+        self.pcoords = at_coords
+        self.pvels = np.zeros(3)
+        self.paccs = np.zeros(3)
         self.e_nonbonded = 0.0
         self.e_bonded = 0.0
+        self.e_bound = 0.0
         self.g_nonbonded = np.zeros(3)
         self.g_bonded = np.zeros(3)
     # set new atom type
@@ -219,7 +223,10 @@ class molecule:
         self.n_angles = 0
         self.n_torsions = 0
         self.n_outofplanes = 0
-        
+        self.mass = 0.0
+        self.k_box = 0.0
+        self.bound = np.zeros(3)
+
         self.e_bonds = 0.0
         self.e_angles = 0.0
         self.e_torsions = 0.0
@@ -228,6 +235,7 @@ class molecule:
         self.e_vdw = 0.0
         self.e_elst = 0.0
         self.e_nonbonded = 0.0
+        self.e_bound = 0.0
         self.e_potential = 0.0
         self.e_kinetic = 0.0
         self.e_total = 0.0
@@ -266,13 +274,14 @@ class molecule:
         topology.get_nonints(self)
 
     # calculate energy of molecule
-    def get_energy(self):
+    def get_energy(self, kintype):
         energy.get_e_bonds(self)
         energy.get_e_angles(self)
         energy.get_e_torsions(self)
         energy.get_e_outofplanes(self)
         energy.get_e_nonbonded(self)
-        energy.get_e_kinetic(self)
+        energy.get_e_bound(self)
+        energy.get_e_kinetic(self, kintype)
         energy.get_e_totals(self)
 
     # calculate energy gradient of molecule
@@ -293,6 +302,7 @@ class molecule:
         gradient.get_g_torsions(self)
         gradient.get_g_outofplanes(self)
         gradient.get_g_nonbonded(self)
+        gradient.get_g_bound(self)
         gradient.get_g_totals(self)
 
     # calculate numerical energy gradient of molecule

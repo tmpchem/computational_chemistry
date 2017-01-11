@@ -1,0 +1,10 @@
+MOLECULE         ../prm/he20.prm
+TEMPERATURE                15.00
+BOUNDARY   1.0  10.0  10.0  10.0
+TOTALTIME             100.000 ps
+TIMESTEP                0.001 ps
+GEOMTIME                0.010 ps
+GEOMOUT         ../traj/he20.xyz
+ENERGYTIME              0.010 ps
+ENERGYOUT    ../../data/he20.dat
+STATUSTIME              1.000 ps

@@ -104,10 +104,14 @@ def get_sim_data(sim):
         if (len(infile_array[q]) < 2): continue
         kwarg = infile_array[q][0]
         kwargval = infile_array[q][1]
+        kwargarr = infile_array[q][1:]
         if (kwarg == 'MOLECULE'):
             sim.mol = molecule.molecule(kwargval)
         elif (kwarg == 'TEMPERATURE'):
             sim.temp = float(kwargval)
+        elif (kwarg == 'BOUNDARY'):
+            sim.mol.k_box = float(kwargarr[0])
+            sim.mol.bound = [float(kwargarr[i+1]) for i in range(3)]
         elif (kwarg == 'TOTALTIME'):
             sim.tottime = float(kwargval)
         elif (kwarg == 'TIMESTEP'):
@@ -120,6 +124,8 @@ def get_sim_data(sim):
             sim.energytime = float(kwargval)
         elif (kwarg == 'ENERGYOUT'):
             sim.energyout = kwargval
+        elif (kwarg == 'STATUSTIME'):
+            sim.statustime = float(kwargval)
 
 # print atomic coordinates for a set of atoms
 def print_coords(mol, comment):
@@ -136,6 +142,7 @@ def print_gradient(mol, grad_type):
     if   (grad_type == 'total'): grad = mol.g_total
     elif (grad_type == 'nonbonded'): grad = mol.g_nonbonded
     elif (grad_type == 'bonded'): grad = mol.g_bonded
+    elif (grad_type == 'boundary'): grad = mol.g_bound
     elif (grad_type == 'vdw'): grad = mol.g_vdw
     elif (grad_type == 'elst'): grad = mol.g_elst
     elif (grad_type == 'bonds'): grad = mol.g_bonds
@@ -281,12 +288,13 @@ def print_energy(mol):
     print('%10.4f kcal/mol Potential Energy' % (mol.e_potential))
     print('%10.4f kcal/mol Non-bonded Energy' % (mol.e_nonbonded))
     print('%10.4f kcal/mol Bonded Energy' % (mol.e_bonded))
+    print('%10.4f kcal/mol Boundary Energy' % (mol.e_bound))
     print('%10.4f kcal/mol van der Waals Energy' % (mol.e_vdw))
     print('%10.4f kcal/mol Electrostatic Energy' % (mol.e_elst))
     print('%10.4f kcal/mol Bond Energy' % (mol.e_bonds))
     print('%10.4f kcal/mol Angle Energy' % (mol.e_angles))
     print('%10.4f kcal/mol Torsion Energy' % (mol.e_torsions))
-    print('%10.4f kcal/mol Out-of-plane Energy\n' % (mol.e_outofplanes))
+    print('%10.4f kcal/mol Out-of-plane Energy' % (mol.e_outofplanes))
 
 # check for proper input arguments and return result
 def get_input():

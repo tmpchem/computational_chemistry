@@ -1,0 +1,10 @@
+MOLECULE      ../xyzq/h2o_5.xyzq
+TEMPERATURE                 0.00
+BOUNDARY   1.0  10.0  10.0  10.0
+TOTALTIME              50.000 ps
+TIMESTEP               0.0002 ps
+GEOMTIME               0.0010 ps
+GEOMOUT        ../traj/h2o_5.xyz
+ENERGYTIME             0.0010 ps
+ENERGYOUT   ../../data/h2o_5.dat
+STATUSTIME               5.000 s

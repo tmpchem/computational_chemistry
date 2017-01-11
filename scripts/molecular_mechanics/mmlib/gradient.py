@@ -7,12 +7,12 @@ num_disp = 1.0 * 10**-6
 
 # calculate bond length energy gradient magnitude between bonded atoms
 def get_g_bond(r_ij, r_eq, k_b):
-    g_bond = 2 * k_b * (r_ij - r_eq)
+    g_bond = 2.0 * k_b * (r_ij - r_eq)
     return g_bond
 
 # calculate bond angle energy gradient magnitude between bonded atoms
 def get_g_angle(a_ijk, a_eq, k_a):
-    g_angle = 2 * k_a * (geomcalc.deg2rad() * (a_ijk - a_eq) )
+    g_angle = 2.0 * k_a * (geomcalc.deg2rad() * (a_ijk - a_eq) )
     return g_angle
 
 # calculate torsion angle energy gradient magnitude between bonded atoms
@@ -35,6 +35,13 @@ def get_g_vdw_ij(r_ij, eps_ij, ro_ij):
 def get_g_elst_ij(r_ij, q_i, q_j, epsilon):
     g_elst_ij = -energy.ceu2kcal() * ( q_i * q_j ) / ( epsilon * r_ij**2 )
     return g_elst_ij
+
+# calculate boundary repulsion gradient magnitude for a direction
+def get_g_bound_i(k_box, bound, coord):
+    sign = 1.0 if (coord <= 0.0) else -1.0
+    scale = 1.0 if (abs(coord) >= bound) else 0.0
+    g_bound_i = -2.0 * sign * scale * k_box * (abs(coord) - bound)
+    return g_bound_i
 
 # calculate direction of energy gradient between a pair of atoms
 def get_gdir_inter(coords1, coords2):
@@ -181,6 +188,16 @@ def get_g_nonbonded(mol):
             mol.g_elst[i] += g_elst * dir1
             mol.g_elst[j] += g_elst * dir2
 
+# calculate boundary interaction energy gradients for all atoms
+def get_g_bound(mol):
+    mol.g_bound = np.zeros((mol.n_atoms, 3))
+    k_box = mol.k_box
+    bound = mol.bound
+    for i in range(mol.n_atoms):
+        for j in range(3):
+            coord = mol.atoms[i].coords[j]
+            mol.g_bound[i][j] = get_g_bound_i(k_box, bound[j], coord)
+
 # update total system analytic energy gradient values
 def get_g_totals(mol):
     for i in range(mol.n_atoms):
@@ -189,6 +206,7 @@ def get_g_totals(mol):
             mol.g_bonded[i][j] += mol.g_torsions[i][j] + mol.g_angles[i][j]
             mol.g_nonbonded[i][j] = mol.g_vdw[i][j] + mol.g_elst[i][j]
             mol.g_total[i][j] = mol.g_bonded[i][j] + mol.g_nonbonded[i][j]
+            mol.g_total[i][j] += mol.g_bound[i][j]
 
 # update total system numerical energy gradient values
 def get_g_numerical(mol):
@@ -198,6 +216,7 @@ def get_g_numerical(mol):
     mol.g_outofplanes = np.zeros((mol.n_atoms, 3))
     mol.g_vdw = np.zeros((mol.n_atoms, 3))
     mol.g_elst = np.zeros((mol.n_atoms, 3))
+    mol.g_bound = np.zeros((mol.n_atoms, 3))
     for i in range(mol.n_atoms):
         for j in range(3):
             q = mol.atoms[i].coords[j]
@@ -208,11 +227,13 @@ def get_g_numerical(mol):
             ep_bond, ep_ang = mol.e_bonds, mol.e_angles
             ep_tor, ep_oop = mol.e_torsions, mol.e_outofplanes
             ep_vdw, ep_elst = mol.e_vdw, mol.e_elst
+            ep_bound = mol.e_bound
             mol.atoms[i].coords[j] = qm
             mol.get_energy()
             em_bond, em_ang = mol.e_bonds, mol.e_angles
             em_tor, em_oop = mol.e_torsions, mol.e_outofplanes
             em_vdw, em_elst = mol.e_vdw, mol.e_elst
+            em_bound = mol.e_bound
             mol.atoms[i].coords[j] = q
             mol.g_bonds[i][j] = (ep_bond - em_bond) / num_disp
             mol.g_angles[i][j] = (ep_ang - em_ang) / num_disp
@@ -220,4 +241,5 @@ def get_g_numerical(mol):
             mol.g_outofplanes[i][j] = (ep_oop - em_oop) / num_disp
             mol.g_vdw[i][j] = (ep_vdw - em_vdw) / num_disp
             mol.g_elst[i][j] = (ep_elst - em_elst) / num_disp
+            mol.g_bound[i][j] = (ep_bound - em_bound) / num_disp
 
