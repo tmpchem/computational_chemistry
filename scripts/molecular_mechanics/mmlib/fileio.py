@@ -100,6 +100,7 @@ def get_prm(mol):
 # get simulation data from file
 def get_sim_data(sim):
     infile_array = get_file_string_array(sim.infile)
+    simpath = '/'.join(os.path.abspath(sim.infile).split('/')[:-1]) + '/'
     for q in range(len(infile_array)):
         if (len(infile_array[q]) < 2): continue
         kwarg = infile_array[q][0]
@@ -119,11 +120,11 @@ def get_sim_data(sim):
         elif (kwarg == 'GEOMTIME'):
             sim.geomtime = float(kwargval)
         elif (kwarg == 'GEOMOUT'):
-            sim.geomout = kwargval
+            sim.geomout = simpath + kwargval
         elif (kwarg == 'ENERGYTIME'):
             sim.energytime = float(kwargval)
         elif (kwarg == 'ENERGYOUT'):
-            sim.energyout = kwargval
+            sim.energyout = simpath + kwargval
         elif (kwarg == 'STATUSTIME'):
             sim.statustime = float(kwargval)
 
@@ -298,9 +299,14 @@ def print_energy(mol):
 
 # check for proper input arguments and return result
 def get_input():
+    prog_name = sys.argv[0].split('/')[-1]
     if (not len(sys.argv) >= 2):
-        print('\nUsage: mm.py INPUT_FILE\n')
-        print('  INPUT_FILE: xyzq file for molecular mechanics input\n')
+        print('\nUsage: %s INPUT_FILE\n' % (prog_name))
+        print('  INPUT_FILE: ', end='')
+        if (prog_name == 'mm.py'):
+            print('xyzq or prm file for molecular mechanics\n')
+        elif (prog_name == 'md.py'):
+            print('sim file for molecular dynamics\n')
         sys.exit()
     else:
         infile_name = sys.argv[1]
