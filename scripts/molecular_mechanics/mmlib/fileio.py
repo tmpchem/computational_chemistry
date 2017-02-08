@@ -1,11 +1,27 @@
+
+"""Functions for printing, reading, and writing mmlib data.
+
+This module provides the interface to print molecular energy, gradient,
+geometry, topology, parameter, and simulation data to screen or file.
+"""
+
 import os, sys, math
 import numpy as np
 from mmlib import param, geomcalc, topology, energy, molecule
 
-# fileio.py: functions for reading in and printing out molecular mechanics data
-
-# create 2d array of strings from input file name
 def get_file_string_array(infile_name):
+    """Create a 2-d array of strings from input file name.
+
+    Each newline character creates a separate line element in the array.
+    Each line is split by whitespace into an array of strings.
+
+    Args:
+        infile_name (str): Path to desired text file for reading. May
+            be relative or absolute. Exits on error if doesn't exist.
+    
+    Returns:
+        (str**): Contents of text file as an array of arrays of strings
+    """
     try:
         infile = open(infile_name, 'r')
     except IOError:
@@ -18,8 +34,18 @@ def get_file_string_array(infile_name):
         infile_array.append(line.split())
     return infile_array
 
-# get symbols, coordinates, and parameters from xyzq file
 def get_geom(mol):
+    """Read in molecular geometry data from molecule xyzq file.
+    
+    Parse 2-d array of strings from xyzq file into atomic data. First
+    line contains (int) number of atoms. Second line is ignored comment.
+    Each line after (3 to [n+2]) contains atom type, (float) 3 xyz
+    cartesian coordinates [Angstrom], and (float) charge [e].
+    
+    Args:
+        mol (mmlib.molecule.Molecule): molecule with an associated
+            xyzq input file.
+    """
     infile_array = get_file_string_array(mol.infile)
     mol.n_atoms = int(infile_array[0][0])
     for i in range(mol.n_atoms):
@@ -28,155 +54,231 @@ def get_geom(mol):
         for j in range(3):
             at_coords[j] = float(infile_array[i+2][j+1])
         at_charge = float(infile_array[i+2][4])
-        at_element = at_type[0].capitalize()
-        if (at_type[-1].islower()): at_element += at_type[-1]
+        at_element = (at_type[0:2].capitalize() if at_type[-1].islower()
+            else at_type[0])
         at_mass = param.get_at_mass(at_element)
         at_ro, at_eps = param.get_vdw_param(at_type)
-        new_atom = molecule.atom(at_type, at_coords, at_charge, at_ro,
+        new_atom = molecule.Atom(at_type, at_coords, at_charge, at_ro,
             at_eps, at_mass)
         new_atom.set_covrad(param.get_cov_rad(at_element))
         mol.atoms.append(new_atom)
         mol.mass += at_mass
 
-# parse atom record into an atom object
-def get_atom(record):
+def get_atom(mol, record):
+    """Parse atom record into an atom object and append to molecule.
+
+    Appends mmlib.molecule.Atom object to mmlib.molecule.Molecule
+    object. Contents of atom object include (float) xyz cartesian
+    coordinates [Angstrom], (float) partial charge [e], (float) van der
+    Waals radius [Angstrom], (float) van der Waals epsilon [kcal/mol],
+    (str) atom type, (str) atomic element, (float) covalent radius,
+    [Angstrom], and (float) mass [amu].
+
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule to append atom.
+        record (str*): Array of strings from line of prm file.
+    """
     at_type = record[2]
     at_coords = np.zeros(3)
     for j in range(3):
         at_coords[j] = float(record[j+3])
     at_charge, at_ro, at_eps = (float(record[6]), float(record[7]),
         float(record[8]))
-    at_element = at_type[0].capitalize()
-    if (at_type[-1].islower()):
-        at_element += at_type[-1]
+    at_element = (at_type[0:2].capitalize() if at_type[-1].islower()
+        else at_type[0])
     at_mass = param.get_at_mass(at_element)
-    atom = molecule.atom(at_type, at_coords, at_charge, at_ro,
+    atom = molecule.Atom(at_type, at_coords, at_charge, at_ro,
         at_eps, at_mass)
     atom.set_covrad(param.get_cov_rad(at_element))
-    return atom
+    mol.atoms.append(atom)
+    mol.mass += at_mass
 
-# parse bond record into a bond object
-def get_bond(atoms, record):
+def get_bond(mol, record):
+    """Parse bond record into a bond object and append to molecule.
+    
+    Appends mmlib.molecule.Bond object to mmlib.molecule.Molecule
+    object. Contents of bond object include (int) 2 atomic indices,
+    (float) spring constant [kcal/(mol*A^2)], (float) equilibrium bond
+    length [Angstrom], (float) bond length [Angstrom].
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule to append bond.
+        record (str*): Array of strings from line of prm file.
+    """
     at1, at2 = int(record[1])-1, int(record[2])-1
     k_b, r_eq = float(record[3]), float(record[4])
-    c1, c2 = atoms[at1].coords, atoms[at2].coords
+    c1, c2 = mol.atoms[at1].coords, mol.atoms[at2].coords
     r_ij = geomcalc.get_r_ij(c1, c2)
-    bond = molecule.bond(at1, at2, r_ij, r_eq, k_b)
-    return bond
+    bond = molecule.Bond(at1, at2, r_ij, r_eq, k_b)
+    mol.bonds.append(bond)
 
-# parse angle record into an angle object
-def get_angle(atoms, record):
+def get_angle(mol, record):
+    """Parse angle record into an angle object and append to molecule.
+    
+    Appends mmlib.molecule.Angle object to mmlib.molecule.Molecule
+    object. Contents of angle object include (int) 3 atomic indices,
+    (float) spring constant [kcal/(mol*radian^2)], (float) equilibrium
+    bond angle [degree], and (float) bond angle [degree].
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule to append angle.
+        record (str*): Array of strings from line of prm file.
+    """
     at1, at2, at3 = int(record[1])-1, int(record[2])-1, int(record[3])-1
     k_a, a_eq = float(record[4]), float(record[5])
-    c1, c2, c3 = (atoms[at1].coords, atoms[at2].coords,
-        atoms[at3].coords)
+    c1, c2, c3 = (mol.atoms[at1].coords, mol.atoms[at2].coords,
+        mol.atoms[at3].coords)
     a_ijk = geomcalc.get_a_ijk(c1, c2, c3)
-    angle = molecule.angle(at1, at2, at3, a_ijk, a_eq, k_a)
-    return angle
+    angle = molecule.Angle(at1, at2, at3, a_ijk, a_eq, k_a)
+    mol.angles.append(angle)
 
-# parse torsion record into a torsion object
-def get_torsion(atoms, record):
+def get_torsion(mol, record):
+    """Parse torsion record into a torsion object and append to molecule.
+    
+    Appends mmlib.molecule.Torsion object to mmlib.molecule.Molecule
+    object. Contents of torsion object include (int) 4 atomic indices,
+    (float) barrier height [kcal/mol], (float) barrier offset [degrees],
+    (int) barrier frequency, (int) barrier paths, and (float) torsion
+    angle [degrees].
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule to append torsion.
+        record (str*): Array of strings from line of prm file.
+    """
     at1, at2, at3, at4 = (int(record[1])-1, int(record[2])-1,
         int(record[3])-1, int(record[4])-1)
     v_n, gamma, nfold, paths = (float(record[5]), float(record[6]),
         int(record[7]), int(record[8]))
-    c1, c2, c3, c4 = (atoms[at1].coords, atoms[at2].coords,
-        atoms[at3].coords, atoms[at4].coords)
+    c1, c2, c3, c4 = (mol.atoms[at1].coords, mol.atoms[at2].coords,
+        mol.atoms[at3].coords, mol.atoms[at4].coords)
     t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4)
-    torsion = molecule.torsion(at1, at2, at3, at4, t_ijkl,
+    torsion = molecule.Torsion(at1, at2, at3, at4, t_ijkl,
         v_n, gamma, nfold, paths)
-    return torsion
+    mol.torsions.append(torsion)
 
-# parse outofplane record into an outofplane object
-def get_outofplane(atoms, record):
+def get_outofplane(mol, record):
+    """Parse outofplane record into object and append to molecule.
+    
+    Appends mmlib.molecule.Outofplane object to mmlib.molecule.Molecule
+    object. Contents of outofplane object include (int) 4 atomic indices,
+    (float) barrier height [kcal/mol], and (float) outofplane angle
+    [degrees].
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule to append outofplane.
+        record (str*): Array of string from line of prm file.
+    """
     at1, at2, at3, at4 = (int(record[1])-1, int(record[2])-1,
         int(record[3])-1, int(record[4])-1)
-    v_n, gamma, nfold = float(record[5]), float(record[6]), int(record[7])
-    c1, c2, c3, c4 = (atoms[at1].coords, atoms[at2].coords,
-        atoms[at3].coords, atoms[at4].coords)
+    v_n = float(record[5])
+    c1, c2, c3, c4 = (mol.atoms[at1].coords, mol.atoms[at2].coords,
+        mol.atoms[at3].coords, mol.atoms[at4].coords)
     o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4) 
-    outofplane = molecule.outofplane(at1, at2, at3, at4, o_ijkl,
-        v_n, gamma, nfold)
-    return outofplane
+    outofplane = molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n)
+    mol.outofplanes.append(outofplane)
 
-# get symbols, coordinates, parameters, and topology from prm file
 def get_prm(mol):
+    """Parse contents of prm file into molecular topology / geometry data.
+    
+    Reads in and organizes contents of a prm parameter file into given
+    mmlib.molecule.Molecule object. Contents of molecule object include
+    Atom objects, Bond objects, Angle objects, Torsion objects, and
+    Outofplane objects and associated parameters and values.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule to append data
+    """
     infile_array = get_file_string_array(mol.infile)
     for i in range(len(infile_array)):
         record = infile_array[i]
         rec_type = record[0]
         if (rec_type == 'ATOM'):
-            mol.atoms.append(get_atom(record))
-            mol.mass += mol.atoms[-1].mass
+            get_atom(mol, record)
     mol.n_atoms = len(mol.atoms)
     for i in range(len(infile_array)):
         record = infile_array[i]
         rec_type = record[0]
-        if (rec_type == 'BOND'):
-            mol.bonds.append(get_bond(mol.atoms, record))
-        elif (rec_type == 'ANGLE'):
-            mol.angles.append(get_angle(mol.atoms, record))
-        elif (rec_type == 'TORSION'):
-            mol.torsions.append(get_torsion(mol.atoms, record))
-        elif (rec_type == 'OUTOFPLANE'):
-            mol.outofplanes.append(get_outofplane(mol.atoms, record))
+        if   (rec_type == 'BOND'      ): get_bond(mol, record)
+        elif (rec_type == 'ANGLE'     ): get_angle(mol, record)
+        elif (rec_type == 'TORSION'   ): get_torsion(mol, record)
+        elif (rec_type == 'OUTOFPLANE'): get_outofplane(mol, record)
     mol.n_bonds = len(mol.bonds)
     mol.n_angles = len(mol.angles)
     mol.n_torsions = len(mol.torsions)
     mol.n_outofplanes = len(mol.outofplanes)
     topology.get_nonints(mol)
 
-# get simulation data from file
 def get_sim_data(sim):
+    """Parse contents of sim file into molecular simulation data.
+    
+    Many molecular simulation parameters (dynamics, monte carlo, etc.)
+    can be determined by default, or overriden in a simulation file.
+    All listed values below can be set through the given keyword arguments.
+    
+    Mandatory values include (str) molecule [file path], (float) temperature
+    [kelvin], and (float / int) total time/confs [ps / none] (md / mc).
+    
+    Args:
+        sim (mmlib.simulation.Simulation): Simulation to append data.
+    """
     infile_array = get_file_string_array(sim.infile)
     for q in range(len(infile_array)):
         if (len(infile_array[q]) < 2): continue
-        kwarg = infile_array[q][0]
+        kwarg = infile_array[q][0].lower()
         kwargval = infile_array[q][1]
         kwargarr = infile_array[q][1:]
-        if (kwarg == 'MOLECULE'):
-            sim.mol = molecule.molecule(sim.indir + '/' + kwargval)
-        elif (kwarg == 'TEMPERATURE'):
+        if (kwarg == 'molecule'):
+            sim.mol = molecule.Molecule(sim.indir + '/' + kwargval)
+        elif (kwarg == 'temperature'):
             sim.temp = float(kwargval)
-        elif (kwarg == 'PRESSURE'):
+        elif (kwarg == 'pressure'):
             sim.press = float(kwargval)
-        elif (kwarg == 'BOUNDARYSPRING'):
+        elif (kwarg == 'boundaryspring'):
             sim.mol.k_box = float(kwargval)
-        elif (kwarg == 'BOUNDARY'):
+        elif (kwarg == 'boundary'):
             sim.mol.bound = float(kwargval)
             sim.mol.get_volume()
-        elif (kwarg == 'BOUNDARYTYPE'):
+        elif (kwarg == 'boundarytype'):
             sim.mol.boundtype = kwargval.lower()
             sim.mol.get_volume()
-        elif (kwarg == 'ORIGIN'):
+        elif (kwarg == 'origin'):
             sim.mol.origin = [float(kwargarr[i]) for i in range(3)]
-        elif (kwarg == 'TOTALTIME'):
+        elif (kwarg == 'totaltime'):
             sim.tottime = float(kwargval)
-        elif (kwarg == 'TOTALCONFS'):
+        elif (kwarg == 'totalconfs'):
             sim.totconfs = int(kwargval)
-        elif (kwarg == 'TIMESTEP'):
+        elif (kwarg == 'timestep'):
             sim.timestep = float(kwargval)
-        elif (kwarg == 'GEOMTIME'):
+        elif (kwarg == 'geomtime'):
             sim.geomtime = float(kwargval)
-        elif (kwarg == 'GEOMCONF'):
+        elif (kwarg == 'geomconf'):
             sim.geomconf = int(kwargval)
-        elif (kwarg == 'GEOMOUT'):
+        elif (kwarg == 'geomout'):
             sim.geomout = sim.indir + '/' + kwargval
-        elif (kwarg == 'ENERGYTIME'):
+        elif (kwarg == 'energytime'):
             sim.energytime = float(kwargval)
-        elif (kwarg == 'ENERGYCONF'):
+        elif (kwarg == 'energyconf'):
             sim.energyconf = int(kwargval)
-        elif (kwarg == 'ENERGYOUT'):
+        elif (kwarg == 'energyout'):
             sim.energyout = sim.indir + '/' + kwargval
-        elif (kwarg == 'STATUSTIME'):
+        elif (kwarg == 'statustime'):
             sim.statustime = float(kwargval)
-        elif (kwarg == 'EQTIME'):
+        elif (kwarg == 'eqtime'):
             sim.eqtime = float(kwargval)
-        elif (kwarg == 'EQRATE'):
+        elif (kwarg == 'eqrate'):
             sim.eqrate = float(kwargval)
 
-# print atomic coordinates for a set of atoms
 def print_coords(mol, comment):
+    """Print atomic coordinates for a set of atoms.
+    
+    Print to screen all (float) 3N atomic cartesian coordinates [Angstrom]
+    from mol in xyz file format with (str) `comment` for the comment line.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with (float) 3N
+            atomic cartesian coordinates [Angstrom]
+        comment (str): Comment string for xyz file comment line
+    """
     print('%i\n%s\n' % (mol.n_atoms, comment), end='')
     for i in range(mol.n_atoms):
         print('%-2s' % (mol.atoms[i].attype), end='')
@@ -185,17 +287,29 @@ def print_coords(mol, comment):
         print('\n', end='')
     print('\n', end='')
 
-# print atomic energy gradient for a set of atoms
 def print_gradient(mol, grad_type):
-    if   (grad_type == 'total'): grad = mol.g_total
-    elif (grad_type == 'nonbonded'): grad = mol.g_nonbonded
-    elif (grad_type == 'bonded'): grad = mol.g_bonded
-    elif (grad_type == 'boundary'): grad = mol.g_bound
-    elif (grad_type == 'vdw'): grad = mol.g_vdw
-    elif (grad_type == 'elst'): grad = mol.g_elst
-    elif (grad_type == 'bonds'): grad = mol.g_bonds
-    elif (grad_type == 'angles'): grad = mol.g_angles
-    elif (grad_type == 'torsions'): grad = mol.g_torsions
+    """Print specified atomic gradient type for a set of atoms.
+    
+    Print to screen all (float) 3N atomic cartesian gradient components
+    [kcal/(mol*Angstrom)] from mol in xyz file format. Gradient is
+    partial derivative of `grad_type` energy [kcal/mol] with respect to
+    each (float) cartesian coordinate [Angstrom].
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with (float) 3N
+            atomic gradient components [kcal/(mol*Angstrom)]
+        grad_type (str): Gradient component values to be printed to
+            screen
+    """
+    if   (grad_type == 'total'      ): grad = mol.g_total
+    elif (grad_type == 'nonbonded'  ): grad = mol.g_nonbonded
+    elif (grad_type == 'bonded'     ): grad = mol.g_bonded
+    elif (grad_type == 'boundary'   ): grad = mol.g_bound
+    elif (grad_type == 'vdw'        ): grad = mol.g_vdw
+    elif (grad_type == 'elst'       ): grad = mol.g_elst
+    elif (grad_type == 'bonds'      ): grad = mol.g_bonds
+    elif (grad_type == 'angles'     ): grad = mol.g_angles
+    elif (grad_type == 'torsions'   ): grad = mol.g_torsions
     elif (grad_type == 'outofplanes'): grad = mol.g_outofplanes
     else: print('Error: grad type (%s) not recognized!' % (grad_type))
     print('\n %s\n\n' % ('%s %s gradient' % (mol.grad_type,
@@ -207,8 +321,18 @@ def print_gradient(mol, grad_type):
         print('\n', end='')
     print('\n', end='')
 
-# print a string in the middle of dash banner of specified length
 def print_banner(string, length, newline1, newline2):
+    """Print a string in the center of a banner with dashes on each side
+    
+    Print leading newlines, one space, dashes to center string, header
+    string, dashes to end of line, and trailing newlines to screen.
+    
+    Args:
+        string (str): Banner header title.
+        length (int): Total number of characters in banner.
+        newline1 (int): Number of leading newlines.
+        newline2 (int): Number of trailing newlines.
+    """
     n_dash1 = math.floor((length - len(string))/2) - 1
     n_dash2 = math.ceil((length - len(string))/2) - 1
     for i in range(newline1):
@@ -223,21 +347,51 @@ def print_banner(string, length, newline1, newline2):
     for i in range(newline2):
         print('')
 
-# print an array of strings padded by specified number of spaces
 def print_padded(strings, spacings):
+    """Print an array of strings padded by spaces.
+    
+    Print leading number of spaces prior to each string, each elements
+    of the arrays `strings` and `spacings`, respectively.
+    
+    Args:
+        strings (str*): Array of strings to be printed.
+        spacings (int*): Array of number of spaces to be printed prior
+            to each `strings` element.
+    """
     print_string = ''
     for i in range(len(strings)):
         print_string += '%*s%s' % (spacings[i], '', strings[i])
     print(print_string)
 
-# print header for a section of output
-def print_header(header, n_banner, params, spaces):
+def print_header(header, n_banner, params, spacings):
+    """Print banner header for a section of output.
+    
+    Print a header string in the center of a dash banner, followed by
+    a set of column headers, and a trailing line of dashes.
+    
+    Args:
+        header (str): Banner header title.
+        n_banner (int): Total number of characters in banner.
+        params (str*): Array of strings to be printed.
+        spacings (int*): Array of number of spaces to be printed prior
+            to each `params` element.
+    """
     print_banner(header, n_banner, 1, 1)
-    print_padded(params, spaces)
+    print_padded(params, spacings)
     print_banner('', n_banner, 0, 1)
 
-# print geometry and non-bonded parameters for a set of atoms
 def print_geom(mol):
+    """Print geometry and non-bonded parameters for a molecule to screen.
+    
+    Print a header banner for the section, and for each Atom object in a
+    Molecule object print the (str) atom type, (float) 3 xyz cartesian
+    coordinates [Angstrom], (float) partial charge [e], (float) van der
+    waals radius [Angstrom], and (float) van der waals epsilon [kcal/mol].
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule with Atom objects with
+            data for printing.
+    """
     header = ' Molecular Geometry and Non-bonded Parameters '
     params = ['type', 'x', 'y', 'z', 'q', 'ro/2', 'eps']
     spaces = [6, 6, 11, 11, 10, 6, 4]
@@ -250,8 +404,20 @@ def print_geom(mol):
         print('  %8.5f %7.4f %7.4f' % (mol.atoms[i].charge,
             mol.atoms[i].ro, mol.atoms[i].eps))
 
-# print geometry and non-bonded parameters for a set of atoms
 def print_geom_file(outfile, mol):
+    """Write out molecular geometry and non-bonded parameters to prm file.
+    
+    For each Atom object in Molecule object, write to outfile an atom
+    record, containing (int) atomic index, (str) atom type, (float) 3
+    cartesian coordinates [Angstrom], (float) partial charge [e], (float)
+    van der waals radius [Angstrom], and (float) van der waals epsilon
+    [kcal/mol].
+    
+    Args:
+        outfile (_io.TextIOWrapper): Output stream to open prm file.
+        mol (mmlib.molecule.Molecule): Molecule with geometry and
+            non-bonded parameter data for printing.
+    """
     outfile.write('# %s Atoms (at, type, x, y, z, q, ro, eps)\n' % (
         mol.n_atoms))
     for i in range(mol.n_atoms):
@@ -261,8 +427,19 @@ def print_geom_file(outfile, mol):
         outfile.write(' %8.5f %7.4f %7.4f\n' % (mol.atoms[i].charge,
             mol.atoms[i].ro, mol.atoms[i].eps))
 
-# print bond topology and bond parameters from an array
 def print_bonds(mol):
+    """Print bond topology and parameters for a molecule to screen.
+    
+    Print a header banner for the section, and for each Bond object in a
+    Molecule object print (float) spring constant [kcal/(mol*A^2)],
+    (float) equilibrium bond length [Angstrom], (float) bond length
+    [Angstrom], (str) 2 atom types, (float) bond energy [kcal/mol],
+    and (int) 2 atomic indices.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule with Bond objects with
+            data for printing.
+    """
     if (mol.n_bonds > 0):
         header, n_banner = ' Bond Length Data ', 57
         params = ['k_b', 'r_eq', 'r_ij', 'types', 'energy', 'atoms']
@@ -278,16 +455,37 @@ def print_bonds(mol):
             bond.at2+1)
         print(pstr)
 
-# print bond topology and bond parameters to parameter file
 def print_bonds_file(outfile, mol):
+    """Write out molecular bond data and parameters to prm file.
+    
+    For each Bond object in Molecule object, write to outfile a bond
+    record, containing (int) 2 atomic indices, (float) spring constant
+    [kcal/(mol*A^2)], and (float) equilibrium bond length [Angstrom].
+    
+    Args:
+        outfile (_io.TextIOWrapper): Output stream to open prm file.
+        mol (mmlib.molecule.Molecule): Molecule with bond data and
+            parameters for printing.
+    """
     outfile.write('# %i Bonds (At1, At2, K_b, R_eq)\n' % (mol.n_bonds))
     for p in range(mol.n_bonds):
         bond = mol.bonds[p]
         outfile.write('BOND %4i %4i %7.2f %7.4f\n' % (bond.at1+1, bond.at2+1,
             bond.k_b, bond.r_eq))
 
-# print bond angle topology and angle parameters from an array
 def print_angles(mol):
+    """Print angle topology and parameters for a molecule to screen.
+    
+    Print a header banner for the section, and for each Angle object in a
+    Molecule object print (float) spring constant [kcal/(mol*rad^2)],
+    (float) equilibrium bond angle [degree], (float) bond angle
+    [degree], (str) 3 atom types, (float) angle energy [kcal/mol],
+    and (int) 3 atomic indices.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule with Angle objects with
+            data for printing.
+    """
     if (mol.n_angles > 0):
         header, n_banner = ' Bond Angle Data ', 58
         params = ['k_a', 'a_eq', 'a_ijk', 'types', 'energy', 'atoms']
@@ -304,16 +502,37 @@ def print_angles(mol):
             ang.at2+1, ang.at3+1)
         print(pstr)
 
-# print bond angle topology and angle parameters to parameter file
 def print_angles_file(outfile, mol):
+    """Write out molecular angle data and parameters to prm file.
+    
+    For each Angle object in Molecule object, write to outfile an angle
+    record, containing (int) 3 atomic indices, (float) spring constant
+    [kcal/(mol*rad^2)], and (float) equilibrium bond angle [degrees].
+    
+    Args:
+        outfile (_io.TextIOWrapper): Output stream to open prm file.
+        mol (mmlib.molecule.Molecule): Molecule with angle data and
+            parameters for printing.
+    """
     outfile.write('# %i Angles (At1, At2, At3, K_a, A_eq)\n' % (mol.n_angles))
     for p in range(mol.n_angles):
         ang = mol.angles[p]
         outfile.write('ANGLE %4i %4i %4i %7.4f %8.4f\n' % (ang.at1+1,
             ang.at2+1, ang.at3+1, ang.k_a, ang.a_eq))
 
-# print torsion topology and torsion parameters from an array
 def print_torsions(mol):
+    """Print torsion topology and parameters for a molecule to screen.
+    
+    Print a header banner for the section, and for each Torsion object
+    in a Molecule object print (float) barrier height [kcal/mol],
+    (float) barrier offset [degree], (int) barrier frequency, (int)
+    barrier paths, (str) 4 atom types, (float) torsion energy [kcal/mol],
+    and (int) 4 atomic indices.
+
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule with Torsion objects with
+            data for printing.
+    """
     if (mol.n_torsions > 0):
         header, n_banner = ' Torsion Angle Data ', 67
         params = ['vn/2', 'gamma', 't_ijkl n p', 'types', 'energy', 'atoms']
@@ -331,8 +550,19 @@ def print_torsions(mol):
             tor.at3+1, tor.at4+1)
         print(pstr)
 
-# print torsion topology and torsion parameters from an array
 def print_torsions_file(outfile, mol):
+    """Write out molecular torsion data and parameters to prm file.
+    
+    For each Torsion object in Molecule object, write to outfile a torsion
+    record, containing (int) 4 atomic indices, (float) barrier height
+    [kcal/mol], (float) barrier offset [degrees], (int) barrier frequency,
+    and (int) barrier paths.
+    
+    Args:
+        outfile (_io.TextIOWrapper): Output stream to open prm file.
+        mol (mmlib.molecule.Molecule): Molecule with torsion data and
+            parameters for printing.
+    """
     outfile.write('# %i Torsions (At1, At2, At3, At4,' % (mol.n_torsions))
     outfile.write('V_n, Gamma, N_f, paths)\n')
     for p in range(mol.n_torsions):
@@ -341,8 +571,18 @@ def print_torsions_file(outfile, mol):
             tor.at1+1, tor.at2+1, tor.at3+1, tor.at4+1, tor.v_n, tor.gam,
             tor.n, tor.paths))
 
-# print out-of-plane angles and out-of-plane parameters from an array
 def print_outofplanes(mol):
+    """Print outofplane topology and parameters for a molecule to screen.
+    
+    Print a header banner for the section, and for each Outofplane object
+    in a Molecule object print (float) barrier height [kcal/mol], (float)
+    outofplane angle [degree], (str) 4 atom types, (float) torsion energy
+    [kcal/mol], and (int) 4 atomic indices.
+
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule with Outofplane objects
+            with data for printing.
+    """
     if (mol.n_outofplanes > 0):
         header, n_banner = ' Out-of-plane Angle Data ', 55
         params = ['vn/2', 'o_ijkl', 'types', 'energy', 'atoms']
@@ -359,8 +599,18 @@ def print_outofplanes(mol):
             oop.at2+1, oop.at3+1, oop.at4+1)
         print(pstr)
 
-# print out-of-plane angles and out-of-plane parameters from an array
 def print_outofplanes_file(outfile, mol):
+    """Write out molecular outofplane data and parameters to prm file.
+    
+    For each Outofplane object in Molecule object, write to outfile an
+    outofplane record, containing (int) 4 atomic indices, and (float)
+    barrier height [kcal/mol].
+    
+    Args:
+        outfile (_io.TextIOWrapper): Output stream to open prm file.
+        mol (mmlib.molecule.Molecule): Molecule with outofplane data
+            and parameters for printing.
+    """
     outfile.write('# %i Outofplanes (At1, At2, At3, At4,' % (mol.n_outofplanes))
     outfile.write(' V_n, Gamma, N_f)\n')
     for p in range(mol.n_outofplanes):
@@ -369,26 +619,38 @@ def print_outofplanes_file(outfile, mol):
             oop.at1+1, oop.at2+1, oop.at3+1, oop.at4+1, oop.v_n, oop.gam,
             oop.n_fold))
 
-# print energy values to screen
 def print_energy(mol):
-    print_banner(' Energy Values ', 42, 1, 1)
-    print('%10.4f kcal/mol Total Energy' % (mol.e_total))
-    print('%10.4f kcal/mol Kinetic Energy' % (mol.e_kinetic))
-    print('%10.4f kcal/mol Potential Energy' % (mol.e_potential))
-    print('%10.4f kcal/mol Non-bonded Energy' % (mol.e_nonbonded))
-    print('%10.4f kcal/mol Bonded Energy' % (mol.e_bonded))
-    print('%10.4f kcal/mol Boundary Energy' % (mol.e_bound))
-    print('%10.4f kcal/mol van der Waals Energy' % (mol.e_vdw))
-    print('%10.4f kcal/mol Electrostatic Energy' % (mol.e_elst))
-    print('%10.4f kcal/mol Bond Energy' % (mol.e_bonds))
-    print('%10.4f kcal/mol Angle Energy' % (mol.e_angles))
-    print('%10.4f kcal/mol Torsion Energy' % (mol.e_torsions))
-    print('%10.4f kcal/mol Out-of-plane Energy' % (mol.e_outofplanes))
+    """Print list of energy values in a table to screen.
+    
+    For each energy term in `labels` print one (float) value [kcal/mol]
+    to screen per line.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule with energy component
+            data.
+    """
+    header, n_banner = ' Energy Values ', 33
+    params = ['component', '[kcal/mol]']
+    spaces = [3, 9]
+    print_header(header, n_banner, params, spaces)
+    labels = ['Total', 'Kinetic', 'Potential', 'Non-bonded', 'Bonded',
+        'Boundary', 'van der Waals', 'Electrostatic', 'Bonds', 'Angles',
+        'Torsions', 'Out-of-planes']
+    vals = [mol.e_total, mol.e_kinetic, mol.e_potential, mol.e_nonbonded,
+        mol.e_bonded, mol.e_bound, mol.e_vdw, mol.e_elst, mol.e_bonds,
+        mol.e_angles, mol.e_torsions, mol.e_outofplanes]
+    for i in range(len(vals)):
+        print('   %-13s | %10.4f' % (labels[i], vals[i]))
 
-# check for proper input arguments and return result
 def get_input():
+    """Check for proper input argument syntax and return parsed result.
+    
+    Check that the command line input contains two strings or throw
+    an error and print usage guidance. If correct, return the name of
+    the input file given as the second command line input string.
+    """
     prog_name = sys.argv[0].split('/')[-1]
-    if (not len(sys.argv) >= 2):
+    if (not len(sys.argv) == 2):
         print('\nUsage: %s INPUT_FILE\n' % (prog_name))
         print('  INPUT_FILE: ', end='')
         if (prog_name == 'mm.py'):

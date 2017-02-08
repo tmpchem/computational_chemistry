@@ -30,7 +30,7 @@ import mmlib
 infile_name = mmlib.fileio.get_input()
 
 # read in molecular and simulation data
-sim = mmlib.simulation.simulation(infile_name, 'md')
+sim = mmlib.simulation.Simulation(infile_name, 'md')
 
 # run molecular dynamics
 sim.run_simulation()

@@ -28,7 +28,7 @@ def get_bonds(mol):
                 k_b, r_eq = param.get_bond_param(mol.atoms[i].attype,
                     mol.atoms[j].attype)
                 if (k_b > 0.0):
-                    mol.bonds.append(molecule.bond(i, j, r_ij, r_eq, k_b))
+                    mol.bonds.append(molecule.Bond(i, j, r_ij, r_eq, k_b))
     mol.bonds = sorted(mol.bonds, key=lambda bond:bond.at2)
     mol.bonds = sorted(mol.bonds, key=lambda bond:bond.at1)
     mol.n_bonds = len(mol.bonds)
@@ -46,7 +46,7 @@ def get_angles(mol):
                 k_a, a_eq = param.get_angle_param(mol.atoms[i].attype,
                     mol.atoms[j].attype, mol.atoms[k].attype)
                 if (k_a > 0.0):
-                    mol.angles.append(molecule.angle(i, j, k, a_ijk, a_eq,
+                    mol.angles.append(molecule.Angle(i, j, k, a_ijk, a_eq,
                         k_a))
     mol.angles = sorted(mol.angles, key=lambda angle:angle.at3)
     mol.angles = sorted(mol.angles, key=lambda angle:angle.at2)
@@ -74,7 +74,7 @@ def get_torsions(mol):
                         mol.atoms[i].attype, mol.atoms[j].attype,
                         mol.atoms[k].attype, mol.atoms[l].attype)
                     if (v_n > 0.0):
-                        mol.torsions.append(molecule.torsion(i, j, k, l,
+                        mol.torsions.append(molecule.Torsion(i, j, k, l,
                             t_ijkl, v_n, gamma, nfold, paths))
     mol.torsions = sorted(mol.torsions, key=lambda torsion:torsion.at4)
     mol.torsions = sorted(mol.torsions, key=lambda torsion:torsion.at3)
@@ -97,12 +97,12 @@ def get_outofplanes(mol):
                     o_ijkl = geomcalc.get_o_ijkl(mol.atoms[i].coords,
                         mol.atoms[j].coords, mol.atoms[k].coords,
                         mol.atoms[l].coords)
-                    v_n, gamma, nfold = param.get_outofplane_param(
-                        mol.atoms[i].coords, mol.atoms[j].coords,
-                        mol.atoms[k].coords, mol.atoms[l].coords)
+                    v_n = param.get_outofplane_param(mol.atoms[i].coords,
+                        mol.atoms[j].coords, mol.atoms[k].coords,
+                        mol.atoms[l].coords)
                     if (v_n > 0.0):
-                        mol.outofplanes.append(molecule.outofplane(i, j, k, l,
-                            o_ijkl, v_n, gamma, nfold))
+                        mol.outofplanes.append(molecule.Outofplane(i, j, k, l,
+                            o_ijkl, v_n))
     mol.outofplanes = sorted(mol.outofplanes, key=lambda outofplane:outofplane.at4)
     mol.outofplanes = sorted(mol.outofplanes, key=lambda outofplane:outofplane.at3)
     mol.outofplanes = sorted(mol.outofplanes, key=lambda outofplane:outofplane.at2)

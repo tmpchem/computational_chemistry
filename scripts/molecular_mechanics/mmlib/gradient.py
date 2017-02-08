@@ -25,9 +25,9 @@ def get_g_torsion(t_ijkl, v_n, gamma, n_fold, paths):
     return g_torsion
 
 # calculate out-of-plane angle (improper torsion) gradient bewteen bonded atoms
-def get_g_outofplane(o_ijkl, v_n, gamma, n_fold):
+def get_g_outofplane(o_ijkl, v_n):
     g_outofplane = (-v_n * n_fold * math.sin(geomcalc.deg2rad()
-        * (n_fold * o_ijkl - gamma)))
+        * (2.0 * o_ijkl - 180.0)))
     return g_outofplane
 
 # calculate van der waals interaction gradient magnitude between atom pair
@@ -178,7 +178,7 @@ def get_g_outofplanes(mol):
         c3 = mol.atoms[oop.at3].coords
         c4 = mol.atoms[oop.at4].coords
         oop.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
-        oop.g = get_g_outofplane(oop.o_ijkl, oop.v_n, oop.gam, oop.n)
+        oop.g = get_g_outofplane(oop.o_ijkl, oop.v_n)
         dir1, dir2, dir3, dir4 = get_gdir_outofplane(c1,c2,c3,c4,oop.o_ijkl)
         mol.g_outofplanes[oop.at1] += oop.g * dir1
         mol.g_outofplanes[oop.at2] += oop.g * dir2

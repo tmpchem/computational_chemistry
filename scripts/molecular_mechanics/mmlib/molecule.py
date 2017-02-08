@@ -5,7 +5,7 @@ from mmlib import fileio, param, geomcalc, topology, energy, gradient
 # molecule.py: classes for handling molecular mechanics data
 
 # atom class for atomic data
-class atom:
+class Atom:
     # constructor
     def __init__(self, at_type, at_coords, at_charge, at_ro, at_eps, at_mass):
         self.attype = at_type
@@ -63,7 +63,7 @@ class atom:
         self.accs = accs
 
 # bond class for bond data
-class bond:
+class Bond:
     # constructor
     def __init__(self, at1, at2, r_ij, r_eq, k_b):
         self.at1 = at1
@@ -90,7 +90,7 @@ class bond:
         self.k_b = k_b
 
 # bond angle class for bond angle data
-class angle:
+class Angle:
     # constructor
     def __init__(self, at1, at2, at3, a_ijk, a_eq, k_a):
         self.at1 = at1
@@ -121,7 +121,7 @@ class angle:
         self.k_a = k_a
 
 # torsion class for torsion angle data
-class torsion:
+class Torsion:
     # constructor
     def __init__(self, at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths):
         self.at1 = at1
@@ -164,17 +164,15 @@ class torsion:
         self.paths = paths
 
 # outofplane class for outofplane angle data
-class outofplane:
+class Outofplane:
     # constructor
-    def __init__(self, at1, at2, at3, at4, o_ijkl, v_n, gamma, nfold):
+    def __init__(self, at1, at2, at3, at4, o_ijkl, v_n):
         self.at1 = at1
         self.at2 = at2
         self.at3 = at3
         self.at4 = at4
         self.o_ijkl = o_ijkl
         self.v_n = v_n
-        self.gam = gamma
-        self.n = nfold
         self.e = 0.0
         self.g = 0.0
     # set new atomic index 1
@@ -195,15 +193,9 @@ class outofplane:
     # set new outofplane magnitude parameter (kcal/mol)
     def set_v_n(self, v_n):
         self.v_n = v_n
-    # set new outofplane phase factor parameter (degrees)
-    def set_gamma(self, gamma):
-        self.gam = gamma
-    # set new outofplane angular frequency parameter (unitless)
-    def set_nfold(self, nfold):
-        self.nfold = nfold
 
 # molecule class for molecular mechanics data
-class molecule:
+class Molecule:
     # constructor
     def __init__(self, infile_name):
         self.infile = infile_name

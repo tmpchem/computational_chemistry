@@ -11,7 +11,7 @@ def rgas(): return 0.83144598
 def acc_conv(): return 418.4
 
 # simulation class for molecular dynamics data
-class simulation:
+class Simulation:
     # constructor
     def __init__(self, infile_name, sim_type):
         self.infile = os.getcwd() + '/' + infile_name

@@ -24,14 +24,14 @@ def get_e_angle(a_ijk, a_eq, k_a):
 
 # calculate torsion angle energy between bonded atoms
 def get_e_torsion(t_ijkl, v_n, gamma, n_fold, paths):
-    e_torsion = (v_n * (1.0 + math.cos(geomcalc.deg2rad() *
-        (n_fold * t_ijkl - gamma))) / paths)
+    e_torsion = (v_n * (1.0 + math.cos(geomcalc.deg2rad()
+        * (n_fold * t_ijkl - gamma))) / paths)
     return e_torsion
 
 # calculate out-of-plane angle (improper torsion) energy bewteen bonded atoms
-def get_e_outofplane(o_ijkl, v_n, gamma, n_fold):
-    e_outofplane = (v_n * (1.0 + math.cos(geomcalc.deg2rad() *
-        (n_fold * o_ijkl - gamma))))
+def get_e_outofplane(o_ijkl, v_n):
+    e_outofplane = (v_n * (1.0 + math.cos(geomcalc.deg2rad()
+        * (2.0 * o_ijkl - 180.0))))
     return e_outofplane
 
 # calculate van der waals interaction between atom pair
@@ -51,8 +51,8 @@ def get_e_bound_i(k_box, bound, coords, origin, boundtype):
     if (boundtype == 'prism'):
         for j in range(3):
             scale = 1.0 if (abs(coords[j] - origin[j]) >= bound) else 0.0
-            e_bound_i += (scale * k_box *
-                (abs(coords[j] - origin[j]) - bound)**2)
+            e_bound_i += (scale * k_box
+                * (abs(coords[j] - origin[j]) - bound)**2)
     elif (boundtype == 'sphere'):
         r_io = geomcalc.get_r_ij(origin, coords)
         u_io = geomcalc.get_u_ij(origin, coords)
@@ -129,7 +129,7 @@ def get_e_outofplanes(mol):
         c3 = mol.atoms[oop.at3].coords
         c4 = mol.atoms[oop.at4].coords
         oop.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
-        oop.e = get_e_outofplane(oop.o_ijkl, oop.v_n, oop.gam, oop.n)
+        oop.e = get_e_outofplane(oop.o_ijkl, oop.v_n)
         mol.e_outofplanes += oop.e
 
 # update box boundary energies
