@@ -38,6 +38,7 @@ def get_geom(mol):
         new_atom = molecule.atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
         new_atom.set_covrad(param.get_cov_rad(at_element))
         mol.atoms.append(new_atom)
+        mol.mass += at_mass
 
 # get symbols, coordinates, parameters, and topology from prm file
 def get_prm(mol):
@@ -59,6 +60,7 @@ def get_prm(mol):
             new_atom = molecule.atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
             new_atom.set_covrad(param.get_cov_rad(at_element))
             mol.atoms.append(new_atom)
+            mol.mass += at_mass
     mol.n_atoms = len(mol.atoms)
     for i in range(len(infile_array)):
         record = infile_array[i]
@@ -100,33 +102,51 @@ def get_prm(mol):
 # get simulation data from file
 def get_sim_data(sim):
     infile_array = get_file_string_array(sim.infile)
-    simpath = '/'.join(os.path.abspath(sim.infile).split('/')[:-1]) + '/'
     for q in range(len(infile_array)):
         if (len(infile_array[q]) < 2): continue
         kwarg = infile_array[q][0]
         kwargval = infile_array[q][1]
         kwargarr = infile_array[q][1:]
         if (kwarg == 'MOLECULE'):
-            sim.mol = molecule.molecule(kwargval)
+            sim.mol = molecule.molecule(sim.indir + '/' + kwargval)
         elif (kwarg == 'TEMPERATURE'):
             sim.temp = float(kwargval)
+        elif (kwarg == 'PRESSURE'):
+            sim.press = float(kwargval)
+        elif (kwarg == 'BOUNDARYSPRING'):
+            sim.mol.k_box = float(kwargval)
         elif (kwarg == 'BOUNDARY'):
-            sim.mol.k_box = float(kwargarr[0])
-            sim.mol.bound = [float(kwargarr[i+1]) for i in range(3)]
+            sim.mol.bound = float(kwargval)
+            sim.mol.get_volume()
+        elif (kwarg == 'BOUNDARYTYPE'):
+            sim.mol.boundtype = kwargval.lower()
+            sim.mol.get_volume()
+        elif (kwarg == 'ORIGIN'):
+            sim.mol.origin = [float(kwargarr[i]) for i in range(3)]
         elif (kwarg == 'TOTALTIME'):
             sim.tottime = float(kwargval)
+        elif (kwarg == 'TOTALCONFS'):
+            sim.totconfs = int(kwargval)
         elif (kwarg == 'TIMESTEP'):
             sim.timestep = float(kwargval)
         elif (kwarg == 'GEOMTIME'):
             sim.geomtime = float(kwargval)
+        elif (kwarg == 'GEOMCONF'):
+            sim.geomconf = int(kwargval)
         elif (kwarg == 'GEOMOUT'):
-            sim.geomout = simpath + kwargval
+            sim.geomout = sim.indir + '/' + kwargval
         elif (kwarg == 'ENERGYTIME'):
             sim.energytime = float(kwargval)
+        elif (kwarg == 'ENERGYCONF'):
+            sim.energyconf = int(kwargval)
         elif (kwarg == 'ENERGYOUT'):
-            sim.energyout = simpath + kwargval
+            sim.energyout = sim.indir + '/' + kwargval
         elif (kwarg == 'STATUSTIME'):
             sim.statustime = float(kwargval)
+        elif (kwarg == 'EQTIME'):
+            sim.eqtime = float(kwargval)
+        elif (kwarg == 'EQRATE'):
+            sim.eqrate = float(kwargval)
 
 # print atomic coordinates for a set of atoms
 def print_coords(mol, comment):
@@ -306,7 +326,9 @@ def get_input():
         if (prog_name == 'mm.py'):
             print('xyzq or prm file for molecular mechanics\n')
         elif (prog_name == 'md.py'):
-            print('sim file for molecular dynamics\n')
+            print('simulation file for molecular dynamics\n')
+        elif (prog_name == 'mmc.py'):
+            print('simulation file for metropolis monte carlo\n')
         sys.exit()
     else:
         infile_name = sys.argv[1]

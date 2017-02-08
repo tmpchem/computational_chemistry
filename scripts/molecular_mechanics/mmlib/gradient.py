@@ -5,6 +5,9 @@ import numpy as np
 # numerical displacement distance (Angstrom)
 num_disp = 1.0 * 10**-6
 
+# conversion from kcal*A^3/mol to joules
+kcalamol2j = 69476.95
+
 # calculate bond length energy gradient magnitude between bonded atoms
 def get_g_bond(r_ij, r_eq, k_b):
     g_bond = 2.0 * k_b * (r_ij - r_eq)
@@ -37,10 +40,20 @@ def get_g_elst_ij(r_ij, q_i, q_j, epsilon):
     return g_elst_ij
 
 # calculate boundary repulsion gradient magnitude for a direction
-def get_g_bound_i(k_box, bound, coord):
-    sign = 1.0 if (coord <= 0.0) else -1.0
-    scale = 1.0 if (abs(coord) >= bound) else 0.0
-    g_bound_i = -2.0 * sign * scale * k_box * (abs(coord) - bound)
+def get_g_bound_i(k_box, bound, coord, origin, boundtype):
+    g_bound_i = np.zeros(3)
+    if (boundtype == 'prism'):
+        for j in range(3):
+            sign = 1.0 if ((coord[j] - origin[j]) <= 0.0) else -1.0
+            scale = 1.0 if (abs(coord[j] - origin[j]) >= bound) else 0.0
+            g_bound_i[j] = -2.0 * sign * scale * k_box * (abs(coord[j]) - bound)
+    elif (boundtype == 'sphere'):
+        r_io = geomcalc.get_r_ij(origin, coord)
+        u_io = geomcalc.get_u_ij(origin, coord)
+        scale = 1.0 if (r_io >= bound) else 0.0
+        g_bound_i = 2.0 * scale * k_box * (r_io - bound) * u_io
+    elif (bound_type == 'none'):
+        pass
     return g_bound_i
 
 # calculate direction of energy gradient between a pair of atoms
@@ -193,10 +206,11 @@ def get_g_bound(mol):
     mol.g_bound = np.zeros((mol.n_atoms, 3))
     k_box = mol.k_box
     bound = mol.bound
+    origin = mol.origin
+    boundtype = mol.boundtype
     for i in range(mol.n_atoms):
-        for j in range(3):
-            coord = mol.atoms[i].coords[j]
-            mol.g_bound[i][j] = get_g_bound_i(k_box, bound[j], coord)
+        coords = mol.atoms[i].coords
+        mol.g_bound[i] = get_g_bound_i(k_box, bound, coords, origin, boundtype)
 
 # update total system analytic energy gradient values
 def get_g_totals(mol):
@@ -207,6 +221,21 @@ def get_g_totals(mol):
             mol.g_nonbonded[i][j] = mol.g_vdw[i][j] + mol.g_elst[i][j]
             mol.g_total[i][j] = mol.g_bonded[i][j] + mol.g_nonbonded[i][j]
             mol.g_total[i][j] += mol.g_bound[i][j]
+    mol.get_pressure()
+
+# update clausius virial function
+def get_virial(mol):
+    mol.virial = 0.0
+    for i in range(mol.n_atoms):
+        for j in range(3):
+            mol.virial += -mol.atoms[i].coords[j] * mol.g_total[i][j]
+
+# update pressure of system
+def get_pressure(mol):
+    get_virial(mol)
+    pv = mol.n_atoms * energy.kb() * mol.temp
+    pv += mol.virial / (3.0 * mol.n_atoms)
+    mol.press = kcalamol2j * pv / mol.vol
 
 # update total system numerical energy gradient values
 def get_g_numerical(mol):

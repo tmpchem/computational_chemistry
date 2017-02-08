@@ -1,5 +1,5 @@
 import os, sys
-sys.path.append('/'.join(os.path.realpath(__file__).split('/')[:-1]))
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from mmlib import *
 
 #############################################################################

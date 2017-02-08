@@ -225,12 +225,18 @@ class molecule:
         self.n_outofplanes = 0
         self.mass = 0.0
         self.k_box = 0.0
-        self.bound = np.zeros(3)
+        self.bound = 0.0
+        self.boundtype = 'none'
+        self.origin = np.zeros(3)
+        self.vol = float('inf')
+        self.temp = 0.0
+        self.press = 0.0
+        self.virial = 0.0
 
         self.e_bonds = 0.0
         self.e_angles = 0.0
         self.e_torsions = 0.0
-        self.e_oufofplanes = 0.0
+        self.e_outofplanes = 0.0
         self.e_bonded = 0.0
         self.e_vdw = 0.0
         self.e_elst = 0.0
@@ -309,6 +315,18 @@ class molecule:
     def get_numerical_gradient(self):
         gradient.get_g_numerical(self)
         gradient.get_g_totals(self)
+
+    # calculate current temperature of molecule
+    def get_temperature(self):
+        energy.get_temperature(self)
+
+    # calculate current pressure of molecule
+    def get_pressure(self):
+        gradient.get_pressure(self)
+
+    # calculate current volume of molecule
+    def get_volume(self):
+        geomcalc.get_volume(self)
 
     # print energy / topology to screen
     def print_data(self):

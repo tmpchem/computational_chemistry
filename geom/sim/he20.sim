@@ -1,10 +1,15 @@
 MOLECULE         ../prm/he20.prm
-TEMPERATURE                15.00
-BOUNDARY   1.0  10.0  10.0  10.0
+TEMPERATURE             298.15 K
+PRESSURE                 1.0 bar
+BOUNDARY                   10.00
+BOUNDARYSPRING             250.0
+BOUNDARYTYPE              SPHERE
 TOTALTIME             100.000 ps
-TIMESTEP                0.001 ps
+TIMESTEP               0.0005 ps
 GEOMTIME                0.010 ps
 GEOMOUT         ../traj/he20.xyz
-ENERGYTIME              0.010 ps
+ENERGYTIME              0.005 ps
 ENERGYOUT    ../../data/he20.dat
-STATUSTIME              1.000 ps
+EQTIME                 20.000 ps
+EQRATE                  2.000 ps
+STATUSTIME                 5.0 s

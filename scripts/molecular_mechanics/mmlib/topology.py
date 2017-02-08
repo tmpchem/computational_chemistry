@@ -107,3 +107,4 @@ def get_nonints(mol):
         mol.nonints[mol.torsions[p].at4].append(mol.torsions[p].at1)
     for i in range(mol.n_atoms):
         mol.nonints[i] = sorted(list(set(mol.nonints[i])))
+

@@ -5,4 +5,5 @@ from mmlib import topology
 from mmlib import energy
 from mmlib import molecule
 from mmlib import gradient
-from mmlib import dynamics
+from mmlib import simulation
+from mmlib import test

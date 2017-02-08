@@ -7,7 +7,10 @@ from mmlib import geomcalc
 def ceu2kcal(): return 332.06375
 
 # conversion of kinetic energy from amu*A^2/ps^2 to kcal/mol
-def kin2kcal(): return 2.39005736 * 10**-3
+def kin2kcal(): return 0.00239005736
+
+# boltzmann constant in kcal/(mol*K)
+def kb(): return 0.001987204
 
 # calculate bond length energy between bonded atoms
 def get_e_bond(r_ij, r_eq, k_b):
@@ -41,11 +44,17 @@ def get_e_elst_ij(r_ij, q_i, q_j, epsilon):
     return e_elst_ij
 
 # calculate boundary energy of an atom
-def get_e_bound_i(k_box, bounds, coords):
+def get_e_bound_i(k_box, bound, coords, origin, boundtype):
     e_bound_i = 0.0
-    for j in range(3):
-        scale = 1.0 if (abs(coords[j]) >= bounds[j]) else 0.0
-        e_bound_i += scale * k_box * (abs(coords[j]) - bounds[j])**2
+    if (boundtype == 'prism'):
+        for j in range(3):
+            scale = 1.0 if (abs(coords[j] - origin[j]) >= bound) else 0.0
+            e_bound_i += scale * k_box * (abs(coords[j] - origin[j]) - bound)**2
+    elif (boundtype == 'sphere'):
+        r_io = geomcalc.get_r_ij(origin, coords)
+        u_io = geomcalc.get_u_ij(origin, coords)
+        scale = 1.0 if (r_io >= bound) else 0.0
+        e_bound_i += scale * k_box * (r_io - bound)**2
     return e_bound_i
 
 # calculate kinetic energy of an atom
@@ -124,11 +133,17 @@ def get_e_bound(mol):
     mol.e_bound = 0.0
     k_box = mol.k_box
     bound = mol.bound
+    origin = mol.origin
+    boundtype = mol.boundtype
     for i in range(mol.n_atoms):
         atom = mol.atoms[i]
         k_box = mol.k_box
-        atom.e_bound = get_e_bound_i(k_box, bound, atom.coords)
+        atom.e_bound = get_e_bound_i(k_box, bound, atom.coords, origin, boundtype)
         mol.e_bound += atom.e_bound
+
+# update temperature of system
+def get_temperature(mol):
+    mol.temp = (2.0/3.0) * mol.e_kinetic / (kb() * mol.n_atoms)
 
 # calculate kinetic energy
 def get_e_kinetic(mol, kintype):
@@ -147,6 +162,7 @@ def get_e_kinetic(mol, kintype):
             vels = mol.atoms[p].vels
             e_kin = get_e_kinetic_i(mass, vels)
             mol.e_kinetic += e_kin
+    mol.get_temperature()
 
 # update total system energy values
 def get_e_totals(mol):

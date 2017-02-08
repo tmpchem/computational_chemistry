@@ -26,8 +26,9 @@ def get_r_ij(coords_i, coords_j):
 def get_u_ij(coords_i, coords_j):
     r_ij = get_r_ij(coords_i, coords_j)
     u_ij = np.zeros(3)
-    for m in range(3):
-        u_ij[m] = (coords_j[m] - coords_i[m]) / r_ij
+    if (r_ij > 0.0):
+        for m in range(3):
+            u_ij[m] = (coords_j[m] - coords_i[m]) / r_ij
     return u_ij
 
 # calculate dot product between two unit vectors
@@ -91,3 +92,13 @@ def get_o_ijkl(coords_i, coords_j, coords_k, coords_l):
     dp_kikj_kl = get_udp(u_kikj, u_kl)
     o_ijkl = rad2deg() * math.asin(dp_kikj_kl)
     return o_ijkl
+
+# determine volume of molecular system in Angstroms based on boundary type
+def get_volume(mol):
+    if (mol.boundtype == 'cube'):
+        mol.vol = 8.0 * mol.bound**3
+    elif (mol.boundtype == 'sphere'):
+        mol.vol = (4.0/3.0) * math.pi * mol.bound**3
+    else:
+        mol.vol = float('inf')
+

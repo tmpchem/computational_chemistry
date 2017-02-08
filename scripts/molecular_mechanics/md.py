@@ -1,6 +1,6 @@
 import os, sys
-sys.path.append('/'.join(os.path.realpath(__file__).split('/')[:-1]))
-from mmlib import *
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+import mmlib
 
 #############################################################################
 #                              Welcome to md.py                             #
@@ -27,13 +27,13 @@ from mmlib import *
 ## MAIN BLOCK ##
 
 # check input syntax
-infile_name = fileio.get_input()
+infile_name = mmlib.fileio.get_input()
 
 # read in molecular and simulation data
-sim = dynamics.simulation(infile_name)
+sim = mmlib.simulation.simulation(infile_name, 'md')
 
 # run molecular dynamics
-sim.run_dynamics('leapfrog')
+sim.run_simulation()
 
 # end of program
 

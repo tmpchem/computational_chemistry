@@ -1,61 +1,82 @@
-from mmlib import fileio, topology, energy
+from mmlib import geomcalc, fileio, topology, energy
+import os, sys, ast, math
 
-# threshold energy exponent for passing tests
-test_thresh = -8
+# absolute and relative thresholds for float equality comparisons
+comp_coef = 1.0
+comp_exp = -7
+abstol = comp_coef * 10**(comp_exp) 
+reltol = comp_coef * 10**(comp_exp) 
 
-# directory structure for test files
-head_dir = 'C:\Users\Trent\Documents\TMPChem\Coding'
-test_dir = head_dir + '\tests'
+# boolean equality strings
+bool_eq_char = {True: '==', False: '!='}
 
-# compare if two values are equal within a threshold
-def are_equal(a, b, cutoff):
-    are_equal = (abs(a - b) < cutoff)
-    return are_equal
+# boolean pass strings
+bool_pass = {True: 'PASS', False: 'FAIL'}
 
-# run tests to check for proper program function
-def run_tests():
-    tests = ['Methane Dimer', 'Water Dimer', 'Benzene dimer']
-    N_tests = len(tests)
+# directory with test files
+mm_dir = '/'.join(os.path.abspath(energy.__file__).split('/')[:-1])
+test_dir = mm_dir + '/test_files/'
 
-    test_energy_file = test_dir + '/energy_tests.dat'
-    test_energies = fileio.get_file_string_array(test_energy_file)
-    for i in range(N_tests):
-        test_energies[i] = float(test_energies[i][0])
-  
-    ALL_SUCCESS = 1
+# names of functions to be unit tested
+test_funcs = ['geomcalc.get_r2_ij']
 
-    for i in range(N_tests):
-        test_prefix = test_dir + '/test%i' % (i + 1)
-        dimer_file = test_prefix + '_dimer.xyzq'
-        monoA_file = test_prefix + '_monoA.xyzq'
-        monoB_file = test_prefix + '_monoB.xyzq'
-    
-        dimer_geom = fileio.get_geom(dimer_file)
-        monoA_geom = fileio.get_geom(monoA_file)
-        monoB_geom = fileio.get_geom(monoB_file)
-    
-        dimer_topology = topology.get_topology(dimer_geom)
-        monoA_topology = topology.get_topology(monoA_geom)
-        monoB_topology = topology.get_topology(monoB_geom)
-    
-        dimer_energy = energy.get_e_nonbond(dimer_geom, dimer_topology)
-        monoA_energy = energy.get_e_nonbond(monoA_geom, monoA_topology)
-        monoB_energy = energy.get_e_nonbond(monoB_geom, monoB_topology)
-    
-        int_energy = dimer_energy - (monoA_energy + monoB_energy)
-        reference_energy = test_energies[i]
-        TEST_PASS = are_equal(int_energy, reference_energy, 10**test_thresh)
+# file with test case reference values
+test_files = []
+for i in range(len(test_funcs)):
+    test_files.append(test_dir + test_funcs[i].replace('.', '-') + '.dat')
 
-        if (TEST_PASS):
-            print('Test %i PASS %15.10f (%s)' % (i + 1, int_energy, tests[i]))
-        else:
-            print('Test %i FAIL %15.10f (%s)' % (i + 1, int_energy, tests[i]))
+# read in test case inputs and references from file
+def read_in_tests(file_name):
+    infile = open(file_name, "r")
+    infile_lines = infile.readlines()
+    infile.close()
+    tests = []
+    for line in infile_lines:
+        if (not line[0] == '#'):
+            inputs = line.split(';')[0]
+            ref = ast.literal_eval(line.split(';')[1].replace(' ',''))
+            tests.append([inputs, ref])
+    return tests
 
-    ALL_SUCCESS *= TEST_PASS
+# print result of an individual unit test
+def print_success_test(index, n_tests, success, val, ref, printval):
+    if (printval >= 2):
+        n_dig = int(math.ceil(math.log10(n_tests)))
+        print('Test %0*i -> ' % (n_dig, index), end='')
+        print('%s(%i)' % (bool_pass[success], success), end='')
+    if (printval >= 3):
+        ref_dig = int(math.floor(math.log10(max(ref, abstol))))
+        print_dig = max(0, -comp_exp - ref_dig*(ref_dig>0))
+        eq = bool_eq_char[success]
+        print(' %10.*f %s %-10.*f' % (print_dig, val, eq, print_dig, ref), end='')
+    if (printval >= 2):
+        print('')
 
-    if (ALL_SUCCESS):
-        print('All Tests PASS')
-    else:
-        print('Some Tests FAIL')
+# print result of an individual function test
+def print_success_function(index, n_pass, n_fail, name, printval):
+    n_tests = n_pass + n_fail
+    success = (n_pass == n_tests)
+    if (printval >= 1):
+        print('  %i/%i Subtests Passed,' % (n_pass, n_tests), end='')
+        print(' Func Test %i\n  (%s) ' % (index, name), end='')
+        print('-> %s(%i)' % (bool_pass[success], int(success)))
 
-    return ALL_SUCCESS
+# run unit tests for a given function
+def run_tests(printval):
+    for j in range(len(test_files)):
+        tests = read_in_tests(test_files[j])
+        name = test_funcs[j]
+        n_tests = len(tests)
+        n_pass = 0
+        n_fail = 0
+        for i in range(n_tests):
+            inputs = tests[i][0]
+            ref = tests[i][1]
+            evalstr = '%s(%s)' % (test_funcs[j], inputs)
+            val = eval(evalstr)
+            success = math.isclose(ref, val, rel_tol=reltol, abs_tol=abstol)
+            print_success_test(i+1, n_tests, success, val, ref, printval)
+            n_pass += int(success)
+            n_fail += int(not success)
+        print_success_function(j+1, n_pass, n_fail, name, printval)
+
