@@ -1,6 +1,6 @@
 import sys
 
-# param.py: functions and dictionaries for amber94 molecular mechanics parameters
+# param.py: functions and tables for amber94 molecular mechanics parameters
 
 # relative atomic masses of elements (in atomic mass units [amu]) from
 # "CRC Handbook" 84th ed, ed Lide, pgs 1-12 - 1-14
@@ -137,7 +137,8 @@ angle_params = {             'C CACA': [ 63.0, 120.00], 'C CAHA': [ 35.0, 120.00
   'O2P OH': [ 45.0, 108.23], 'O2P OS': [100.0, 108.23], 'OHP OS': [ 45.0, 102.60],
   'OSP OS': [ 45.0, 102.60], 'P OSP ': [100.0, 120.50]} 
 
-# central torsion parameters, [Vn/2 (kcal/mol), Gamma (degrees), n (unitless), paths (unitless)]
+# central torsion parameters, [Vn/2 (kcal/mol), Gamma (degrees),
+# n (unitless), paths (unitless)]
 torsion23_params = {              'C CA': [14.50, 180.0, 2.0, 4],
   'C CB': [12.00, 180.0, 2.0, 4], 'C CM': [ 8.70, 180.0, 2.0, 4],
   'C CT': [ 0.00,   0.0, 2.0, 4], 'C N ': [10.00, 180.0, 2.0, 4],
@@ -166,15 +167,20 @@ torsion23_params = {              'C CA': [14.50, 180.0, 2.0, 4],
   'CWNA': [ 6.00, 180.0, 2.0, 4], 'OHP ': [ 0.75,   0.0, 3.0, 3],
   'OSP ': [ 4.80, 180.0, 2.0, 2]}
 
-# torsion parameters, [Vn/2 (kcal/mol), Gamma (degrees), n (unitless), paths (unitless)]
+# torsion parameters, [Vn/2 (kcal/mol), Gamma (degrees), n (unitless),
+# paths (unitless)]
 torsion1234_params = {
-  'C N CTC ': [[ 0.00,   0.0, -4.0, 1], [ 0.00, 180.0, -3.0, 1], [ 0.20, 180.0, -2.0, 1], [ 0.00, 180.0, 1.0, 1]],
-  'CTCTC N ': [[ 0.10,   0.0, -4.0, 1], [ 0.00,   0.0, -3.0, 1], [ 0.07,   0.0, -2.0, 1], [ 0.00, 180.0, 1.0, 1]],
-  'CTCTN C ': [[ 0.50, 180.0, -4.0, 1], [ 0.15, 180.0, -3.0, 1], [ 0.00, 180.0, -2.0, 1], [ 0.53,   0.0, 1.0, 1]],
+  'C N CTC ': [[ 0.00,   0.0, -4.0, 1], [ 0.00, 180.0, -3.0, 1],
+               [ 0.20, 180.0, -2.0, 1], [ 0.00, 180.0, 1.0, 1]],
+  'CTCTC N ': [[ 0.10,   0.0, -4.0, 1], [ 0.00,   0.0, -3.0, 1],
+               [ 0.07,   0.0, -2.0, 1], [ 0.00, 180.0, 1.0, 1]],
+  'CTCTN C ': [[ 0.50, 180.0, -4.0, 1], [ 0.15, 180.0, -3.0, 1],
+               [ 0.00, 180.0, -2.0, 1], [ 0.53,   0.0, 1.0, 1]],
   'CTCTOSCT': [[0.383,   0.0, -3.0, 1], [ 0.10, 180.0,  2.0, 1]],
   'CTS S CT': [[ 0.60,   0.0,  3.0, 1], [ 3.50,   0.0, -2.0, 1]],
   'H N C O ': [[ 2.50, 180.0, -2.0, 1], [ 2.00,   0.0,  1.0, 1]],
-  'N CTC N ': [[ 0.40, 180.0, -4.0, 1], [ 0.00,   0.0, -3.0, 1], [ 1.35, 180.0, -2.0, 1], [ 0.75, 180.0, 1.0, 1]],
+  'N CTC N ': [[ 0.40, 180.0, -4.0, 1], [ 0.00,   0.0, -3.0, 1],
+               [ 1.35, 180.0, -2.0, 1], [ 0.75, 180.0, 1.0, 1]],
   'OHCTCTOH': [[0.144,   0.0, -3.0, 1], [ 1.00,   0.0,  2.0, 1]],
   'OHP OSCT': [[ 0.25,   0.0, -3.0, 1], [ 1.20,   0.0,  2.0, 1]],
   'OSCTCTOH': [[0.144,   0.0, -3.0, 1], [ 1.00,   0.0,  2.0, 1]],
@@ -241,7 +247,8 @@ def get_bond_param(at1_type, at2_type):
             bond_types = '%-2s%-2s' % (at2_type, at1_type)
             bond = bond_params[bond_types]
         except KeyError:
-            print('Error: bond type (%s, %s) not recognized!' % (at1_type, at2_type))
+            print('Error: bond type (%s, %s) not recognized!' % (at1_type,
+                at2_type))
             sys.exit()
     return bond
 
@@ -255,7 +262,8 @@ def get_angle_param(at1_type, at2_type, at3_type):
             angle_types = '%-2s%-2s%-2s' % (at3_type, at2_type, at1_type)
             angle = angle_params[angle_types]
         except KeyError:
-            print('Error: angle type (%s, %s, %s) not recognized!' % (at1_type, at2_type, at3_type))
+            print('Error: angle type (%s, %s, %s) not recognized!' % (
+                at1_type, at2_type, at3_type))
             sys.exit()
     return angle
 
@@ -274,16 +282,19 @@ def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
             torsion23 = torsion23_params[torsion23_types]
             torsion.append(torsion23)
         except KeyError:
-            print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type, at3_type))
+            print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type,
+                at3_type))
             sys.exit()
   
     # four-atom torsion potentials
     try:
-        torsion1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type, at3_type, at4_type)
+        torsion1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type,
+            at3_type, at4_type)
         torsion1234 = torsion1234_params[torsion1234_types]
     except KeyError:
         try:
-            torsion1234_types = '%-2s%-2s%-2s%-2s' % (at4_type, at3_type, at2_type, at1_type)
+            torsion1234_types = '%-2s%-2s%-2s%-2s' % (at4_type, at3_type,
+                at2_type, at1_type)
             torsion1234 = torsion1234_params[torsion1234_types]
         except KeyError:
             torsion1234 = []
@@ -324,11 +335,13 @@ def get_outofplane_param(at1_type, at2_type, at3_type, at4_type):
   
     # four-atom out-of-plane potentials
     try:
-        oop1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type, at3_type, at4_type)
+        oop1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type, at3_type,
+            at4_type)
         oop1234 = oop1234_params[oop1234_types]
     except KeyError:
         try:
-            oop1234_types = '%-2s%-2s%-2s%-2s' % (at4_type, at3_type, at2_type, at1_type)
+            oop1234_types = '%-2s%-2s%-2s%-2s' % (at4_type, at3_type,
+                at2_type, at1_type)
             oop1234 = oop1234_params[oop1234_types]
         except KeyError:
             oop1234 = []

@@ -56,7 +56,8 @@ class simulation:
         elif (self.simtype == 'mmc'):
             self.run_mmc()
         else:
-            print('Error: simulation type (%s) not recognized!' % (self.simtype))
+            print('Error: simulation type (%s) not recognized!' % (
+                self.simtype))
             sys.exit()
 
     # initialize atomic velocities according to Maxwell-Boltzmann distribution
@@ -65,7 +66,8 @@ class simulation:
             self.etemp = self.temp
             self.epress = self.press
             for i in range(self.mol.n_atoms):
-                sigma = math.sqrt(2.0 * rgas() * self.temp / (3.0 * self.mol.atoms[i].mass))
+                sigma = (math.sqrt(2.0 * rgas() * self.temp
+                    / (3.0 * self.mol.atoms[i].mass)))
                 for j in range(3):
                     self.mol.atoms[i].vels[j] = np.random.normal(0.0, sigma)
             self.mol.get_energy('standard')

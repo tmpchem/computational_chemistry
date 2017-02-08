@@ -48,7 +48,8 @@ def print_success_test(index, n_tests, success, val, ref, printval):
         ref_dig = int(math.floor(math.log10(max(ref, abstol))))
         print_dig = max(0, -comp_exp - ref_dig*(ref_dig>0))
         eq = bool_eq_char[success]
-        print(' %10.*f %s %-10.*f' % (print_dig, val, eq, print_dig, ref), end='')
+        print(' %10.*f %s %-10.*f' % (print_dig, val, eq, print_dig, ref),
+            end='')
     if (printval >= 2):
         print('')
 

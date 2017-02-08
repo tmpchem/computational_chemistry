@@ -20,12 +20,14 @@ def get_g_angle(a_ijk, a_eq, k_a):
 
 # calculate torsion angle energy gradient magnitude between bonded atoms
 def get_g_torsion(t_ijkl, v_n, gamma, n_fold, paths):
-    g_torsion = -v_n * n_fold * math.sin(geomcalc.deg2rad() * (n_fold * t_ijkl - gamma)) / paths
+    g_torsion = (-v_n * n_fold * math.sin(geomcalc.deg2rad()
+        * (n_fold * t_ijkl - gamma)) / paths)
     return g_torsion
 
 # calculate out-of-plane angle (improper torsion) gradient bewteen bonded atoms
 def get_g_outofplane(o_ijkl, v_n, gamma, n_fold):
-    g_outofplane = -v_n * n_fold * math.sin(geomcalc.deg2rad() * (n_fold * o_ijkl - gamma))
+    g_outofplane = (-v_n * n_fold * math.sin(geomcalc.deg2rad()
+        * (n_fold * o_ijkl - gamma)))
     return g_outofplane
 
 # calculate van der waals interaction gradient magnitude between atom pair
@@ -46,7 +48,8 @@ def get_g_bound_i(k_box, bound, coord, origin, boundtype):
         for j in range(3):
             sign = 1.0 if ((coord[j] - origin[j]) <= 0.0) else -1.0
             scale = 1.0 if (abs(coord[j] - origin[j]) >= bound) else 0.0
-            g_bound_i[j] = -2.0 * sign * scale * k_box * (abs(coord[j]) - bound)
+            g_bound_i[j] = (-2.0 * sign * scale * k_box
+                * (abs(coord[j]) - bound))
     elif (boundtype == 'sphere'):
         r_io = geomcalc.get_r_ij(origin, coord)
         u_io = geomcalc.get_u_ij(origin, coord)
@@ -111,9 +114,12 @@ def get_gdir_outofplane(coords1, coords2, coords3, coords4, oop):
     c_ikj = math.cos(geomcalc.deg2rad() * a_ikj)
     c_oop = math.cos(geomcalc.deg2rad() * oop)
     t_oop = math.tan(geomcalc.deg2rad() * oop)
-    gdir1 = (1.0/r_ki)*(cp_kjkl/(c_oop*s_ikj) - (t_oop/s_ikj**2)*(u_ki - c_ikj*u_kj))
-    gdir2 = (1.0/r_kj)*(cp_klki/(c_oop*s_ikj) - (t_oop/s_ikj**2)*(u_kj - c_ikj*u_ki))
-    gdir4 = (1.0/r_kl)*(cp_kikj/(c_oop*s_ikj) - (t_oop*u_kl))
+    gdir1 = ((1.0/r_ki)*(cp_kjkl/(c_oop*s_ikj)
+        - (t_oop/s_ikj**2)*(u_ki - c_ikj*u_kj)))
+    gdir2 = ((1.0/r_kj)*(cp_klki/(c_oop*s_ikj)
+        - (t_oop/s_ikj**2)*(u_kj - c_ikj*u_ki)))
+    gdir4 = ((1.0/r_kl)*(cp_kikj/(c_oop*s_ikj)
+        - (t_oop*u_kl)))
     gdir3 = -1.0*(gdir1 + gdir2 + gdir4)
     return gdir1, gdir2, gdir3, gdir4
 
@@ -194,7 +200,8 @@ def get_g_nonbonded(mol):
             r_ij = geomcalc.get_r_ij(atom1.coords, atom2.coords)
             eps_ij = atom1.sreps * atom2.sreps
             ro_ij = atom1.ro + atom2.ro
-            g_elst = get_g_elst_ij(r_ij, atom1.charge, atom2.charge, mol.dielectric)
+            g_elst = get_g_elst_ij(r_ij, atom1.charge, atom2.charge,
+                mol.dielectric)
             g_vdw = get_g_vdw_ij(r_ij, eps_ij, ro_ij)
             mol.g_vdw[i] += g_vdw * dir1
             mol.g_vdw[j] += g_vdw * dir2

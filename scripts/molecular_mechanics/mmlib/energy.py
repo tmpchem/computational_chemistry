@@ -1,7 +1,7 @@
 import math
 from mmlib import geomcalc
 
-# energy.py: functions for calculating molecular mechanics energy of molecules 
+# energy.py: functions for calculating molecular mechanics energy of molecules
 
 # conversion of elst energy from ceu to kcal/mol
 def ceu2kcal(): return 332.06375
@@ -24,12 +24,14 @@ def get_e_angle(a_ijk, a_eq, k_a):
 
 # calculate torsion angle energy between bonded atoms
 def get_e_torsion(t_ijkl, v_n, gamma, n_fold, paths):
-    e_torsion = v_n * (1.0 + math.cos(geomcalc.deg2rad() * (n_fold * t_ijkl - gamma))) / paths
+    e_torsion = (v_n * (1.0 + math.cos(geomcalc.deg2rad() *
+        (n_fold * t_ijkl - gamma))) / paths)
     return e_torsion
 
 # calculate out-of-plane angle (improper torsion) energy bewteen bonded atoms
 def get_e_outofplane(o_ijkl, v_n, gamma, n_fold):
-    e_outofplane = v_n * (1.0 + math.cos(geomcalc.deg2rad() * (n_fold * o_ijkl - gamma)))
+    e_outofplane = (v_n * (1.0 + math.cos(geomcalc.deg2rad() *
+        (n_fold * o_ijkl - gamma))))
     return e_outofplane
 
 # calculate van der waals interaction between atom pair
@@ -49,7 +51,8 @@ def get_e_bound_i(k_box, bound, coords, origin, boundtype):
     if (boundtype == 'prism'):
         for j in range(3):
             scale = 1.0 if (abs(coords[j] - origin[j]) >= bound) else 0.0
-            e_bound_i += scale * k_box * (abs(coords[j] - origin[j]) - bound)**2
+            e_bound_i += (scale * k_box *
+                (abs(coords[j] - origin[j]) - bound)**2)
     elif (boundtype == 'sphere'):
         r_io = geomcalc.get_r_ij(origin, coords)
         u_io = geomcalc.get_u_ij(origin, coords)
@@ -76,7 +79,8 @@ def get_e_nonbonded(mol):
             r_ij = geomcalc.get_r_ij(atom1.coords, atom2.coords)
             eps_ij = atom1.sreps * atom2.sreps
             ro_ij = atom1.ro + atom2.ro
-            mol.e_elst += get_e_elst_ij(r_ij, atom1.charge, atom2.charge, mol.dielectric)
+            mol.e_elst += get_e_elst_ij(r_ij, atom1.charge, atom2.charge,
+                mol.dielectric)
             mol.e_vdw += get_e_vdw_ij(r_ij, eps_ij, ro_ij)
 
 # update bond values and calculate bond energies
@@ -138,7 +142,8 @@ def get_e_bound(mol):
     for i in range(mol.n_atoms):
         atom = mol.atoms[i]
         k_box = mol.k_box
-        atom.e_bound = get_e_bound_i(k_box, bound, atom.coords, origin, boundtype)
+        atom.e_bound = get_e_bound_i(k_box, bound, atom.coords, origin,
+            boundtype)
         mol.e_bound += atom.e_bound
 
 # update temperature of system
