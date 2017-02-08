@@ -191,17 +191,17 @@ def get_prm(mol):
     infile_array = get_file_string_array(mol.infile)
     for i in range(len(infile_array)):
         record = infile_array[i]
-        rec_type = record[0]
-        if (rec_type == 'ATOM'):
+        rec_type = record[0].lower()
+        if (rec_type == 'atom'):
             get_atom(mol, record)
     mol.n_atoms = len(mol.atoms)
     for i in range(len(infile_array)):
         record = infile_array[i]
-        rec_type = record[0]
-        if   (rec_type == 'BOND'      ): get_bond(mol, record)
-        elif (rec_type == 'ANGLE'     ): get_angle(mol, record)
-        elif (rec_type == 'TORSION'   ): get_torsion(mol, record)
-        elif (rec_type == 'OUTOFPLANE'): get_outofplane(mol, record)
+        rec_type = record[0].lower()
+        if   (rec_type == 'bond'      ): get_bond(mol, record)
+        elif (rec_type == 'angle'     ): get_angle(mol, record)
+        elif (rec_type == 'torsion'   ): get_torsion(mol, record)
+        elif (rec_type == 'outofplane'): get_outofplane(mol, record)
     mol.n_bonds = len(mol.bonds)
     mol.n_angles = len(mol.angles)
     mol.n_torsions = len(mol.torsions)
