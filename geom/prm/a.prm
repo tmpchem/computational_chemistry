@@ -89,7 +89,7 @@ TORSION   10    8    9    5  20.00  180.0 2 2
 TORSION   11    2    3    4  13.60  180.0 2 2
 TORSION   13    7    8    9   6.80  180.0 2 4
 TORSION   13    7    8   10   6.80  180.0 2 4
-# 3 Outofplanes (At1, At2, At3, At4, V_n, Gamma, N_f)
-OUTOFPLANE    1    3    2   11   1.10  180.0 2
-OUTOFPLANE    7    9    8   10   1.10  180.0 2
-OUTOFPLANE    6   14   12   15   1.00  180.0 2
+# 3 Outofplanes (At1, At2, At3, At4, V_n)
+OUTOFPLANE    1    3    2   11   1.10
+OUTOFPLANE    7    9    8   10   1.10
+OUTOFPLANE    6   14   12   15   1.00

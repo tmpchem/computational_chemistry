@@ -1,6 +1,5 @@
+import os, sys, math, time, numpy
 from mmlib import energy, gradient, molecule, fileio
-import os, sys, math, time
-import numpy as np
 
 # simulation.py: classes for handling molecular dynamics / monte carlo data
 
@@ -69,7 +68,7 @@ class Simulation:
                 sigma = (math.sqrt(2.0 * rgas() * self.temp
                     / (3.0 * self.mol.atoms[i].mass)))
                 for j in range(3):
-                    self.mol.atoms[i].vels[j] = np.random.normal(0.0, sigma)
+                    self.mol.atoms[i].vels[j] = numpy.random.normal(0.0, sigma)
             self.mol.get_energy('standard')
             vscale = math.sqrt(self.temp / self.mol.temp)
             for i in range(self.mol.n_atoms):
@@ -88,11 +87,11 @@ class Simulation:
 
     # generate a random vector to displace 
     def get_rand_disp(self):
-        self.rand_disp = np.zeros((self.mol.n_atoms, 3))
+        self.rand_disp = numpy.zeros((self.mol.n_atoms, 3))
         for i in range(self.mol.n_atoms):
             for j in range(3):
-                randval = np.random.normal(0.0, self.dispmag)
-                self.rand_disp[i][j] = np.random.normal(0.0, self.dispmag)
+                randval = numpy.random.normal(0.0, self.dispmag)
+                self.rand_disp[i][j] = numpy.random.normal(0.0, self.dispmag)
 
     # molecular dynamics function
     def run_dynamics(self):
@@ -127,7 +126,7 @@ class Simulation:
             self.mol.get_energy('standard')
             delta_e = self.mol.e_total - penergy
             bf = math.exp(min(1.0, -1.0*delta_e / (energy.kb()*self.temp)))
-            if (bf >= np.random.random()):
+            if (bf >= numpy.random.random()):
                 self.check_print_mc()
                 self.conf += 1
                 self.n_accept += 1

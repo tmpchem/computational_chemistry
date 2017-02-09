@@ -5,8 +5,7 @@ This module provides the interface to print molecular energy, gradient,
 geometry, topology, parameter, and simulation data to screen or file.
 """
 
-import os, sys, math
-import numpy as np
+import os, sys, math, numpy
 from mmlib import param, geomcalc, topology, energy, molecule
 
 def get_file_string_array(infile_name):
@@ -50,7 +49,7 @@ def get_geom(mol):
     mol.n_atoms = int(infile_array[0][0])
     for i in range(mol.n_atoms):
         at_type = infile_array[i+2][0]
-        at_coords = np.zeros(3)
+        at_coords = numpy.zeros(3)
         for j in range(3):
             at_coords[j] = float(infile_array[i+2][j+1])
         at_charge = float(infile_array[i+2][4])
@@ -79,7 +78,7 @@ def get_atom(mol, record):
         record (str*): Array of strings from line of prm file.
     """
     at_type = record[2]
-    at_coords = np.zeros(3)
+    at_coords = numpy.zeros(3)
     for j in range(3):
         at_coords[j] = float(record[j+3])
     at_charge, at_ro, at_eps = (float(record[6]), float(record[7]),

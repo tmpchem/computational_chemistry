@@ -1,5 +1,4 @@
-import sys, math
-import numpy as np
+import sys, math, numpy
 from mmlib import fileio, param, geomcalc, topology, energy, gradient
 
 # molecule.py: classes for handling molecular mechanics data
@@ -18,16 +17,16 @@ class Atom:
         self.sreps = math.sqrt(self.eps)
         self.mass = at_mass
         self.covrad = param.get_cov_rad(self.element)
-        self.vels = np.zeros(3)
-        self.accs = np.zeros(3)
+        self.vels = numpy.zeros(3)
+        self.accs = numpy.zeros(3)
         self.pcoords = at_coords
-        self.pvels = np.zeros(3)
-        self.paccs = np.zeros(3)
+        self.pvels = numpy.zeros(3)
+        self.paccs = numpy.zeros(3)
         self.e_nonbonded = 0.0
         self.e_bonded = 0.0
         self.e_bound = 0.0
-        self.g_nonbonded = np.zeros(3)
-        self.g_bonded = np.zeros(3)
+        self.g_nonbonded = numpy.zeros(3)
+        self.g_bonded = numpy.zeros(3)
     # set new atom type
     def set_attype(self, attype):
         self.attype = attype
@@ -219,7 +218,7 @@ class Molecule:
         self.k_box = 0.0
         self.bound = 0.0
         self.boundtype = 'none'
-        self.origin = np.zeros(3)
+        self.origin = numpy.zeros(3)
         self.vol = float('inf')
         self.temp = 0.0
         self.press = 0.0
@@ -244,15 +243,15 @@ class Molecule:
         elif (self.filetype == 'prm'):
             self.read_in_prm()
             
-        self.g_bonds = np.zeros((self.n_atoms, 3))
-        self.g_angles = np.zeros((self.n_atoms, 3))
-        self.g_torsions = np.zeros((self.n_atoms, 3))
-        self.g_outofplanes = np.zeros((self.n_atoms, 3))
-        self.g_bonded = np.zeros((self.n_atoms, 3))
-        self.g_vdw = np.zeros((self.n_atoms, 3))
-        self.g_elst = np.zeros((self.n_atoms, 3))
-        self.g_nonbonded = np.zeros((self.n_atoms, 3))
-        self.g_total = np.zeros((self.n_atoms, 3))
+        self.g_bonds = numpy.zeros((self.n_atoms, 3))
+        self.g_angles = numpy.zeros((self.n_atoms, 3))
+        self.g_torsions = numpy.zeros((self.n_atoms, 3))
+        self.g_outofplanes = numpy.zeros((self.n_atoms, 3))
+        self.g_bonded = numpy.zeros((self.n_atoms, 3))
+        self.g_vdw = numpy.zeros((self.n_atoms, 3))
+        self.g_elst = numpy.zeros((self.n_atoms, 3))
+        self.g_nonbonded = numpy.zeros((self.n_atoms, 3))
+        self.g_total = numpy.zeros((self.n_atoms, 3))
 
     # read in xyzq data from input file
     def read_in_xyzq(self):
@@ -264,7 +263,7 @@ class Molecule:
 
     # determine bonded topology of molecule
     def get_topology(self):
-        topology.get_bond_tree(self)
+        topology.get_bond_graph(self)
         topology.get_bonds(self)
         topology.get_angles(self)
         topology.get_torsions(self)

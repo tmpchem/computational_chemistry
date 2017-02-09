@@ -1,5 +1,4 @@
-import math
-import numpy as np
+import math, numpy
 
 # geomcalc.py: functions for calculating molecular coordinate data
 
@@ -25,7 +24,7 @@ def get_r_ij(coords_i, coords_j):
 # calculate unit vector between two points
 def get_u_ij(coords_i, coords_j):
     r_ij = get_r_ij(coords_i, coords_j)
-    u_ij = np.zeros(3)
+    u_ij = numpy.zeros(3)
     if (r_ij > 0.0):
         for m in range(3):
             u_ij[m] = (coords_j[m] - coords_i[m]) / r_ij
@@ -42,7 +41,7 @@ def get_udp(uvec_i, uvec_j):
 
 # calculate unit cross product between two unit vectors
 def get_ucp(uvec_i, uvec_j):
-    ucp = np.zeros(3)
+    ucp = numpy.zeros(3)
     cos_ijk = get_udp(uvec_i, uvec_j)
     sin_ijk = math.sqrt(1 - cos_ijk**2)
     if (sin_ijk > 0.0):
@@ -53,7 +52,7 @@ def get_ucp(uvec_i, uvec_j):
 
 # calculate cross product between two unit vectors
 def get_cp(uvec_i, uvec_j):
-    ucp = np.zeros(3)
+    ucp = numpy.zeros(3)
     cos_ijk = get_udp(uvec_i, uvec_j)
     sin_ijk = math.sqrt(1 - cos_ijk**2)
     if (sin_ijk > 0.0):

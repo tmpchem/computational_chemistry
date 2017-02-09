@@ -1,5 +1,5 @@
+import os, sys, ast, math 
 from mmlib import geomcalc, fileio, topology, energy
-import os, sys, ast, math
 
 # absolute and relative thresholds for float equality comparisons
 comp_coef = 1.0

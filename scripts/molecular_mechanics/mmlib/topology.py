@@ -5,23 +5,23 @@ from mmlib import geomcalc, param, molecule
 # threshold beyond average of covalent radii to determine bond cutoff
 bond_thresh = 1.2
 
-# build tree of which atoms are covalently bonded
-def get_bond_tree(mol):
-    mol.bond_tree = [[] for i in range(mol.n_atoms)]
+# build graph of which atoms are covalently bonded
+def get_bond_graph(mol):
+    mol.bond_graph = [[] for i in range(mol.n_atoms)]
     for i in range(mol.n_atoms):
         for j in range(i+1, mol.n_atoms):
             thresh = bond_thresh * (mol.atoms[i].covrad + mol.atoms[j].covrad)
             r2_12 = geomcalc.get_r2_ij(mol.atoms[i].coords,
                 mol.atoms[j].coords)
             if (r2_12 < thresh**2):
-                mol.bond_tree[i].append(j)
-                mol.bond_tree[j].append(i)
+                mol.bond_graph[i].append(j)
+                mol.bond_graph[j].append(i)
 
-# determine atoms which are covalently bonded from bond tree and get parameters
+# determine atoms which are covalently bonded from bond graph and get parameters
 def get_bonds(mol):
     for i in range(mol.n_atoms):
-        for a in range(len(mol.bond_tree[i])):
-            j = mol.bond_tree[i][a]
+        for a in range(len(mol.bond_graph[i])):
+            j = mol.bond_graph[i][a]
             if (i < j):
                 r_ij = geomcalc.get_r_ij(mol.atoms[i].coords,
                     mol.atoms[j].coords)
@@ -33,14 +33,14 @@ def get_bonds(mol):
     mol.bonds = sorted(mol.bonds, key=lambda bond:bond.at1)
     mol.n_bonds = len(mol.bonds)
     
-# determine atoms which form a bond angle from bond tree and get parameters
+# determine atoms which form a bond angle from bond graph and get parameters
 def get_angles(mol):
     for j in range(mol.n_atoms):
-        n_jbonds = len(mol.bond_tree[j])
+        n_jbonds = len(mol.bond_graph[j])
         for a in range(n_jbonds):
-            i = mol.bond_tree[j][a]
+            i = mol.bond_graph[j][a]
             for b in range(a+1, n_jbonds):
-                k = mol.bond_tree[j][b]
+                k = mol.bond_graph[j][b]
                 a_ijk = geomcalc.get_a_ijk(mol.atoms[i].coords,
                     mol.atoms[j].coords, mol.atoms[k].coords)
                 k_a, a_eq = param.get_angle_param(mol.atoms[i].attype,
@@ -53,19 +53,19 @@ def get_angles(mol):
     mol.angles = sorted(mol.angles, key=lambda angle:angle.at1)
     mol.n_angles = len(mol.angles)
     
-# determine atoms which form torsion angles from bond tree and get parameters
+# determine atoms which form torsion angles from bond graph and get parameters
 def get_torsions(mol):
     for j in range(mol.n_atoms):
-        n_jbonds = len(mol.bond_tree[j])
+        n_jbonds = len(mol.bond_graph[j])
         for a in range(n_jbonds):
-            k = mol.bond_tree[j][a]
+            k = mol.bond_graph[j][a]
             if (k < j): continue
-            n_kbonds = len(mol.bond_tree[k])
+            n_kbonds = len(mol.bond_graph[k])
             for b in range(n_jbonds):
-                i = mol.bond_tree[j][b]
+                i = mol.bond_graph[j][b]
                 if (i == k): continue
                 for c in range(n_kbonds):
-                    l = mol.bond_tree[k][c]
+                    l = mol.bond_graph[k][c]
                     if (l == j or l == i): continue
                     t_ijkl = geomcalc.get_t_ijkl(mol.atoms[i].coords,
                         mol.atoms[j].coords, mol.atoms[k].coords,
@@ -82,17 +82,17 @@ def get_torsions(mol):
     mol.torsions = sorted(mol.torsions, key=lambda torsion:torsion.at1)
     mol.n_torsions = len(mol.torsions)
 
-# determine atoms which form out-of-plane angles from bond tree and get parameters
+# determine atoms which form out-of-plane angles from bond graph and get parameters
 def get_outofplanes(mol):
     for l in range(mol.n_atoms):
-        n_lbonds = len(mol.bond_tree[l])
+        n_lbonds = len(mol.bond_graph[l])
         for a in range(n_lbonds):
-            i = mol.bond_tree[l][a]
+            i = mol.bond_graph[l][a]
             for b in range(n_lbonds):
-                j = mol.bond_tree[l][b]
+                j = mol.bond_graph[l][b]
                 if (i == j): continue
                 for c in range(b+1, n_lbonds):
-                    k = mol.bond_tree[l][c]
+                    k = mol.bond_graph[l][c]
                     if (i == k): continue
                     o_ijkl = geomcalc.get_o_ijkl(mol.atoms[i].coords,
                         mol.atoms[j].coords, mol.atoms[k].coords,
