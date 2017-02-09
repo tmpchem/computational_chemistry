@@ -393,14 +393,14 @@ def print_geom(mol):
     """
     header = ' Molecular Geometry and Non-bonded Parameters '
     params = ['type', 'x', 'y', 'z', 'q', 'ro/2', 'eps']
-    spaces = [6, 6, 11, 11, 10, 6, 4]
-    n_banner = 73
+    spaces = [6, 5, 9, 9, 7, 6, 4]
+    n_banner = 65
     print_header(header, n_banner, params, spaces)
     for i in range(mol.n_atoms):
         print('%4i | %-2s' % (i+1, mol.atoms[i].attype), end='')
         for j in range(3):
-            print('%12.6f' % (mol.atoms[i].coords[j]), end='')
-        print('  %8.5f %7.4f %7.4f' % (mol.atoms[i].charge,
+            print('%10.4f' % (mol.atoms[i].coords[j]), end='')
+        print(' %7.4f %7.4f %7.4f' % (mol.atoms[i].charge,
             mol.atoms[i].ro, mol.atoms[i].eps))
 
 def print_geom_file(outfile, mol):
@@ -446,12 +446,12 @@ def print_bonds(mol):
         print_header(header, n_banner, params, spaces)
     else:
         print('\n No Bonds Detected')
+    a = mol.atoms
     for p in range(mol.n_bonds):
-        bond = mol.bonds[p]
-        t1, t2 = mol.atoms[bond.at1].attype, mol.atoms[bond.at2].attype
+        b = mol.bonds[p]
+        t1, t2 = a[b.at1].attype, a[b.at2].attype
         pstr = '%4i | %7.2f %8.4f %8.4f (%2s-%2s) %8.4f (%i-%i)' % (p+1,
-            bond.k_b, bond.r_eq, bond.r_ij, t1, t2, bond.e, bond.at1+1,
-            bond.at2+1)
+            b.k_b, b.r_eq, b.r_ij, t1, t2, b.energy, b.at1+1, b.at2+1)
         print(pstr)
 
 def print_bonds_file(outfile, mol):
@@ -468,9 +468,9 @@ def print_bonds_file(outfile, mol):
     """
     outfile.write('# %i Bonds (At1, At2, K_b, R_eq)\n' % (mol.n_bonds))
     for p in range(mol.n_bonds):
-        bond = mol.bonds[p]
-        outfile.write('BOND %4i %4i %7.2f %7.4f\n' % (bond.at1+1, bond.at2+1,
-            bond.k_b, bond.r_eq))
+        b = mol.bonds[p]
+        outfile.write('BOND %4i %4i %7.2f %7.4f\n' % (b.at1+1, b.at2+1,
+            b.k_b, b.r_eq))
 
 def print_angles(mol):
     """Print angle topology and parameters for a molecule to screen.
@@ -492,13 +492,13 @@ def print_angles(mol):
         print_header(header, n_banner, params, spaces)
     else:
         print('\n No Bond Angles Detected')
+    at = mol.atoms
     for p in range(mol.n_angles):
-        ang = mol.angles[p]
-        t1, t2, t3 = (mol.atoms[ang.at1].attype, mol.atoms[ang.at2].attype,
-            mol.atoms[ang.at3].attype)
+        a = mol.angles[p]
+        t1, t2, t3 = (at[a.at1].attype, at[a.at2].attype, at[a.at3].attype)
         pstr = '%4i | %6.2f %7.3f %7.3f (%2s-%2s-%2s) %7.4f (%i-%i-%i)' % (
-            p+1, ang.k_a, ang.a_eq, ang.a_ijk, t1, t2, t3, ang.e, ang.at1+1,
-            ang.at2+1, ang.at3+1)
+            p+1, a.k_a, a.a_eq, a.a_ijk, t1, t2, t3, a.energy, a.at1+1,
+            a.at2+1, a.at3+1)
         print(pstr)
 
 def print_angles_file(outfile, mol):
@@ -515,9 +515,9 @@ def print_angles_file(outfile, mol):
     """
     outfile.write('# %i Angles (At1, At2, At3, K_a, A_eq)\n' % (mol.n_angles))
     for p in range(mol.n_angles):
-        ang = mol.angles[p]
-        outfile.write('ANGLE %4i %4i %4i %7.4f %8.4f\n' % (ang.at1+1,
-            ang.at2+1, ang.at3+1, ang.k_a, ang.a_eq))
+        a = mol.angles[p]
+        outfile.write('ANGLE %4i %4i %4i %7.4f %8.4f\n' % (a.at1+1,
+            a.at2+1, a.at3+1, a.k_a, a.a_eq))
 
 def print_torsions(mol):
     """Print torsion topology and parameters for a molecule to screen.
@@ -539,14 +539,15 @@ def print_torsions(mol):
         print_header(header, n_banner, params, spaces)
     else:
         print('\n No Torsion Angles Detected')
+    a = mol.atoms
     for p in range(mol.n_torsions):
-        tor = mol.torsions[p]
-        t1, t2 = mol.atoms[tor.at1].attype, mol.atoms[tor.at2].attype
-        t3, t4 = mol.atoms[tor.at3].attype, mol.atoms[tor.at4].attype
+        t = mol.torsions[p]
+        t1, t2 = a[t.at1].attype, a[t.at2].attype
+        t3, t4 = a[t.at3].attype, a[t.at4].attype
         pstr = '%4i | %6.2f %6.1f %8.3f %i %i (%2s-%2s-%2s-%2s)' % (p+1,
-            tor.v_n, tor.gam, tor.t_ijkl, tor.n, tor.paths, t1, t2, t3, t4)
-        pstr += ' %7.4f (%i-%i-%i-%i)' % (tor.e, tor.at1+1, tor.at2+2,
-            tor.at3+1, tor.at4+1)
+            t.v_n, t.gam, t.t_ijkl, t.n, t.paths, t1, t2, t3, t4)
+        pstr += ' %7.4f (%i-%i-%i-%i)' % (t.energy, t.at1+1, t.at2+2,
+            t.at3+1, t.at4+1)
         print(pstr)
 
 def print_torsions_file(outfile, mol):
@@ -565,10 +566,9 @@ def print_torsions_file(outfile, mol):
     outfile.write('# %i Torsions (At1, At2, At3, At4,' % (mol.n_torsions))
     outfile.write('V_n, Gamma, N_f, paths)\n')
     for p in range(mol.n_torsions):
-        tor = mol.torsions[p]
+        t = mol.torsions[p]
         outfile.write('TORSION %4i %4i %4i %4i %6.2f %6.1f %i %i\n' % (
-            tor.at1+1, tor.at2+1, tor.at3+1, tor.at4+1, tor.v_n, tor.gam,
-            tor.n, tor.paths))
+            t.at1+1, t.at2+1, t.at3+1, t.at4+1, t.v_n, t.gam, t.n, t.paths))
 
 def print_outofplanes(mol):
     """Print outofplane topology and parameters for a molecule to screen.
@@ -589,13 +589,14 @@ def print_outofplanes(mol):
         print_header(header, n_banner, params, spaces)
     else:
         print('\n No Out-of-plane Angles Detected')
+    a = mol.atoms
     for p in range(mol.n_outofplanes):
-        oop = mol.outofplanes[p]
-        t1, t2 = mol.atoms[oop.at1].attype, mol.atoms[oop.at2].attype
-        t3, t4 = mol.atoms[oop.at3].attype, mol.atoms[oop.at4].attype
+        o = mol.outofplanes[p]
+        t1, t2 = a[o.at1].attype, a[o.at2].attype
+        t3, t4 = a[o.at3].attype, a[o.at4].attype
         pstr = '%4i | %6.2f %7.3f (%2s-%2s-%2s-%2s) %7.4f (%i-%i-%i-%i)' % (
-            p+1, oop.v_n, oop.o_ijkl, t1, t2, t3, t4, oop.e, oop.at1+1,
-            oop.at2+1, oop.at3+1, oop.at4+1)
+            p+1, o.v_n, o.o_ijkl, t1, t2, t3, t4, o.energy, o.at1+1, o.at2+1,
+            o.at3+1, o.at4+1)
         print(pstr)
 
 def print_outofplanes_file(outfile, mol):
@@ -613,10 +614,9 @@ def print_outofplanes_file(outfile, mol):
     outfile.write('# %i Outofplanes (At1, At2, At3, At4,' % (mol.n_outofplanes))
     outfile.write(' V_n, Gamma, N_f)\n')
     for p in range(mol.n_outofplanes):
-        oop = mol.outofplanes[p]
-        outfile.write('OUTOFPLANE %4i %4i %4i %4i %6.2f %6.1f %i\n' % (
-            oop.at1+1, oop.at2+1, oop.at3+1, oop.at4+1, oop.v_n, oop.gam,
-            oop.n_fold))
+        o = mol.outofplanes[p]
+        outfile.write('OUTOFPLANE %4i %4i %4i %4i %6.2f\n' % (o.at1+1,
+            o.at2+1, o.at3+1, o.at4+1, o.v_n))
 
 def print_energy(mol):
     """Print list of energy values in a table to screen.

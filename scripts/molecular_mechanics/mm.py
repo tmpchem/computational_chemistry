@@ -23,8 +23,6 @@ import mmlib
 #                                 02/15/2016                                #
 #############################################################################
 
-## MAIN BLOCK ##
-
 # check input syntax
 infile_name = mmlib.fileio.get_input()
 

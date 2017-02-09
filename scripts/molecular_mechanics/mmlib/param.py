@@ -3,7 +3,7 @@
 
 import sys
 
-# relative atomic masses of elements (in atomic mass units [amu]) from
+# relative atomic masses of elements (in atomic mass units [g/mol]) from
 # "CRC Handbook" 84th ed, ed Lide, pgs 1-12 - 1-14
 at_masses = {  'H' : 1.00794, 'C' : 12.0107, 'O' : 15.9994, 'N' : 14.0067,
 'F' : 18.9984, 'P' : 30.9738, 'S' : 32.0650, 'Cl': 35.4530, 'Br': 79.9040,
@@ -14,7 +14,7 @@ at_masses = {  'H' : 1.00794, 'C' : 12.0107, 'O' : 15.9994, 'N' : 14.0067,
 'Ni': 58.6934, 'Cu': 63.5460, 'Zn': 65.4090, 'Ga': 69.7230, 'Ge': 72.6400,
 'As': 74.9216, 'Se': 78.9600, 'Kr': 83.7980, 'X' : 0.00000}
 
-# covalent (or ionic) radii by atomic element (Angstroms) from
+# covalent (or ionic) radii by atomic element [Angstroms] from
 # "Inorganic Chemistry" 3rd ed, Housecroft, Appendix 6, pgs 1013-1014
 cov_radii = {'H' : 0.37, 'C' : 0.77, 'O' : 0.73, 'N' : 0.75, 'F' : 0.71,
  'P' : 1.10, 'S' : 1.03, 'Cl': 0.99, 'Br': 1.14, 'I' : 1.33, 'He': 0.30,
@@ -24,7 +24,9 @@ cov_radii = {'H' : 0.37, 'C' : 0.77, 'O' : 0.73, 'N' : 0.75, 'F' : 0.71,
  'Ni': 0.55, 'Cu': 0.46, 'Zn': 0.60, 'Ga': 1.22, 'Ge': 1.22, 'As': 1.22,
  'Se': 1.17, 'Kr': 1.03, 'X' : 0.00}
 
-# first parameter is Ro/2 (A), second is Epsilon (kcal/mol)
+# AMBER94 molecular mechanics van der waals parameters for atom types:
+# 1 -> (float) ro/2 [Angstrom], van der waals radius (divided by 2)
+# 2 -> (float) eps [kcal/mol], van der waals attraction magnitude
 vdw_params = {          'C' : [1.9080, 0.0860], 'CA': [1.9080, 0.0860],
 'CM': [1.9080, 0.0860], 'CC': [1.9080, 0.0860], 'CV': [1.9080, 0.0860],
 'CW': [1.9080, 0.0860], 'CR': [1.9080, 0.0860], 'CB': [1.9080, 0.0860],
@@ -43,7 +45,9 @@ vdw_params = {          'C' : [1.9080, 0.0860], 'CA': [1.9080, 0.0860],
 'N*': [1.8240, 0.1700], 'N2': [1.8240, 0.1700], 'N3': [1.8750, 0.1700],
 'He': [1.5800, 0.0112], 'Ar': [1.8436, 0.4466], 'HH': [1.5000, 0.0000]}
 
-# bond parameters, [Kb (*kcal/mol / Angstrom^2), R_eq (Angstrom)]
+# AMBER94 molecular mechanics bond parameters for atom type pairs:
+# 1 -> (float) k_b [kcal/(mol*A^2)], bond spring constant
+# 2 -> (float) r_eq [Angstrom], equilibrium bond length
 bond_params = {         'C CA': [469.0, 1.409], 'C CB': [447.0, 1.419],
 'C CM': [410.0, 1.444], 'C CT': [317.0, 1.522], 'C N ': [490.0, 1.335],
 'C N*': [424.0, 1.383], 'C NA': [418.0, 1.388], 'C NC': [457.0, 1.358],
@@ -73,7 +77,9 @@ bond_params = {         'C CA': [469.0, 1.409], 'C CB': [447.0, 1.419],
 'O2P ': [525.0, 1.480], 'OHP ': [230.0, 1.610], 'OSP ': [230.0, 1.610],
 'OWHW': [553.0,0.9572], 'S S ': [166.0, 2.038], 'HHHH': [100.0, 0.740]}
 
-# angle parameters, [Ka (*kcal/mol / radian^2), Theta_eq (degrees)]
+# AMBER94 molecular mechanics angle parameters for atom type triplets:
+# 1 -> (float) k_a [kcal/(mol*rad^2)], angle spring constant
+# 2 -> (float) a_eq [degrees], equilibrium bond angle
 angle_params = {           'C CACA': [ 63.0, 120.00],
 'C CAHA': [ 35.0, 120.00], 'C CBCB': [ 63.0, 119.20],
 'C CBNB': [ 70.0, 130.00], 'C CMCM': [ 63.0, 120.70],
@@ -169,75 +175,93 @@ angle_params = {           'C CACA': [ 63.0, 120.00],
 'O2P OS': [100.0, 108.23], 'OHP OS': [ 45.0, 102.60],
 'OSP OS': [ 45.0, 102.60], 'P OSP ': [100.0, 120.50]} 
 
-# central torsion parameters, [Vn/2 (kcal/mol), Gamma (degrees),
-# n (unitless), paths (unitless)]
-torsion23_params = {            'C CA': [14.50, 180.0, 2.0, 4],
-'C CB': [12.00, 180.0, 2.0, 4], 'C CM': [ 8.70, 180.0, 2.0, 4],
-'C CT': [ 0.00,   0.0, 2.0, 4], 'C N ': [10.00, 180.0, 2.0, 4],
-'C N*': [ 5.80, 180.0, 2.0, 4], 'C NA': [ 5.40, 180.0, 2.0, 4],
-'C NC': [ 8.00, 180.0, 2.0, 2], 'C OH': [ 1.80, 180.0, 2.0, 2],
-'C*CB': [ 6.70, 180.0, 2.0, 4], 'C*CT': [ 0.00,   0.0, 2.0, 6],
-'C*CW': [26.10, 180.0, 2.0, 4], 'CACA': [14.50, 180.0, 2.0, 4],
-'CACB': [14.00, 180.0, 2.0, 4], 'CACM': [10.20, 180.0, 2.0, 4],
-'CACN': [14.50, 180.0, 2.0, 4], 'CACT': [ 0.00,   0.0, 2.0, 6],
-'CAN2': [ 9.60, 180.0, 2.0, 4], 'CANA': [ 6.00, 180.0, 2.0, 2],
-'CANC': [ 9.60, 180.0, 2.0, 2], 'CBCB': [21.80, 180.0, 2.0, 4],
-'CBCN': [12.00, 180.0, 2.0, 4], 'CBN*': [ 6.60, 180.0, 2.0, 4],
-'CBNB': [ 5.10, 180.0, 2.0, 2], 'CBNC': [ 8.30, 180.0, 2.0, 2],
-'CCCT': [ 0.00,   0.0, 2.0, 6], 'CCCV': [20.60, 180.0, 2.0, 4],
-'CCCW': [21.50, 180.0, 2.0, 4], 'CCNA': [ 5.60, 180.0, 2.0, 4],
-'CCNB': [ 4.80, 180.0, 2.0, 2], 'CKN*': [ 6.80, 180.0, 2.0, 4],
-'CKNB': [20.00, 180.0, 2.0, 2], 'CMCM': [26.60, 180.0, 2.0, 4],
-'CMCT': [ 0.00,   0.0, 3.0, 6], 'CMN*': [ 7.40, 180.0, 2.0, 4],
-'CNNA': [ 6.10, 180.0, 2.0, 4], 'CQNC': [13.60, 180.0, 2.0, 2],
-'CRNA': [ 9.30, 180.0, 2.0, 4], 'CRNB': [10.00, 180.0, 2.0, 2],
-'CTCT': [ 1.40,   0.0, 3.0, 9], 'CTN ': [ 0.00,   0.0, 2.0, 6],
-'CTN*': [ 0.00,   0.0, 2.0, 6], 'CTN2': [ 0.00,   0.0, 3.0, 6],
-'CTN3': [ 1.40,   0.0, 3.0, 9], 'CTOH': [ 0.50,   0.0, 3.0, 3],
-'CTOS': [ 1.15,   0.0, 3.0, 3], 'CTS ': [ 1.00,   0.0, 3.0, 3],
-'CTSH': [ 0.75,   0.0, 3.0, 3], 'CVNB': [ 4.80, 180.0, 2.0, 2],
-'CWNA': [ 6.00, 180.0, 2.0, 4], 'OHP ': [ 0.75,   0.0, 3.0, 3],
-'OSP ': [ 4.80, 180.0, 2.0, 2]}
+# AMBER94 molecular mechanics torsion parameters for atom type quartets
+# where only the 2 central atom types are known:
+# 1 -> (float) vn/2 [kcal/mol], rotation barrier height
+# 2 -> (float) gamma [degrees], barrier minimum offset angle
+# 3 -> (int) n [unitless], frequency of barrier
+# 4 -> (int) paths [unitless], number of unique torsion paths
+torsion23_params = {          'C CA': [14.50, 180.0, 2, 4],
+'C CB': [12.00, 180.0, 2, 4], 'C CM': [ 8.70, 180.0, 2, 4],
+'C CT': [ 0.00,   0.0, 2, 4], 'C N ': [10.00, 180.0, 2, 4],
+'C N*': [ 5.80, 180.0, 2, 4], 'C NA': [ 5.40, 180.0, 2, 4],
+'C NC': [ 8.00, 180.0, 2, 2], 'C OH': [ 1.80, 180.0, 2, 2],
+'C*CB': [ 6.70, 180.0, 2, 4], 'C*CT': [ 0.00,   0.0, 2, 6],
+'C*CW': [26.10, 180.0, 2, 4], 'CACA': [14.50, 180.0, 2, 4],
+'CACB': [14.00, 180.0, 2, 4], 'CACM': [10.20, 180.0, 2, 4],
+'CACN': [14.50, 180.0, 2, 4], 'CACT': [ 0.00,   0.0, 2, 6],
+'CAN2': [ 9.60, 180.0, 2, 4], 'CANA': [ 6.00, 180.0, 2, 2],
+'CANC': [ 9.60, 180.0, 2, 2], 'CBCB': [21.80, 180.0, 2, 4],
+'CBCN': [12.00, 180.0, 2, 4], 'CBN*': [ 6.60, 180.0, 2, 4],
+'CBNB': [ 5.10, 180.0, 2, 2], 'CBNC': [ 8.30, 180.0, 2, 2],
+'CCCT': [ 0.00,   0.0, 2, 6], 'CCCV': [20.60, 180.0, 2, 4],
+'CCCW': [21.50, 180.0, 2, 4], 'CCNA': [ 5.60, 180.0, 2, 4],
+'CCNB': [ 4.80, 180.0, 2, 2], 'CKN*': [ 6.80, 180.0, 2, 4],
+'CKNB': [20.00, 180.0, 2, 2], 'CMCM': [26.60, 180.0, 2, 4],
+'CMCT': [ 0.00,   0.0, 3, 6], 'CMN*': [ 7.40, 180.0, 2, 4],
+'CNNA': [ 6.10, 180.0, 2, 4], 'CQNC': [13.60, 180.0, 2, 2],
+'CRNA': [ 9.30, 180.0, 2, 4], 'CRNB': [10.00, 180.0, 2, 2],
+'CTCT': [ 1.40,   0.0, 3, 9], 'CTN ': [ 0.00,   0.0, 2, 6],
+'CTN*': [ 0.00,   0.0, 2, 6], 'CTN2': [ 0.00,   0.0, 3, 6],
+'CTN3': [ 1.40,   0.0, 3, 9], 'CTOH': [ 0.50,   0.0, 3, 3],
+'CTOS': [ 1.15,   0.0, 3, 3], 'CTS ': [ 1.00,   0.0, 3, 3],
+'CTSH': [ 0.75,   0.0, 3, 3], 'CVNB': [ 4.80, 180.0, 2, 2],
+'CWNA': [ 6.00, 180.0, 2, 4], 'OHP ': [ 0.75,   0.0, 3, 3],
+'OSP ': [ 4.80, 180.0, 2, 2]}
 
-# torsion parameters, [Vn/2 (kcal/mol), Gamma (degrees), n (unitless),
-# paths (unitless)]
+# AMBER94 molecular mechanics torsion parameters for atom type quartets
+# where all 4 atom types are known (see above for parameter descriptions).
 torsion1234_params = {
-'C N CTC ': [[ 0.00,   0.0, -4.0, 1], [ 0.00, 180.0, -3.0, 1],
-             [ 0.20, 180.0, -2.0, 1], [ 0.00, 180.0, 1.0, 1]],
-'CTCTC N ': [[ 0.10,   0.0, -4.0, 1], [ 0.00,   0.0, -3.0, 1],
-             [ 0.07,   0.0, -2.0, 1], [ 0.00, 180.0, 1.0, 1]],
-'CTCTN C ': [[ 0.50, 180.0, -4.0, 1], [ 0.15, 180.0, -3.0, 1],
-             [ 0.00, 180.0, -2.0, 1], [ 0.53,   0.0, 1.0, 1]],
-'CTCTOSCT': [[0.383,   0.0, -3.0, 1], [ 0.10, 180.0,  2.0, 1]],
-'CTS S CT': [[ 0.60,   0.0,  3.0, 1], [ 3.50,   0.0, -2.0, 1]],
-'H N C O ': [[ 2.50, 180.0, -2.0, 1], [ 2.00,   0.0,  1.0, 1]],
-'N CTC N ': [[ 0.40, 180.0, -4.0, 1], [ 0.00,   0.0, -3.0, 1],
-             [ 1.35, 180.0, -2.0, 1], [ 0.75, 180.0, 1.0, 1]],
-'OHCTCTOH': [[0.144,   0.0, -3.0, 1], [ 1.00,   0.0,  2.0, 1]],
-'OHP OSCT': [[ 0.25,   0.0, -3.0, 1], [ 1.20,   0.0,  2.0, 1]],
-'OSCTCTOH': [[0.144,   0.0, -3.0, 1], [ 1.00,   0.0,  2.0, 1]],
-'OSCTCTOS': [[0.144,   0.0, -3.0, 1], [ 1.00,   0.0,  3.0, 1]],
-'OSCTN*CK': [[ 0.50, 180.0, -2.0, 1], [ 2.50,   0.0,  1.0, 1]],
-'OSCTN*CM': [[ 0.50, 180.0, -2.0, 1]],
-'OSP OSCT': [[ 0.25,   0.0, -3.0, 1], [ 1.20,   0.0, 2.0, 1]],
-'S CTN*CM': [[ 2.50,   0.0,  1.0, 1]]}
+'C N CTC ': [[ 0.00,   0.0, -4, 1], [ 0.00, 180.0, -3, 1],
+             [ 0.20, 180.0, -2, 1], [ 0.00, 180.0,  1, 1]],
+'CTCTC N ': [[ 0.10,   0.0, -4, 1], [ 0.00,   0.0, -3, 1],
+             [ 0.07,   0.0, -2, 1], [ 0.00, 180.0,  1, 1]],
+'CTCTN C ': [[ 0.50, 180.0, -4, 1], [ 0.15, 180.0, -3, 1],
+             [ 0.00, 180.0, -2, 1], [ 0.53,   0.0,  1, 1]],
+'CTCTOSCT': [[0.383,   0.0, -3, 1], [ 0.10, 180.0,  2, 1]],
+'CTS S CT': [[ 0.60,   0.0,  3, 1], [ 3.50,   0.0, -2, 1]],
+'H N C O ': [[ 2.50, 180.0, -2, 1], [ 2.00,   0.0,  1, 1]],
+'N CTC N ': [[ 0.40, 180.0, -4, 1], [ 0.00,   0.0, -3, 1],
+             [ 1.35, 180.0, -2, 1], [ 0.75, 180.0,  1, 1]],
+'OHCTCTOH': [[0.144,   0.0, -3, 1], [ 1.00,   0.0,  2, 1]],
+'OHP OSCT': [[ 0.25,   0.0, -3, 1], [ 1.20,   0.0,  2, 1]],
+'OSCTCTOH': [[0.144,   0.0, -3, 1], [ 1.00,   0.0,  2, 1]],
+'OSCTCTOS': [[0.144,   0.0, -3, 1], [ 1.00,   0.0,  3, 1]],
+'OSCTN*CK': [[ 0.50, 180.0, -2, 1], [ 2.50,   0.0,  1, 1]],
+'OSCTN*CM': [[ 0.50, 180.0, -2, 1]],
+'OSP OSCT': [[ 0.25,   0.0, -3, 1], [ 1.20,   0.0, 2.0, 1]],
+'S CTN*CM': [[ 2.50,   0.0,  1, 1]]}
 
-# 2-atom out-of-plane parameters, Vn/2 (kcal/mol)
+# AMBER94 molecular mechanics outofplane parameters for atom type
+# quartets where only final 2 atom types are known:
+# 1 -> (float) vn/2 [kcal/mol], rotation barrier height
 oop34_params = {'C O ': 10.5, 'CAH4':  1.1, 'CAH5':  1.1, 'CAHA':  1.1,
   'CKH5':  1.1, 'CMH4':  1.1, 'CMHA':  1.1, 'CQH5':  1.1, 'CRH5':  1.1,
   'CVH4':  1.1, 'CWH4':  1.1, 'N H ':  1.0, 'N2H ':  1.0, 'NAH ':  1.0}
 
-# 3-atom out-of-plane parameters, Vn/2 (kcal/mol)
+# AMBER94 molecular mechanics outofplane parameters for atom type
+# quartets where only final 3 atom types are known (see above for
+# parameter descriptions).
 oop234_params = {'CTN CT':  1.0, 'N2CAN2': 10.5, 'O2C O2': 10.5}
 
-# 4-atom out-of-plane parameters, Vn/2 (kcal/mol)
+# AMBER94 molecular mechanics outofplane parameters for atom type
+# quartets where al 4 atom types are known (see above for parameter
+# descriptions).
 oop1234_params = {'CACAC OH':  1.1, 'CACACACT':  1.1, 'CBNCCAN2':  1.1,
 'CKCBN*CT':  1.0, 'CMC CMCT':  1.1, 'CMC N*CT':  1.0, 'CTCMCMC' :  1.1,
 'CWCBC*CT':  1.1, 'NCCMCAN2':  1.1, 'NACVCCCT':  1.1, 'NACWCCCT':  1.1,
 'NANCCAN2':  1.1, 'NBCWCCCT':  1.1}
 
-# map for van der waals parameters from at types
 def get_vdw_param(at_type):
+    """Find van der waals parameter for specified AMBER mm atom type.
+    
+    Args:
+        at_type (str): AMBER mm atom type.
+    
+    Returns:
+        vdw (float, float): van der waals parameters for atom type:
+            ro/2 and eps.
+    """
     try:
         vdw = vdw_params[at_type]
     except KeyError:
@@ -245,8 +269,15 @@ def get_vdw_param(at_type):
         sys.exit()
     return vdw
 
-# map for determining atomic mass from element
 def get_at_mass(element):
+    """Find the mass of an atom of a given element (periodic table avg).
+    
+    Args:
+        element (str): atomic element string.
+    
+    Returns:
+        at_mass (float): average periodic table mass of element.
+    """
     try:
         at_mass = at_masses[element]
     except KeyError:
@@ -254,8 +285,15 @@ def get_at_mass(element):
         sys.exit()
     return at_mass
 
-# map for determining atomic covalent radius from element
 def get_cov_rad(element):
+    """Find the covalent radius of an atom of a given element.
+    
+    Args:
+        element (str): atomic element string.
+    
+    Returns:
+        cov_rad (float): covalent radius [Angstrom] of atom.
+    """
     try:
         cov_rad = cov_radii[element]
     except KeyError:
@@ -263,8 +301,17 @@ def get_cov_rad(element):
         sys.exit()
     return cov_rad
 
-# map for bond length parameters from at types
 def get_bond_param(at1_type, at2_type):
+    """Find bond parameters for 2 AMBER94 mm atom types.
+    
+    Args:
+        at1_type (str): atom 1 AMBER94 mm atom type.
+        at2_type (str): atom 2 AMBER94 mm atom type.
+    
+    Returns:
+        bond (float, float): AMBER94 mm bond parameters for atom types:
+            k_b [kcal/(mol*A^2)] and r_eq [Angstrom].
+    """
     try:
         bond_types = '%-2s%-2s' % (at1_type, at2_type)
         bond = bond_params[bond_types]
@@ -278,8 +325,18 @@ def get_bond_param(at1_type, at2_type):
             sys.exit()
     return bond
 
-# map for bond angle parameters from at types
 def get_angle_param(at1_type, at2_type, at3_type):
+    """Find angle parameters for 3 AMBER94 mm atom types.
+    
+    Args:
+        at1_type (str): atom 1 AMBER94 mm atom type.
+        at2_type (str): atom 2 AMBER94 mm atom type.
+        at3_type (str): atom 3 AMBER94 mm atom type.
+
+    Returns:
+        angle (float, float): AMBER94 mm angle parameters for atom types:
+            k_a [kcal/(mol*rad^2)] and a_eq [degrees].
+    """
     try:
         angle_types = '%-2s%-2s%-2s' % (at1_type, at2_type, at3_type)
         angle = angle_params[angle_types]
@@ -293,8 +350,20 @@ def get_angle_param(at1_type, at2_type, at3_type):
             sys.exit()
     return angle
 
-# map for torsion angle parameters from at types
 def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
+    """Find torsion parameters for 4 AMBER94 mm atom types:
+    
+    Args:
+        at1_type (str): atom 1 AMBER94 mm atom type.
+        at2_type (str): atom 2 AMBER94 mm atom type.
+        at3_type (str): atom 3 AMBER94 mm atom type.
+        at4_type (str): atom 4 AMBER94 mm atom type.
+
+    Returns:
+        torsion (float, float, int, int): AMBER94 mm torsion parameters
+            for atom types: vn/2 [kcal/mol], gamma [degrees], n [],
+            and paths [].
+    """
     torsion = []
   
     # two-atom torsion potentials
@@ -329,8 +398,19 @@ def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
   
     return torsion[0]
 
-# map for improper torsion angle parameters from at types
 def get_outofplane_param(at1_type, at2_type, at3_type, at4_type):
+    """Find outofplane parameters for 4 AMBER94 mm atom types:
+    
+    Args:
+        at1_type (str): atom 1 AMBER94 mm atom type.
+        at2_type (str): atom 2 AMBER94 mm atom type.
+        at3_type (str): atom 3 AMBER94 mm atom type.
+        at4_type (str): atom 4 AMBER94 mm atom type.
+
+    Returns:
+        torsion (float): AMBER94 mm outofplane parameters for atom types:
+            vn/2 [kcal/mol].
+    """
     oop = [0.0, 0.0, 1.0]
   
     # two-atom out-of-plane potentials

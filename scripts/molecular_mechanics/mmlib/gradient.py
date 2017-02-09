@@ -68,7 +68,7 @@ def get_g_outofplane(o_ijkl, v_n):
     Returns:
         g_outofplane (float): Magnitude of energy gradient [kcal/(mol*A)].
     """
-    g_outofplane = (-v_n * n_fold * math.sin(geomcalc.deg2rad()
+    g_outofplane = (-v_n * 2.0 * math.sin(geomcalc.deg2rad()
         * (2.0 * o_ijkl - 180.0)))
     return g_outofplane
 
@@ -247,14 +247,14 @@ def get_g_bonds(mol):
     """
     mol.g_bonds = numpy.zeros((mol.n_atoms, 3))
     for p in range(mol.n_bonds):
-        bond = mol.bonds[p]
-        c1 = mol.atoms[bond.at1].coords
-        c2 = mol.atoms[bond.at2].coords
-        bond.r_ij = geomcalc.get_r_ij(c1, c2)
-        bond.g = get_g_bond(bond.r_ij, bond.r_eq, bond.k_b)
+        b = mol.bonds[p]
+        c1 = mol.atoms[b.at1].coords
+        c2 = mol.atoms[b.at2].coords
+        b.r_ij = geomcalc.get_r_ij(c1, c2)
+        b.grad = get_g_bond(b.r_ij, b.r_eq, b.k_b)
         dir1, dir2 = get_gdir_inter(c1, c2)
-        mol.g_bonds[bond.at1] += bond.g * dir1
-        mol.g_bonds[bond.at2] += bond.g * dir2
+        mol.g_bonds[b.at1] += b.grad * dir1
+        mol.g_bonds[b.at2] += b.grad * dir2
 
 def get_g_angles(mol):
     """Calculate angle bend energy gradients for all angles.
@@ -265,16 +265,16 @@ def get_g_angles(mol):
     """
     mol.g_angles = numpy.zeros((mol.n_atoms, 3))
     for p in range(mol.n_angles):
-        ang = mol.angles[p]
-        c1 = mol.atoms[ang.at1].coords
-        c2 = mol.atoms[ang.at2].coords
-        c3 = mol.atoms[ang.at3].coords
-        ang.a_ijk = geomcalc.get_a_ijk(c1, c2, c3)
-        ang.g = get_g_angle(ang.a_ijk, ang.a_eq, ang.k_a)
+        a = mol.angles[p]
+        c1 = mol.atoms[a.at1].coords
+        c2 = mol.atoms[a.at2].coords
+        c3 = mol.atoms[a.at3].coords
+        a.a_ijk = geomcalc.get_a_ijk(c1, c2, c3)
+        a.grad = get_g_angle(a.a_ijk, a.a_eq, a.k_a)
         dir1, dir2, dir3 = get_gdir_angle(c1, c2, c3)
-        mol.g_angles[ang.at1] += ang.g * dir1
-        mol.g_angles[ang.at2] += ang.g * dir2
-        mol.g_angles[ang.at3] += ang.g * dir3
+        mol.g_angles[a.at1] += a.grad * dir1
+        mol.g_angles[a.at2] += a.grad * dir2
+        mol.g_angles[a.at3] += a.grad * dir3
 
 def get_g_torsions(mol):
     """Calculate torsion strain energy gradients for all torsions.
@@ -285,18 +285,18 @@ def get_g_torsions(mol):
     """
     mol.g_torsions = numpy.zeros((mol.n_atoms, 3))
     for p in range(mol.n_torsions):
-        tor = mol.torsions[p]
-        c1 = mol.atoms[tor.at1].coords
-        c2 = mol.atoms[tor.at2].coords
-        c3 = mol.atoms[tor.at3].coords
-        c4 = mol.atoms[tor.at4].coords
-        tor.t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4)
-        tor.g = get_g_torsion(tor.t_ijkl, tor.v_n, tor.gam, tor.n, tor.paths)
+        t = mol.torsions[p]
+        c1 = mol.atoms[t.at1].coords
+        c2 = mol.atoms[t.at2].coords
+        c3 = mol.atoms[t.at3].coords
+        c4 = mol.atoms[t.at4].coords
+        t.t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4)
+        t.grad = get_g_torsion(t.t_ijkl, t.v_n, t.gam, t.n, t.paths)
         dir1, dir2, dir3, dir4 = get_gdir_torsion(c1, c2, c3, c4)
-        mol.g_torsions[tor.at1] += tor.g * dir1
-        mol.g_torsions[tor.at2] += tor.g * dir2
-        mol.g_torsions[tor.at3] += tor.g * dir3
-        mol.g_torsions[tor.at4] += tor.g * dir4
+        mol.g_torsions[t.at1] += t.grad * dir1
+        mol.g_torsions[t.at2] += t.grad * dir2
+        mol.g_torsions[t.at3] += t.grad * dir3
+        mol.g_torsions[t.at4] += t.grad * dir4
 
 def get_g_outofplanes(mol):
     """Calculate outofplane bend energy gradients for all outofplanes.
@@ -307,18 +307,18 @@ def get_g_outofplanes(mol):
     """
     mol.g_outofplanes = numpy.zeros((mol.n_atoms, 3))
     for p in range(mol.n_outofplanes):
-        oop = mol.outofplanes[p]
-        c1 = mol.atoms[oop.at1].coords
-        c2 = mol.atoms[oop.at2].coords
-        c3 = mol.atoms[oop.at3].coords
-        c4 = mol.atoms[oop.at4].coords
-        oop.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
-        oop.g = get_g_outofplane(oop.o_ijkl, oop.v_n)
-        dir1, dir2, dir3, dir4 = get_gdir_outofplane(c1,c2,c3,c4,oop.o_ijkl)
-        mol.g_outofplanes[oop.at1] += oop.g * dir1
-        mol.g_outofplanes[oop.at2] += oop.g * dir2
-        mol.g_outofplanes[oop.at3] += oop.g * dir3
-        mol.g_outofplanes[oop.at4] += oop.g * dir4
+        o = mol.outofplanes[p]
+        c1 = mol.atoms[o.at1].coords
+        c2 = mol.atoms[o.at2].coords
+        c3 = mol.atoms[o.at3].coords
+        c4 = mol.atoms[o.at4].coords
+        o.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
+        o.grad = get_g_outofplane(o.o_ijkl, o.v_n)
+        dir1, dir2, dir3, dir4 = get_gdir_outofplane(c1, c2, c3, c4, o.o_ijkl)
+        mol.g_outofplanes[o.at1] += o.grad * dir1
+        mol.g_outofplanes[o.at2] += o.grad * dir2
+        mol.g_outofplanes[o.at3] += o.grad * dir3
+        mol.g_outofplanes[o.at4] += o.grad * dir4
 
 def get_g_nonbonded(mol):
     """Calculate vdw and elst energy gradients for all nonbonded atom pairs.

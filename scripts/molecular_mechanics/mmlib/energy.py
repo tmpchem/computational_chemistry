@@ -44,21 +44,21 @@ def get_e_angle(a_ijk, a_eq, k_a):
     e_angle = k_a * (geomcalc.deg2rad() * (a_ijk - a_eq) )**2
     return e_angle
 
-def get_e_torsion(t_ijkl, v_n, gamma, n_fold, paths):
+def get_e_torsion(t_ijkl, v_n, gamma, nfold, paths):
     """Calculate torsion strain energy between 4 bonded atoms.
     
     Args:
         t_ijkl (float): Torsion [degrees] between atoms i, j, k, and l.
         v_n (float): Barrier height [kcal/mol] of torsion ijkl.
         gamma (float): Barrier offset [degrees] of torsion ijkl.
-        n_fold (int): Barrier frequency of torsion ijkl.
+        nfold (int): Barrier frequency of torsion ijkl.
         paths (int): Number of distinct paths in torsion ijkl.
     
     Returns:
         e_torsion (float): Energy [kcal/mol] of torsion ijkl.
     """
     e_torsion = (v_n * (1.0 + math.cos(geomcalc.deg2rad()
-        * (n_fold * t_ijkl - gamma))) / paths)
+        * (nfold * t_ijkl - gamma))) / paths)
     return e_torsion
 
 def get_e_outofplane(o_ijkl, v_n):
@@ -185,12 +185,12 @@ def get_e_bonds(mol):
     """
     mol.e_bonds = 0.0
     for p in range(mol.n_bonds):
-        bond = mol.bonds[p]
-        c1 = mol.atoms[bond.at1].coords
-        c2 = mol.atoms[bond.at2].coords
-        bond.r_ij = geomcalc.get_r_ij(c1, c2)
-        bond.e = get_e_bond(bond.r_ij, bond.r_eq, bond.k_b)
-        mol.e_bonds += bond.e
+        b = mol.bonds[p]
+        c1 = mol.atoms[b.at1].coords
+        c2 = mol.atoms[b.at2].coords
+        b.r_ij = geomcalc.get_r_ij(c1, c2)
+        b.energy = get_e_bond(b.r_ij, b.r_eq, b.k_b)
+        mol.e_bonds += b.energy
 
 def get_e_angles(mol):
     """Update bond angle values and compute angle energy of system.
@@ -204,13 +204,13 @@ def get_e_angles(mol):
     """
     mol.e_angles = 0.0
     for p in range(mol.n_angles):
-        ang = mol.angles[p]
-        c1 = mol.atoms[ang.at1].coords
-        c2 = mol.atoms[ang.at2].coords
-        c3 = mol.atoms[ang.at3].coords
-        ang.a_ijk = geomcalc.get_a_ijk(c1, c2, c3)
-        ang.e = get_e_angle(ang.a_ijk, ang.a_eq, ang.k_a)
-        mol.e_angles += ang.e
+        a = mol.angles[p]
+        c1 = mol.atoms[a.at1].coords
+        c2 = mol.atoms[a.at2].coords
+        c3 = mol.atoms[a.at3].coords
+        a.a_ijk = geomcalc.get_a_ijk(c1, c2, c3)
+        a.energy = get_e_angle(a.a_ijk, a.a_eq, a.k_a)
+        mol.e_angles += a.energy
 
 def get_e_torsions(mol):
     """Update torsion angle values and compute torsion energy of system.
@@ -224,14 +224,14 @@ def get_e_torsions(mol):
     """
     mol.e_torsions = 0.0
     for p in range(mol.n_torsions):
-        tor = mol.torsions[p]
-        c1 = mol.atoms[tor.at1].coords
-        c2 = mol.atoms[tor.at2].coords
-        c3 = mol.atoms[tor.at3].coords
-        c4 = mol.atoms[tor.at4].coords
-        tor.t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4)
-        tor.e = get_e_torsion(tor.t_ijkl, tor.v_n, tor.gam, tor.n, tor.paths)
-        mol.e_torsions += tor.e
+        t = mol.torsions[p]
+        c1 = mol.atoms[t.at1].coords
+        c2 = mol.atoms[t.at2].coords
+        c3 = mol.atoms[t.at3].coords
+        c4 = mol.atoms[t.at4].coords
+        t.t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4)
+        t.energy = get_e_torsion(t.t_ijkl, t.v_n, t.gam, t.n, t.paths)
+        mol.e_torsions += t.energy
 
 def get_e_outofplanes(mol):
     """Update outofplane values and compute outofplane energy of system.
@@ -245,14 +245,14 @@ def get_e_outofplanes(mol):
     """
     mol.e_outofplanes = 0.0
     for p in range(mol.n_outofplanes):
-        oop = mol.outofplanes[p]
-        c1 = mol.atoms[oop.at1].coords
-        c2 = mol.atoms[oop.at2].coords
-        c3 = mol.atoms[oop.at3].coords
-        c4 = mol.atoms[oop.at4].coords
-        oop.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
-        oop.e = get_e_outofplane(oop.o_ijkl, oop.v_n)
-        mol.e_outofplanes += oop.e
+        o = mol.outofplanes[p]
+        c1 = mol.atoms[o.at1].coords
+        c2 = mol.atoms[o.at2].coords
+        c3 = mol.atoms[o.at3].coords
+        c4 = mol.atoms[o.at4].coords
+        o.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
+        o.e = get_e_outofplane(o.o_ijkl, o.v_n)
+        mol.e_outofplanes += o.e
 
 def get_e_bound(mol):
     """Compute total boundary energy of system.
