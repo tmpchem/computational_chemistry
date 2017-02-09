@@ -1,5 +1,5 @@
 
-"""Functions for computing molecular mechanics energy gradient components"""
+"""Functions for computing molecular mechanics energy gradient components."""
 
 import math, numpy
 from mmlib import energy, geomcalc, molecule

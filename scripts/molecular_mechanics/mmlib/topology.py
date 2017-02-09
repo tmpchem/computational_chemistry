@@ -1,13 +1,25 @@
+
+"""Functions for determining bonded structure of molecular systems."""
+
 from mmlib import geomcalc, param, molecule
 
-# topology.py: functions for determining the bonded structure of molecules
+def bond_thresh():
+    """Threshold beyond covalent radii sum to determine bond cutoff"""
+    return 1.2
 
-# threshold beyond average of covalent radii to determine bond cutoff
-bond_thresh = 1.2
-
-# build graph of which atoms are covalently bonded
 def get_bond_graph(mol):
+    """Build graph of which atoms are covalently bonded
+    
+    Search all atom pairs to find those within a threshold of the sum of
+    the interatomic covalent radii. Append those found to the bond graph
+    of each Atom object within the Molecule object.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with Atom objects
+            with geometry and mm parameter data.
+    """
     mol.bond_graph = [[] for i in range(mol.n_atoms)]
+    bond_thresh = bond_thresh()
     for i in range(mol.n_atoms):
         for j in range(i+1, mol.n_atoms):
             thresh = bond_thresh * (mol.atoms[i].covrad + mol.atoms[j].covrad)
@@ -17,8 +29,16 @@ def get_bond_graph(mol):
                 mol.bond_graph[i].append(j)
                 mol.bond_graph[j].append(i)
 
-# determine atoms which are covalently bonded from bond graph and get parameters
 def get_bonds(mol):
+    """Determine covalently bonded atoms from bond graph and get parameters.
+    
+    Search bond graph for bonded atom pairs, and parameter tables for mm
+        parameters. Use to create a new Bond object and append to Molecule.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with bond graph of
+            atom pairs within covalent radius cutoff threshold.
+    """
     for i in range(mol.n_atoms):
         for a in range(len(mol.bond_graph[i])):
             j = mol.bond_graph[i][a]
@@ -33,8 +53,17 @@ def get_bonds(mol):
     mol.bonds = sorted(mol.bonds, key=lambda bond:bond.at1)
     mol.n_bonds = len(mol.bonds)
     
-# determine atoms which form a bond angle from bond graph and get parameters
 def get_angles(mol):
+    """Determine bond angle atom triplets from bond graph and get parameters.
+    
+    Search bond graph for bond angle triplets, and parameter tables for mm
+    parameters. Use to create a new Angle object and append to Molecule.
+    Count as angle if ij and jk are bonded in triplet ijk.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with bond graph of
+            atom pairs within covalent radius cutoff threshold.
+    """
     for j in range(mol.n_atoms):
         n_jbonds = len(mol.bond_graph[j])
         for a in range(n_jbonds):
@@ -53,8 +82,17 @@ def get_angles(mol):
     mol.angles = sorted(mol.angles, key=lambda angle:angle.at1)
     mol.n_angles = len(mol.angles)
     
-# determine atoms which form torsion angles from bond graph and get parameters
 def get_torsions(mol):
+    """Determine torsion angle atom quartets and parameters from bond graph.
+    
+    Search bond graph for torsion angle quartets, and parameter tables for
+    mm parameters. Use to create a new Torsion object and append to Molecule.
+    Count as torsion if ij and jk and kl are bonded in quartet ijkl.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with bond graph of
+            atom pairs within covalent radius cutoff threshold.
+    """
     for j in range(mol.n_atoms):
         n_jbonds = len(mol.bond_graph[j])
         for a in range(n_jbonds):
@@ -82,8 +120,18 @@ def get_torsions(mol):
     mol.torsions = sorted(mol.torsions, key=lambda torsion:torsion.at1)
     mol.n_torsions = len(mol.torsions)
 
-# determine atoms which form out-of-plane angles from bond graph and get parameters
 def get_outofplanes(mol):
+    """Determine outofplane atom quartets and parameters from bond graph.
+    
+    Search bond graph for outofplane angle quartets, and parameter tables for
+    mm parameters. Use to create a new Outofplane object and append to
+    Molecule. Count as outofplane if il and jl and kl are bonded in quartet
+    ijkl.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with bond graph of
+            atom pairs within covalent radius cutoff threshold.
+    """
     for l in range(mol.n_atoms):
         n_lbonds = len(mol.bond_graph[l])
         for a in range(n_lbonds):
@@ -109,8 +157,18 @@ def get_outofplanes(mol):
     mol.outofplanes = sorted(mol.outofplanes, key=lambda outofplane:outofplane.at1)
     mol.n_outofplanes = len(mol.outofplanes)
 
-# determine atoms which have bonded interactions and no non-covalent interaction
 def get_nonints(mol):
+    """Determine which atomic pairs have bonded interactions.
+    
+    If two atoms belong to a mutual bond, angle, and/or torsion, then
+    they are 'bonded' and should not interact non-covalently. These
+    pairs are appended to a list and ignored during computation of
+    non-bonded interaction energies.
+    
+    Args:
+        mol (mmlib.molecule.Molecule): Molecule object with arrays of
+            Bond, Angle, and Torsion objects.
+    """
     mol.nonints = [[] for i in range(mol.n_atoms)]
     for p in range(mol.n_bonds):
         mol.nonints[mol.bonds[p].at1].append(mol.bonds[p].at2)
@@ -123,4 +181,6 @@ def get_nonints(mol):
         mol.nonints[mol.torsions[p].at4].append(mol.torsions[p].at1)
     for i in range(mol.n_atoms):
         mol.nonints[i] = sorted(list(set(mol.nonints[i])))
+
+# end of module
 

@@ -1,5 +1,5 @@
 
-"""Functions for computing molecular mechanics energy components"""
+"""Functions for computing molecular mechanics energy components."""
 
 import math
 from mmlib import geomcalc

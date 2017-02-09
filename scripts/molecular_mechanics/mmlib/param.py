@@ -1,6 +1,7 @@
-import sys
 
-# param.py: functions and tables for amber94 molecular mechanics parameters
+"""Functions and tables for AMBER94 molecular mechanics parameters."""
+
+import sys
 
 # relative atomic masses of elements (in atomic mass units [amu]) from
 # "CRC Handbook" 84th ed, ed Lide, pgs 1-12 - 1-14
