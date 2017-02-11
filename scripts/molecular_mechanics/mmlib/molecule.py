@@ -32,16 +32,16 @@ class Atom:
         pvels (float*): 3 previous `vels` [Angstrom/ps].
         paccs (float*): 3 previous `accs` [Angstrom/(ps^2)].
     """
-    def __init__(self, at_type, at_coords, at_charge, at_ro, at_eps, at_mass):
-        self.attype = at_type
-        self.element = at_type[0].capitalize()
-        if (at_type[-1].islower()): self.element += at_type[-1]
-        self.coords = at_coords
-        self.charge = at_charge
-        self.ro = at_ro
-        self.eps = at_eps
+    def __init__(self, attype, coords, charge, ro, eps, mass):
+        self.attype = attype
+        self.element = attype[0].capitalize()
+        if (attype[-1].islower()): self.element += attype[-1]
+        self.coords = coords
+        self.charge = charge
+        self.ro = ro
+        self.eps = eps
         self.sreps = math.sqrt(self.eps)
-        self.mass = at_mass
+        self.mass = mass
         self.covrad = param.get_cov_rad(self.element)
         self.vels = numpy.zeros(3)
         self.accs = numpy.zeros(3)

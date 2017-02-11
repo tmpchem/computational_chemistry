@@ -117,7 +117,7 @@ def get_angle(mol, record):
     Appends mmlib.molecule.Angle object to mmlib.molecule.Molecule
     object. Contents of angle object include (int) 3 atomic indices,
     (float) spring constant [kcal/(mol*radian^2)], (float) equilibrium
-    bond angle [degree], and (float) bond angle [degree].
+    bond angle [degrees], and (float) bond angle [degrees].
     
     Args:
         mol (mmlib.molecule.Molecule): Molecule to append angle.
@@ -477,8 +477,8 @@ def print_angles(mol):
     
     Print a header banner for the section, and for each Angle object in a
     Molecule object print (float) spring constant [kcal/(mol*rad^2)],
-    (float) equilibrium bond angle [degree], (float) bond angle
-    [degree], (str) 3 atom types, (float) angle energy [kcal/mol],
+    (float) equilibrium bond angle [degrees], (float) bond angle
+    [degrees], (str) 3 atom types, (float) angle energy [kcal/mol],
     and (int) 3 atomic indices.
     
     Args:
@@ -524,7 +524,7 @@ def print_torsions(mol):
     
     Print a header banner for the section, and for each Torsion object
     in a Molecule object print (float) barrier height [kcal/mol],
-    (float) barrier offset [degree], (int) barrier frequency, (int)
+    (float) barrier offset [degrees], (int) barrier frequency, (int)
     barrier paths, (str) 4 atom types, (float) torsion energy [kcal/mol],
     and (int) 4 atomic indices.
 
@@ -575,7 +575,7 @@ def print_outofplanes(mol):
     
     Print a header banner for the section, and for each Outofplane object
     in a Molecule object print (float) barrier height [kcal/mol], (float)
-    outofplane angle [degree], (str) 4 atom types, (float) torsion energy
+    outofplane angle [degrees], (str) 4 atom types, (float) torsion energy
     [kcal/mol], and (int) 4 atomic indices.
 
     Args:

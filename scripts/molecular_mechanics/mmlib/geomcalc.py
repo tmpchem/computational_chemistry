@@ -1,7 +1,7 @@
 
 """Functions for computing molecular geometry data."""
 
-import math, numpy
+import math
 
 def rad2deg():
     """Conversion from radians to degrees."""
@@ -43,7 +43,9 @@ def get_r_ij(coords_i, coords_j):
     return r_ij
 
 def get_u_ij(coords_i, coords_j):
-    """Calculate unit vector from cartesian points i to j.
+    """Calculate 3d unit vector from cartesian points i to j.
+    
+    Gives zero vector if i and j are the same point.
     
     Args:
         coords_i (float*): 3 cartesian coordinates [Angstrom] of point i.
@@ -53,7 +55,7 @@ def get_u_ij(coords_i, coords_j):
         u_ij (float*): 3 unit vector components from point i to j.
     """
     r_ij = get_r_ij(coords_i, coords_j)
-    u_ij = numpy.zeros(3)
+    u_ij = [0.0 for m in range(3)]
     if (r_ij > 0.0):
         for m in range(3):
             u_ij[m] = (coords_j[m] - coords_i[m]) / r_ij
@@ -87,9 +89,9 @@ def get_ucp(uvec_i, uvec_j):
         ucp (float*): Normalized cross product between unit vectors i and j.
     """
     udp = 0.0
-    ucp = numpy.zeros(3)
+    ucp = [0.0 for i in range(3)]
     cos_ijk = get_udp(uvec_i, uvec_j)
-    sin_ijk = math.sqrt(1 - cos_ijk**2)
+    sin_ijk = math.sqrt(1.0 - cos_ijk**2)
     if (sin_ijk > 0.0):
         ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1]) / sin_ijk 
         ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2]) / sin_ijk 
@@ -107,7 +109,7 @@ def get_cp(uvec_i, uvec_j):
         cp (float*): Cross product between unit vectors i and j.
     """
     udp = 0.0
-    ucp = numpy.zeros(3)
+    ucp = [0.0 for i in range(3)]
     cos_ijk = get_udp(uvec_i, uvec_j)
     sin_ijk = math.sqrt(1 - cos_ijk**2)
     if (sin_ijk > 0.0):
@@ -120,9 +122,9 @@ def get_a_ijk(coords_i, coords_j, coords_k):
     """Calculate angle between 3 3d cartesian points.
     
     Args:
-        coords_i (float*): 3 cartesian components of unit vector i.
-        coords_j (float*): 3 cartesian components of unit vector j.
-        coords_k (float*): 3 cartesian components of unit vector k.
+        coords_i (float*): 3 cartesian components of point i.
+        coords_j (float*): 3 cartesian components of point j.
+        coords_k (float*): 3 cartesian components of point k.
 
     Returns:
         a_ijk (float): Angle [degrees] between unit vectors ji and jk.
@@ -138,10 +140,10 @@ def get_t_ijkl(coords_i, coords_j, coords_k, coords_l):
     """Calculate torsion angle between 4 3d cartesian points.
     
     Args:
-        coords_i (float*): 3 cartesian components of unit vector i.
-        coords_j (float*): 3 cartesian components of unit vector j.
-        coords_k (float*): 3 cartesian components of unit vector k.
-        coords_l (float*): 3 cartesian components of unit vector l.
+        coords_i (float*): 3 cartesian components of point i.
+        coords_j (float*): 3 cartesian components of point j.
+        coords_k (float*): 3 cartesian components of point k.
+        coords_l (float*): 3 cartesian components of point l.
 
     Returns:
         t_ijkl (float): Signed angle [degrees] between planes ijk and jkl.
@@ -162,10 +164,10 @@ def get_o_ijkl(coords_i, coords_j, coords_k, coords_l):
     """Calculate outofplane angle between 4 3d cartesian points.
     
     Args:
-        coords_i (float*): 3 cartesian components of unit vector i.
-        coords_j (float*): 3 cartesian components of unit vector j.
-        coords_k (float*): 3 cartesian components of unit vector k.
-        coords_l (float*): 3 cartesian components of unit vector l.
+        coords_i (float*): 3 cartesian components of point i.
+        coords_j (float*): 3 cartesian components of point j.
+        coords_k (float*): 3 cartesian components of point k.
+        coords_l (float*): 3 cartesian components of point l.
 
     Returns:
         o_ijkl (float): Signed angle between plane ijk and vector kl.
