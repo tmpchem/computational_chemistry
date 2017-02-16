@@ -70,15 +70,15 @@ def print_geom(geom, comment):
         print('\n', end='')
     print('\n', end='')
 
-# print bond tree to screen
-def print_bond_tree(geom, bond_tree, comment):
+# print bond graph to screen
+def print_bond_graph(geom, bond_graph, comment):
     at_types = geom[0]
     n_atoms = len(at_types)
     print('%s\n' % (comment), end='')
     for i in range(n_atoms):
         print(' %4i %-2s -' % (i+1, at_types[i]), end='')
-        for j in range(len(bond_tree[i])):
-            print(' %i' % (bond_tree[i][j] + 1), end='')
+        for j in range(len(bond_graph[i])):
+            print(' %i' % (bond_graph[i][j] + 1), end='')
         print('\n', end='')
     print('\n', end='')
     
@@ -154,11 +154,11 @@ def get_a123(coords1, coords2, coords3):
 
 ## TOPOLOGY FUNCTIONS ##
 
-# build tree of which atoms are covalently bonded
-def get_bond_tree(geom):
+# build graph of which atoms are covalently bonded
+def get_bond_graph(geom):
     at_types, coords = geom[0:2]
     n_atoms = len(at_types)
-    bond_tree = [[] for i in range(n_atoms)]
+    bond_graph = [[] for i in range(n_atoms)]
     for i in range(n_atoms):
         covrad1 = cov_rads[at_types[i]]
         for j in range(i+1, n_atoms):
@@ -166,34 +166,34 @@ def get_bond_tree(geom):
             thresh = bond_thresh * (covrad1 + covrad2)
             r12 = get_r12(coords[i], coords[j])
             if (r12 < thresh):
-                bond_tree[i].append(j)
-                bond_tree[j].append(i)
-    return bond_tree
+                bond_graph[i].append(j)
+                bond_graph[j].append(i)
+    return bond_graph
 
-# determine atoms which are covalently bonded from bond tree
-def get_bonds(geom, bond_tree):
+# determine atoms which are covalently bonded from bond graph
+def get_bonds(geom, bond_graph):
     at_types, coords = geom[0:2]
     n_atoms = len(at_types)
     bonds = []
     for i in range(n_atoms):      
-        for a in range(len(bond_tree[i])):
-            j = bond_tree[i][a]
+        for a in range(len(bond_graph[i])):
+            j = bond_graph[i][a]
             if (i < j):
                 r12 = get_r12(coords[i], coords[j])
                 bonds.append([i, j, r12])
     return bonds
 
-# determine atoms which form a bond angle from bond tree
-def get_angles(geom, bond_tree):
+# determine atoms which form a bond angle from bond graph
+def get_angles(geom, bond_graph):
     at_types, coords = geom[0:2]
     n_atoms = len(at_types)
     angles = []
     for j in range(n_atoms):
-        n_jbonds = len(bond_tree[j])
+        n_jbonds = len(bond_graph[j])
         for a in range(n_jbonds):
-            i = bond_tree[j][a]
+            i = bond_graph[j][a]
             for b in range(a+1, n_jbonds):
-                k = bond_tree[j][b]
+                k = bond_graph[j][b]
                 a123 = get_a123(coords[i], coords[j], coords[k])
                 angles.append([i, j, k, a123])
     return angles
@@ -203,11 +203,11 @@ def get_angles(geom, bond_tree):
 # read in geometry, determine bonded topology
 xyz_file_name = get_inputs()
 geom = get_geom(xyz_file_name)
-bond_tree = get_bond_tree(geom)
+bond_graph = get_bond_graph(geom)
 
 # calculate bond lengths and bond angles
-bonds = get_bonds(geom, bond_tree)
-angles = get_angles(geom, bond_tree)
+bonds = get_bonds(geom, bond_graph)
+angles = get_angles(geom, bond_graph)
 
 # print resulting values
 print_geom(geom, 'initial geometry')

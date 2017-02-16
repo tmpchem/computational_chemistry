@@ -67,7 +67,7 @@ def get_atom(mol, record):
     """Parse atom record into an atom object and append to molecule.
 
     Appends mmlib.molecule.Atom object to mmlib.molecule.Molecule
-    object. Contents of atom object include (float) xyz cartesian
+    object. Contents of atom object include (float*) xyz cartesian
     coordinates [Angstrom], (float) partial charge [e], (float) van der
     Waals radius [Angstrom], (float) van der Waals epsilon [kcal/mol],
     (str) atom type, (str) atomic element, (float) covalent radius,
