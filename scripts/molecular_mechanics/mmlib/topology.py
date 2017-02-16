@@ -3,7 +3,7 @@
 
 from mmlib import geomcalc, param, molecule
 
-def bond_thresh():
+def bond_threshold():
     """Threshold beyond covalent radii sum to determine bond cutoff"""
     return 1.2
 
@@ -19,7 +19,7 @@ def get_bond_graph(mol):
             with geometry and mm parameter data.
     """
     mol.bond_graph = [[] for i in range(mol.n_atoms)]
-    bond_thresh = bond_thresh()
+    bond_thresh = bond_threshold()
     for i in range(mol.n_atoms):
         for j in range(i+1, mol.n_atoms):
             thresh = bond_thresh * (mol.atoms[i].covrad + mol.atoms[j].covrad)

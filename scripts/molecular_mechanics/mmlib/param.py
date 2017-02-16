@@ -411,7 +411,7 @@ def get_outofplane_param(at1_type, at2_type, at3_type, at4_type):
         torsion (float): AMBER94 mm outofplane parameters for atom types:
             vn/2 [kcal/mol].
     """
-    oop = [0.0, 0.0, 1.0]
+    oop = 0.0
   
     # two-atom out-of-plane potentials
     try:
