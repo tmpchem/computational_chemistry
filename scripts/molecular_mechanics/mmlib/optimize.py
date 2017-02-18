@@ -147,40 +147,53 @@ class Optimization:
 
     def optimize(self):
         """Displace molecule to minimum energy molecular coordinates."""
-        # minimize energy with chosen algorithm
-        if   (self.opt_type == 'sd'): self.run_steepest_descent()
-        elif (self.opt_type == 'cg'): self.run_conjugate_gradient()
-        elif (self.opt_type == 'nr'): self.run_newton_raphson()
-        else:
-            print('Error: optimization type (%s) not recognized!' % (
-            self.opt_type))
-            sys.exit()
-        # output results
-        self.print_traj()
-
-    def run_steepest_descent(self):
-        """Steepest descent algorithm for potential energy minimization.
-
-        Computes gradient direction and performs line search to minimize
-        1d energy and gradient within convergence threshold. Update gradient
-        and repeat line search until all convergence criteria are met.
-        """
+        self.open_output_files()
         while (self.n_iter < self.n_maxiter and not self.is_converged):
             self.n_iter += 1
-            self.line_search(-1.0 * self.mol.g_total)
+            self.choose_step_direction(self.opt_type)
+            self.line_search(-1.0 * self.step_dir)
             self.update_energy()
             self.update_gradient()
             self.traj.append_step(self.mol)
             self.update_criteria()
             self.check_convergence()
+            self.print_status()
+        self.close_output_files()
 
-    # TODO: algorithm for conjugate gradient potential energy minimization
-    def run_conjugate_gradient(self):
-        print('\nConjugate gradient optimization not yet implemented\n')
+    def choose_step_direction(self, opt_type):
+        """Choose step direction based on energy minimization algorithm.
 
-    # TODO: algorithm for newton-raphson potential energy minimization
-    def run_newton_raphson(self):
-        print('\nNewton-Raphson optimization not yet implemented\n')
+        Args:
+            opt_type (str): Specific optimization algorithm.     
+                `sd` (steepest descent): Travel along gradient.
+                `cg` (conjugate gradient): Improve gradient using gradient
+                    history.
+        """
+        if   (opt_type == 'sd'):
+            self.get_sd_step_dir()
+        elif (opt_type == 'cg'):
+            self.get_cg_step_dir()
+        else:
+            print('Error: optimization type (%s) not recognized!' % (opt_type))
+            sys.exit()
+
+    def get_sd_step_dir(self):
+        """Steepest descent optimization step direction vector."""
+        self.step_dir = self.mol.g_total
+
+    def get_cg_step_dir(self):
+        """Conjugate gradient optimization step direction vector."""
+        if (self.n_iter <= 1):
+            self.hvec = self.mol.g_total
+            gamma = 0.0
+        else:
+            v1 = self.traj.grad[-1] - self.traj.grad[-2]
+            v1 = v1.reshape((1, 3*self.mol.n_atoms))
+            v2 = self.traj.grad[-1].reshape((3*self.mol.n_atoms, 1))
+            gamma  = numpy.linalg.norm(numpy.dot(v1, v2))
+            gamma *= 1.0 / numpy.linalg.norm(self.traj.grad[-1])**2
+            self.hvec = self.mol.g_total + gamma * self.hvec
+        self.step_dir = self.hvec
 
     def update_criteria(self):
         """Update values of the 5 optimization convergence criteria."""
@@ -252,7 +265,7 @@ class Optimization:
             numer = 2*numer + direc
             denom = 2*denom
         disp_mag *= numer / denom
-        # final 1d energy / gradient minimized molecular coordinates
+        # final line search energy minimized molecular coordinates
         self.displace_coords(+1.0 * disp_mag, disp_vector)
 
     def get_opt_criteria(self):
@@ -262,6 +275,7 @@ class Optimization:
         execute the conditional. If overridden from input file to value
         in dictionary, reset all 5 convergence criteria to specified
         value."""
+        print(self.opt_str)
         opt_criteria_refs = {
             'loose'     : [1.0 * 10**(-4), 1.0 * 10**(-3), 2.0 * 10**(-3),
                            1.0 * 10**(-2), 2.0 * 10**(-2)],
@@ -269,15 +283,15 @@ class Optimization:
                            1.0 * 10**(-3), 2.0 * 10**(-3)],
             'tight'     : [1.0 * 10**(-8), 1.0 * 10**(-5), 2.0 * 10**(-5),
                            1.0 * 10**(-4), 2.0 * 10**(-4)],
-            'verytight' : [1.0 * 10**(-9), 1.0 * 10**(-5), 2.0 * 10**(-5),
+            'verytight' : [1.0 * 10**(-9), 1.0 * 10**(-6), 2.0 * 10**(-6),
                            1.0 * 10**(-5), 2.0 * 10**(-5)]}
         if (self.opt_str in opt_criteria_refs):
             opt_vals = opt_criteria_refs[self.opt_str]
-            self.delta_e  = opt_vals[0]
-            self.grad_rms = opt_vals[1] 
-            self.grad_max = opt_vals[2] 
-            self.disp_rms = opt_vals[3] 
-            self.disp_max = opt_vals[4] 
+            self.conv_delta_e  = opt_vals[0]
+            self.conv_grad_rms = opt_vals[1] 
+            self.conv_grad_max = opt_vals[2] 
+            self.conv_disp_rms = opt_vals[3] 
+            self.conv_disp_max = opt_vals[4] 
 
     def get_test_energy(self, test_coords):
         """Determine energy of molecule at set of test coordinates.
@@ -348,9 +362,9 @@ class Optimization:
 
     def print_energy_header(self):
         """Print header of convergence output columns to file."""
-        self.efile.write('# iter       energy    delta_e    grad_max')
+        self.efile.write('# iter          energy    delta_e    grad_max')
         self.efile.write('    grad_rms    disp_max    disp_rms\n')
-        self.efile.write('#                   ')
+        self.efile.write('#                      ')
         self.efile.write('%10.3e  %10.3e  %10.3e  %10.3e  %10.3e\n' % (
             self.conv_delta_e, self.conv_grad_max, self.conv_grad_rms,
             self.conv_disp_max, self.conv_disp_rms))
@@ -358,9 +372,10 @@ class Optimization:
     def print_energy(self, n_iter):
         """Print convergence information to file."""
         e = self.efile
-        grad = self.traj.grad[n_iter]
-        disp = self.traj.coords[n_iter] - self.traj.coords[max(0, n_iter-1)]
-        delta_e = self.traj.energy[n_iter] - self.traj.energy[max(0, n_iter-1)]
+        t = self.traj
+        grad = t.grad[n_iter]
+        disp = t.coords[n_iter] - t.coords[max(0, n_iter-1)]
+        delta_e = t.energy[n_iter] - t.energy[max(0, n_iter-1)]
         gmax = numpy.amax(grad)
         dmax = numpy.amax(disp)
         grms = math.sqrt(numpy.mean(grad**2))
@@ -373,7 +388,7 @@ class Optimization:
             conv_str[3] = '*' if (dmax < self.conv_disp_max) else ' '
             conv_str[4] = '*' if (drms < self.conv_disp_rms) else ' '
         pstr  = '%3i' % (n_iter)
-        pstr += ' %15.9f' % (self.traj.energy[n_iter])
+        pstr += ' %18.12f' % (t.energy[n_iter])
         pstr += ' %10.3e%s' % (delta_e, conv_str[0])
         pstr += ' %10.3e%s' % (gmax, conv_str[1])
         pstr += ' %10.3e%s' % (grms, conv_str[2])
@@ -381,21 +396,19 @@ class Optimization:
         pstr += ' %10.3e%s' % (drms, conv_str[4])
         e.write('%s\n' % (pstr))
 
-    def print_traj(self):
+    def print_status(self):
         """Print xyz-format geometry of system to trajectory file."""
-        self.open_output_files()
-        self.print_energy_header()
-        for p in range(self.traj.n_steps):
-            comment = '%s, iteration %i' % (self.name, p)
-            self.update_coords(self.traj.coords[p])
-            fileio.print_coords_file(self.gfile, self.mol, comment)
-            self.print_energy(p)
-        self.close_output_files()
+        comment = '%s, iteration %i' % (self.name, self.n_iter)
+        fileio.print_coords_file(self.gfile, self.mol, comment)
+        self.print_energy(self.n_iter)
+        self.gfile.flush()
+        self.efile.flush()
 
     def open_output_files(self):
         """Open output files for convergence and geometry data printing."""
         self.gfile = open(self.geomout, "w")
         self.efile = open(self.energyout, "w")
+        self.print_energy_header()
 
     def close_output_files(self):
         """Close output files for convergence and geometry data printing."""

@@ -64,7 +64,7 @@ molecular coordinates to potential energy minima (opt.py).
 
 The energy function and parameters in all cases is based on AMBER FF94
 (Cornell et. al, J. Am. Chem. Soc. 1995, 117, 5179-5197.
-doi.org/10.1021/ja00124a0002). Energy function in Equation 1. Atom types
+doi.org/10.1021/ja00124a002). Energy function in Equation 1. Atom types
 in Table 1. Parameter values in Table 14. Download AmberTools15 from
 "http://ambermd.org/AmberTools15-get.html". After unzipping, parameters
 located in "amber14/dat/leap/parm/parm94.dat".
