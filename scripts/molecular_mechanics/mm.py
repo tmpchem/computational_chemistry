@@ -9,13 +9,6 @@ import mmlib
 # determines bonded topology and parameters, calculates amber94 molecular   #
 # mechanics energy components, and prints resulting values.                 #
 #                                                                           #
-# AMBER FF94 from Cornell et. al, J. Am. Chem. Soc. 1995, 117, 5179-5197.   #
-# Atom types in Table 1. Bonded and Non-bonded parameters in Table 14.      #
-# Energy function in Equation 1.                                            #
-#                                                                           #
-# Download AmberTools15 from "http://ambermd.org/AmberTools15-get.html".    #
-# After unzipping, parameters located in "amber14/dat/leap/parm/parm94.dat" #
-#                                                                           #
 # No guarantees are made that the results of this program are correct       #
 # and the author assumes no liability for their reliability.                #
 #                                                                           #

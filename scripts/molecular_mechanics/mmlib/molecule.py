@@ -1,7 +1,7 @@
 
 """Classes and functions for handling molecular system data."""
 
-import sys, math, numpy
+import os, sys, math, numpy
 from mmlib import fileio, param, geomcalc, topology, energy, gradient
 
 class Atom:
@@ -300,7 +300,8 @@ class Molecule:
         infile_name (str): xyzq or prm input file with molecule data.
     
     Attributes:
-        infile (str): xyzq or prm input file with molecule data.
+        infile (str): Absolute path to `infile_name`
+        indir (str): Absolute path to infile directory.
         filetype (str): Input file format: `xyzq` or `prm`.
         name (str): Name of molecule from input file name.
 
@@ -356,9 +357,10 @@ class Molecule:
         g_total (float**): Total energy gradient [kcal/(mol*A)].
     """
     def __init__(self, infile_name):
-        self.infile = infile_name
+        self.infile = os.path.realpath(infile_name)
+        self.indir = os.path.dirname(self.infile)
         self.filetype = self.infile.split('.')[-1]
-        self.name = self.infile.split('/')[-1].split('.')[0]
+        self.name = '.'.join(self.infile.split('/')[-1].split('.')[:-1])
         self.atoms = []
         self.bonds = []
         self.angles = []

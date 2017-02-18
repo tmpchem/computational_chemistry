@@ -12,4 +12,4 @@ ENERGYTIME              0.005 ps
 ENERGYOUT    ../../data/he20.dat
 EQTIME                 20.000 ps
 EQRATE                  2.000 ps
-STATUSTIME                 5.0 s
+STATUSTIME                0.25 s

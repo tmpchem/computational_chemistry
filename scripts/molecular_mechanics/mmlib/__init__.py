@@ -3,7 +3,8 @@ from mmlib import param
 from mmlib import geomcalc
 from mmlib import topology
 from mmlib import energy
-from mmlib import molecule
 from mmlib import gradient
-from mmlib import simulation
+from mmlib import molecule
+from mmlib import simulate
+from mmlib import optimize
 from mmlib import test

@@ -6,7 +6,7 @@ geometry, topology, parameter, and simulation data to screen or file.
 """
 
 import os, sys, math, numpy
-from mmlib import param, geomcalc, topology, energy, molecule
+from mmlib import param, geomcalc, topology, energy, molecule, optimize
 
 def get_file_string_array(infile_name):
     """Create a 2-d array of strings from input file name.
@@ -218,7 +218,7 @@ def get_sim_data(sim):
     [kelvin], and (float / int) total time/confs [ps / none] (md / mc).
     
     Args:
-        sim (mmlib.simulation.Simulation): Simulation to append data.
+        sim (mmlib.simulate.Simulation): Simulation to append data.
     """
     infile_array = get_file_string_array(sim.infile)
     for q in range(len(infile_array)):
@@ -267,6 +267,48 @@ def get_sim_data(sim):
         elif (kwarg == 'eqrate'):
             sim.eqrate = float(kwargval)
 
+def get_opt_data(opt):
+    """Parse contents of sim file into molecular simulation data.
+    
+    Many molecular simulation parameters (dynamics, monte carlo, etc.)
+    can be determined by default, or overriden in a simulation file.
+    All listed values below can be set through the given keyword arguments.
+    
+    Mandatory values include (str) molecule [file path], (float) temperature
+    [kelvin], and (float / int) total time/confs [ps / none] (md / mc).
+    
+    Args:
+        sim (mmlib.simulate.Simulation): Simulation to append data.
+    """
+    infile_array = get_file_string_array(opt.infile)
+    for q in range(len(infile_array)):
+        if (len(infile_array[q]) < 2): continue
+        kwarg = infile_array[q][0].lower()
+        kwargval = infile_array[q][1]
+        kwargarr = infile_array[q][1:]
+        if (kwarg == 'molecule'):
+            opt.mol = molecule.Molecule(opt.indir + '/' + kwargval)
+        elif (kwarg == 'opttype'):
+            opt.opt_type = kwargval.lower()
+        elif (kwarg == 'optcriteria'):
+            opt.opt_str = kwargval.lower()
+        elif (kwarg == 'e_converge'):
+            opt.conv_delta_e = float(kwargval)
+        elif (kwarg == 'grms_converge'):
+            opt.conv_grad_rms = float(kwargval)
+        elif (kwarg == 'gmax_converge'):
+            opt.conv_grad_max = float(kwargval)
+        elif (kwarg == 'drms_converge'):
+            opt.conv_disp_rms = float(kwargval)
+        elif (kwarg == 'dmax_converge'):
+            opt.conv_disp_max = float(kwargval)
+        elif (kwarg == 'nmaxiter'):
+            opt.n_maxiter = float(kwargval)
+        elif (kwarg == 'geomout'):
+            opt.geomout = kwargval
+        elif (kwarg == 'energyout'):
+            opt.energyout = kwargval
+
 def print_coords(mol, comment):
     """Print atomic coordinates for a set of atoms.
     
@@ -275,8 +317,8 @@ def print_coords(mol, comment):
     
     Args:
         mol (mmlib.molecule.Molecule): Molecule object with (float) 3N
-            atomic cartesian coordinates [Angstrom]
-        comment (str): Comment string for xyz file comment line
+            atomic cartesian coordinates [Angstrom].
+        comment (str): Comment string for xyz file comment line.
     """
     print('%i\n%s\n' % (mol.n_atoms, comment), end='')
     for i in range(mol.n_atoms):
@@ -285,6 +327,25 @@ def print_coords(mol, comment):
             print(' %12.6f' % (mol.atoms[i].coords[j]), end='')
         print('\n', end='')
     print('\n', end='')
+
+def print_coords_file(ofile, mol, comment):
+    """Print atomic coordinates to an open output file.
+    
+    Print to ofile all (float) 3N atomic cartesian coordinates [Angstrom]
+    from mol in xyz file format with (str) `comment` in comment line.
+    
+    Args:
+        ofile (file): Open file handle for printing coordinate data.
+        mol (mmlib.molecule.Molecule): Molecule object with (float) 3N
+            atomic cartesian coordinates [Angstrom].
+        comment(str): Comment string for xyz file comment line.
+    """
+    ofile.write('%i\n%s\n' % (mol.n_atoms, comment))
+    for i in range(mol.n_atoms):
+        ofile.write('%-2s' % (mol.atoms[i].element))
+        for j in range(3):
+            ofile.write(' %12.6f' % (mol.atoms[i].coords[j]))
+        ofile.write('\n')
 
 def print_gradient(mol, grad_type):
     """Print specified atomic gradient type for a set of atoms.
@@ -650,7 +711,7 @@ def get_input():
     """
     prog_name = sys.argv[0].split('/')[-1]
     if (not len(sys.argv) == 2):
-        print('\nUsage: %s INPUT_FILE\n' % (prog_name))
+        print('\nUsage: python %s INPUT_FILE\n' % (prog_name))
         print('  INPUT_FILE: ', end='')
         if (prog_name == 'mm.py'):
             print('xyzq or prm file for molecular mechanics\n')
@@ -658,6 +719,8 @@ def get_input():
             print('simulation file for molecular dynamics\n')
         elif (prog_name == 'mmc.py'):
             print('simulation file for metropolis monte carlo\n')
+        elif (prog_name == 'opt.py'):
+            print('optimization file for energy minimization\n')
         sys.exit()
     else:
         infile_name = sys.argv[1]

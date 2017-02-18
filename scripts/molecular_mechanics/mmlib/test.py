@@ -4,8 +4,8 @@ from mmlib import geomcalc, fileio, topology, energy
 # absolute and relative thresholds for float equality comparisons
 comp_coef = 1.0
 comp_exp = -6
-abstol = 1.0 * 10**(comp_exp) 
-reltol = 1.0 * 10**(comp_exp) 
+abstol = comp_coef * 10**(comp_exp) 
+reltol = comp_coef * 10**(comp_exp) 
 
 # boolean equality strings
 bool_eq_char = {True: '==', False: '!='}
@@ -42,12 +42,12 @@ def read_in_tests(file_name):
 # equality comparison of generic data types
 def equality_comparison(val, ref):
     same = True
-    if   (type(val) in [float, numpy.float64]):
+    if   ('float' in str(type(val))):
         same *= math.isclose(ref, val, rel_tol=reltol, abs_tol=abstol)
     elif (type(val) == int or type(val) == str):
         same *= (val == ref)
     else:
-        if (not (type(ref) == type(val) and len(val) == len(ref))):
+        if (not len(val) == len(ref)):
             return False
         for i in range(len(val)):
             same *= equality_comparison(val[i], ref[i])
@@ -61,7 +61,7 @@ def print_success_test(index, n_tests, success, val, ref, printval):
         print('%s(%i)' % (bool_pass[success], success), end='')
     if (printval >= 3):
         eq = bool_eq_char[success]
-        if (type(val) == float):
+        if (type(val) in [float, numpy.float64]):
             ref_dig = int(math.floor(math.log10(max(ref, abstol))))
             print_dig = max(0, -comp_exp - ref_dig*(ref_dig>0))
             print(', %10.*f %s %10.*f' % (print_dig, val, eq, print_dig,

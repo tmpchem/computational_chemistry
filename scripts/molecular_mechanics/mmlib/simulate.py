@@ -2,7 +2,7 @@
 """Classes and functions for handling molecular simulation data."""
 
 import os, sys, math, time, numpy
-from mmlib import energy, gradient, molecule, fileio
+from mmlib import energy, fileio
 
 def rgas():
     """Gas constant in unit of [amu*A^2/(ps^2*K)]."""
@@ -30,14 +30,14 @@ class Simulation:
             `mmc`: Metropolis Monte-Carlo.
     
     Attributes:
-        infile (str): Input file.
+        infile (str): Input file (see Args).
         indir (str): Directory of input file
         simtype (str): Type of simulation.
         mol (mmlib.molecule.Molecule): Molecule object from input file.
         temp (float): Desired temperature [K].
         press (float): Desired pressure [bar].
-        geomout (str): Geometry printing output file.
-        energyout (str): Energy printing output file.
+        geomout (str): Geometry printing output file path.
+        energyout (str): Energy printing output file path.
         statustime (float): Clock time between printing status to
             standard output [s].
 
@@ -92,11 +92,11 @@ class Simulation:
         self.read_in_data()
 
     def read_in_data(self):
-        """Read in simulation data from input file"""
+        """Read in simulation data from input file."""
         fileio.get_sim_data(self)
 
     def run_simulation(self):
-        """Run simulation depending on simulation type"""
+        """Run simulation depending on simulation type."""
         if (self.simtype == 'md'):
             self.run_dynamics()
         elif (self.simtype == 'mmc'):
@@ -116,7 +116,6 @@ class Simulation:
         """
         if (self.temp > 0.0):
             self.etemp = self.temp
-            self.epress = self.press
             for i in range(self.mol.n_atoms):
                 sigma = (math.sqrt(2.0 * rgas() * self.temp
                     / (3.0 * self.mol.atoms[i].mass)))
@@ -352,17 +351,11 @@ class Simulation:
 
     def print_geom(self):
         """Print xyz-format geometry of system to trajectory file."""
-        g, m = self.gfile, self.mol
-        g.write('%i\n' % (m.n_atoms))
         if (self.simtype == 'md'):
-            g.write('geometry at t = %.4f ps\n' % (self.time))
+            pstr = 'geometry at t = %.4f ps\n' % (self.time)
         elif (self.simtype == 'mmc'):
-            g.write('geometry at conf %i\n' % (self.conf+1))
-        for i in range(m.n_atoms):
-            g.write('%-2s' % (m.atoms[i].element))
-            for j in range(3):
-                g.write('  %12.6f' % (m.atoms[i].coords[j]))
-            g.write('\n')
+            pstr = 'geometry at conf %i\n' % (self.conf+1)
+        fileio.print_coords_file(self.gfile, self.mol, pstr)
 
     def print_energy_header(self):
         """Print header of energy output columns to file."""

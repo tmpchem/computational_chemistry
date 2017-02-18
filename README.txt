@@ -47,17 +47,27 @@ Bugs or other feedback may be sent via email to `tmpchemistry@gmail.com`.
 As of 16 Feb 2017, repository contains two projects: geometry_analysis,
 and molecular_mechanics.
 
+- Geometry Analysis -
+
 The geometry_analysis project contains scripts which take an xyz-format
 molecular geometry file as input, and output to screen associated
 geometry data, including bond lengths, bond angles, torsion angles,
 outofplane angles, center of mass, and/or moment of inertia, etc. Sample
 xyz files are located in `[top_level_path]/geom/xyz` directory.
 
+- Molecular Mechanics -
+
 The molecular_mechanics project contain scripts to compute molecular
 mechanics energy of a system (mm.py), molecular dynamics trajectories
-(md.py), and Metropolis Monte Carlo ensembles (mmc.py). The energy
-function and parameters in all cases is based on AMBER FF94
-(doi.org/10.1021/ja00124a0002).
+(md.py), Metropolis Monte Carlo ensembles (mmc.py), and optimize
+molecular coordinates to potential energy minima (opt.py).
+
+The energy function and parameters in all cases is based on AMBER FF94
+(Cornell et. al, J. Am. Chem. Soc. 1995, 117, 5179-5197.
+doi.org/10.1021/ja00124a0002). Energy function in Equation 1. Atom types
+in Table 1. Parameter values in Table 14. Download AmberTools15 from
+"http://ambermd.org/AmberTools15-get.html". After unzipping, parameters
+located in "amber14/dat/leap/parm/parm94.dat".
 
 Sample input files for mm are located in
 `[top_level_path]/geom/[file_type]` directories, where [file_type] =
@@ -66,7 +76,7 @@ xyzq or prm. Sample input files for md and mmc are located in
 demonstrated in samples, and may be written to any accessible file
 name.
 
-## Authors ##
+## Author ##
 
 The sole author of this package is Trent M. Parker
 (tmpchemistry@gmail.com, linkedin.com/in/tmpchem, youtube.com/tmpchem).

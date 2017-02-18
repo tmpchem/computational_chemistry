@@ -1,7 +1,7 @@
 
 """Functions for computing molecular geometry data."""
 
-import math
+import math, numpy
 
 def rad2deg():
     """Conversion from radians to degrees."""
@@ -55,7 +55,7 @@ def get_u_ij(coords_i, coords_j):
         u_ij (float*): 3 unit vector components from point i to j.
     """
     r_ij = get_r_ij(coords_i, coords_j)
-    u_ij = [0.0 for m in range(3)]
+    u_ij = numpy.zeros(3)
     if (r_ij > 0.0):
         for m in range(3):
             u_ij[m] = (coords_j[m] - coords_i[m]) / r_ij
@@ -89,7 +89,7 @@ def get_ucp(uvec_i, uvec_j):
         ucp (float*): Normalized cross product between unit vectors i and j.
     """
     udp = 0.0
-    ucp = [0.0 for i in range(3)]
+    ucp = numpy.zeros(3)
     cos_ijk = get_udp(uvec_i, uvec_j)
     sin_ijk = math.sqrt(1.0 - cos_ijk**2)
     if (sin_ijk > 0.0):
@@ -109,7 +109,7 @@ def get_cp(uvec_i, uvec_j):
         cp (float*): Cross product between unit vectors i and j.
     """
     udp = 0.0
-    ucp = [0.0 for i in range(3)]
+    ucp = numpy.zeros(3)
     cos_ijk = get_udp(uvec_i, uvec_j)
     sin_ijk = math.sqrt(1 - cos_ijk**2)
     if (sin_ijk > 0.0):

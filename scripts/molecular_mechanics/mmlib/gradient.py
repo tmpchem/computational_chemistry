@@ -129,7 +129,7 @@ def get_g_bound_i(k_box, bound, coord, origin, boundtype):
         u_io = geomcalc.get_u_ij(origin, coord)
         scale = 1.0 if (r_io >= bound) else 0.0
         g_bound_i = 2.0 * scale * k_box * (r_io - bound) * u_io
-    elif (bound_type == 'none'):
+    elif (boundtype == 'none'):
         pass
     return g_bound_i
 

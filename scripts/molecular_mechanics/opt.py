@@ -3,28 +3,28 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import mmlib
 
 #############################################################################
-#                              Welcome to md.py                             #
+#                             Welcome to opt.py                             #
 #                                                                           #
 # This program takes in a set of molecular xyz coordinates and charges,     #
 # determines bonded topology and parameters, calculates amber94 molecular   #
-# mechanics energy components, gradients, and molecular dynamics            #
-# trajectories                                                              #
+# mechanics energy components, gradients, and displaces the atomic          #
+# coordinates to a potential energy local minimum.                          #
 #                                                                           #
 # No guarantees are made that the results of this program are correct       #
 # and the author assumes no liability for their reliability.                #
 #                                                                           #
 #                              Trent M. Parker                              #
-#                                 05/31/2016                                #
+#                                 02/16/2017                                #
 #############################################################################
 
 # check input syntax
 infile_name = mmlib.fileio.get_input()
 
-# read in molecular and simulation data
-sim = mmlib.simulate.Simulation(infile_name, 'md')
+# read in molecular and optimization data
+opt = mmlib.optimize.Optimization(infile_name)
 
-# run molecular dynamics
-sim.run_simulation()
+# run energy minimization
+opt.optimize()
 
 # end of program
 
