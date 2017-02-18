@@ -65,21 +65,21 @@ class Simulation:
         self.indir = '/'.join(self.infile.split('/')[:-1])
         self.simtype = sim_type
         self.mol = []
-        self.temp = 0.0
-        self.press = 0.0
+        self.temp = 298.15
+        self.press = 1.0
         self.geomout = 'geom.xyz'
         self.energyout = 'energy.dat'
-        self.statustime = float('inf')
+        self.statustime = 60.0
 
-        self.tottime = 0.0
+        self.tottime = 1.0
         self.timestep = 1.0 * 10**-3
         self.time = 1.0 * 10**-10
         self.eqtime = 0.0
-        self.eqrate = float('inf')
+        self.eqrate = 2.0
         self.energytime = 0.01
         self.geomtime = 0.01
 
-        self.totconfs = 0
+        self.totconfs = 1000
         self.conf = 0
         self.dispmag = 0.1
         self.dispinc = math.log(2.0)
@@ -94,6 +94,7 @@ class Simulation:
     def read_in_data(self):
         """Read in simulation data from input file."""
         fileio.get_sim_data(self)
+        self.temp += 1.0 * 10**-10
 
     def run_simulation(self):
         """Run simulation depending on simulation type."""
@@ -176,7 +177,7 @@ class Simulation:
             self.update_accs()
             self.update_vels(self.timestep)
             self.mol.get_energy('leapfrog')
-            if (self.time <= self.eqtime):
+            if (self.time < self.eqtime):
                 self.equilibrate_temp()
             self.check_print_md(self.timestep)
             self.time += self.timestep
@@ -310,9 +311,9 @@ class Simulation:
 
     def close_output_files(self):
         """Close output files for energy and geometry data printing."""
+        self.print_status()
         self.gfile.close()
         self.efile.close()
-        self.print_status()
 
     def check_print_md(self, timestep):
         """Check if printing of various md data is needed at current time."""
@@ -352,9 +353,9 @@ class Simulation:
     def print_geom(self):
         """Print xyz-format geometry of system to trajectory file."""
         if (self.simtype == 'md'):
-            pstr = 'geometry at t = %.4f ps\n' % (self.time)
+            pstr = 'geometry at t = %.4f ps' % (self.time)
         elif (self.simtype == 'mmc'):
-            pstr = 'geometry at conf %i\n' % (self.conf+1)
+            pstr = 'geometry at conf %i' % (self.conf+1)
         fileio.print_coords_file(self.gfile, self.mol, pstr)
 
     def print_energy_header(self):
@@ -417,6 +418,9 @@ class Simulation:
         elif (self.simtype == 'mmc'):
             print('%i/%i confs' % (self.conf, self.totconfs), end='')
         print(' as of %s' % (time.strftime('%H:%M:%S')))
+        self.gfile.flush()
+        self.efile.flush()
+        sys.stdout.flush()
 
 # end of module
 

@@ -1,0 +1,6 @@
+MOLECULE    ../../geom/prm/he20.prm
+OPTTYPE                          SD
+OPTCRITERIA                 DEFAULT
+NMAXITER                        800
+GEOMOUT     ../../data/opt/he20.xyz
+ENERGYOUT   ../../data/opt/he20.dat

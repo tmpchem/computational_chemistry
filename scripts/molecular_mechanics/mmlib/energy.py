@@ -116,13 +116,13 @@ def get_e_bound_i(k_box, bound, coords, origin, boundtype):
             of atom.
         origin (float*): Array of cartesian coordiantes [Angstrom]
             of origin of simulation.
-        boundtype (str): `prism` or `sphere`, type of boundary condition.
+        boundtype (str): `cube` or `sphere`, type of boundary condition.
     
     Returns:
         e_bound_i (float): Boundary energy [kcal/mol] of atom.
     """
     e_bound_i = 0.0
-    if (boundtype == 'prism'):
+    if (boundtype == 'cube'):
         for j in range(3):
             scale = 1.0 if (abs(coords[j] - origin[j]) >= bound) else 0.0
             e_bound_i += (scale * k_box

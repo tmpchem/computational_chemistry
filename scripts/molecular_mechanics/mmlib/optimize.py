@@ -107,7 +107,7 @@ class Optimization:
         self.infile = os.path.realpath(infile_name)
         self.indir = os.path.dirname(self.infile)
         self.name = '.'.join(self.infile.split('/')[-1].split('.')[:-1])
-        self.opt_type = 'sd' # steepest descent by default
+        self.opt_type = 'sd'
         self.opt_str = ''
         self.mol = []
         self.geomout = 'geom.xyz'
@@ -239,6 +239,7 @@ class Optimization:
         disp_sign = 1.0 if (self.disp_deriv <= 0.0) else -1.0
         disp_mag *= disp_sign
         disp_sign_same = True
+        ref_energy = self.mol.e_total
         self.n_subiter = 0
         # binary search tree to find upper bound on displacement magnitude
         while (disp_sign_same):
@@ -246,6 +247,9 @@ class Optimization:
             self.displace_coords(+1.0 * disp_mag, disp_vector)
             self.get_disp_deriv(disp_mag, disp_vector)
             self.displace_coords(-1.0 * disp_mag, disp_vector)
+            if (self.mol.e_total > ref_energy):
+                disp_mag *= 0.5
+                break
             old_disp_sign = disp_sign
             disp_sign = 1.0 if (self.disp_deriv <= 0.0) else -1.0
             disp_sign_same = bool(disp_sign == old_disp_sign)
@@ -275,16 +279,15 @@ class Optimization:
         execute the conditional. If overridden from input file to value
         in dictionary, reset all 5 convergence criteria to specified
         value."""
-        print(self.opt_str)
         opt_criteria_refs = {
-            'loose'     : [1.0 * 10**(-4), 1.0 * 10**(-3), 2.0 * 10**(-3),
-                           1.0 * 10**(-2), 2.0 * 10**(-2)],
-            'default'   : [1.0 * 10**(-6), 1.0 * 10**(-4), 2.0 * 10**(-4),
-                           1.0 * 10**(-3), 2.0 * 10**(-3)],
-            'tight'     : [1.0 * 10**(-8), 1.0 * 10**(-5), 2.0 * 10**(-5),
-                           1.0 * 10**(-4), 2.0 * 10**(-4)],
-            'verytight' : [1.0 * 10**(-9), 1.0 * 10**(-6), 2.0 * 10**(-6),
-                           1.0 * 10**(-5), 2.0 * 10**(-5)]}
+            'loose'     : [1.0 * 10**(-4),  1.0 * 10**(-3), 2.0 * 10**(-3),
+                           1.0 * 10**(-2),  2.0 * 10**(-2)],
+            'default'   : [1.0 * 10**(-6),  1.0 * 10**(-4), 2.0 * 10**(-4),
+                           1.0 * 10**(-3),  2.0 * 10**(-3)],
+            'tight'     : [1.0 * 10**(-8),  1.0 * 10**(-5), 2.0 * 10**(-5),
+                           1.0 * 10**(-4),  2.0 * 10**(-4)],
+            'verytight' : [1.0 * 10**(-10), 1.0 * 10**(-6), 2.0 * 10**(-6),
+                           1.0 * 10**(-5),  2.0 * 10**(-5)]}
         if (self.opt_str in opt_criteria_refs):
             opt_vals = opt_criteria_refs[self.opt_str]
             self.conv_delta_e  = opt_vals[0]
@@ -292,19 +295,6 @@ class Optimization:
             self.conv_grad_max = opt_vals[2] 
             self.conv_disp_rms = opt_vals[3] 
             self.conv_disp_max = opt_vals[4] 
-
-    def get_test_energy(self, test_coords):
-        """Determine energy of molecule at set of test coordinates.
-        
-        Args:
-            test_coords (float**): Array of atomic coordinates [Angstrom]
-                at which to determine molecular energy.
-        """
-        self.copy_coords()
-        self.update_coords(test_coords)
-        self.update_energy()
-        self.test_energy = self.mol.e_total
-        self.update_coords(self.ccoords)
 
     def displace_coords(self, disp_mag, disp_vector):
         """Dispace coordinates by disp_mag in disp_vector direction.
@@ -362,12 +352,12 @@ class Optimization:
 
     def print_energy_header(self):
         """Print header of convergence output columns to file."""
-        self.efile.write('# iter          energy    delta_e    grad_max')
-        self.efile.write('    grad_rms    disp_max    disp_rms\n')
         self.efile.write('#                      ')
-        self.efile.write('%10.3e  %10.3e  %10.3e  %10.3e  %10.3e\n' % (
+        self.efile.write('%10.3e  %9.3e  %9.3e  %9.3e  %9.3e\n' % (
             self.conv_delta_e, self.conv_grad_max, self.conv_grad_rms,
             self.conv_disp_max, self.conv_disp_rms))
+        self.efile.write('# iter          energy    delta_e   grad_max')
+        self.efile.write('   grad_rms   disp_max   disp_rms\n')
 
     def print_energy(self, n_iter):
         """Print convergence information to file."""
@@ -390,10 +380,10 @@ class Optimization:
         pstr  = '%3i' % (n_iter)
         pstr += ' %18.12f' % (t.energy[n_iter])
         pstr += ' %10.3e%s' % (delta_e, conv_str[0])
-        pstr += ' %10.3e%s' % (gmax, conv_str[1])
-        pstr += ' %10.3e%s' % (grms, conv_str[2])
-        pstr += ' %10.3e%s' % (dmax, conv_str[3])
-        pstr += ' %10.3e%s' % (drms, conv_str[4])
+        pstr += ' %9.3e%s' % (gmax, conv_str[1])
+        pstr += ' %9.3e%s' % (grms, conv_str[2])
+        pstr += ' %9.3e%s' % (dmax, conv_str[3])
+        pstr += ' %9.3e%s' % (drms, conv_str[4])
         e.write('%s\n' % (pstr))
 
     def print_status(self):

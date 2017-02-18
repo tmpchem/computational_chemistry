@@ -112,13 +112,13 @@ def get_g_bound_i(k_box, bound, coord, origin, boundtype):
             of atom.
         origin (float*): Array of cartesian coordiantes [Angstrom]
             of origin of simulation.
-        boundtype (str): `prism` or `sphere`, type of boundary condition.
+        boundtype (str): `cube` or `sphere`, type of boundary condition.
     
     Returns:
         g_bound_i (float): Magnitude of energy gradient [kcal/(mol*A)].
     """
     g_bound_i = numpy.zeros(3)
-    if (boundtype == 'prism'):
+    if (boundtype == 'cube'):
         for j in range(3):
             sign = 1.0 if ((coord[j] - origin[j]) <= 0.0) else -1.0
             scale = 1.0 if (abs(coord[j] - origin[j]) >= bound) else 0.0

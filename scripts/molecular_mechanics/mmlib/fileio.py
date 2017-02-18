@@ -344,7 +344,7 @@ def print_coords_file(ofile, mol, comment):
     for i in range(mol.n_atoms):
         ofile.write('%-2s' % (mol.atoms[i].element))
         for j in range(3):
-            ofile.write(' %12.6f' % (mol.atoms[i].coords[j]))
+            ofile.write(' %7.3f' % (mol.atoms[i].coords[j]))
         ofile.write('\n')
 
 def print_gradient(mol, grad_type):

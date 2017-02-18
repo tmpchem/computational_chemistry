@@ -1,0 +1,6 @@
+MOLECULE    ../../geom/prm/lif.prm
+OPTTYPE                         SD
+OPTCRITERIA                DEFAULT
+NMAXITER                        50
+GEOMOUT     ../../data/opt/lif.xyz
+ENERGYOUT   ../../data/opt/lif.dat

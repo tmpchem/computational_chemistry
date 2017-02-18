@@ -1,0 +1,6 @@
+MOLECULE    ../../geom/prm/ch2o.prm
+OPTTYPE                          CG
+OPTCRITERIA                 DEFAULT
+NMAXITER                        150
+GEOMOUT     ../../data/opt/ch2o.xyz
+ENERGYOUT   ../../data/opt/ch2o.dat

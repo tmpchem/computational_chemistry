@@ -1,0 +1,30 @@
+
+ -------- Energy Values --------
+   component         [kcal/mol]
+ -------------------------------
+   Total         |   -83.0247
+   Kinetic       |     0.0000
+   Potential     |   -83.0247
+   Non-bonded    |   -83.0247
+   Bonded        |     0.0000
+   Boundary      |     0.0000
+   van der Waals |    -0.0088
+   Electrostatic |   -83.0159
+   Bonds         |     0.0000
+   Angles        |     0.0000
+   Torsions      |     0.0000
+   Out-of-planes |     0.0000
+
+ -------- Molecular Geometry and Non-bonded Parameters ---------
+      type     x         y         z       q      ro/2    eps
+ ---------------------------------------------------------------
+   1 | Li    0.0000    0.0000    0.0000  1.0000  1.1370  0.0183
+   2 | F     0.0000    0.0000    4.0000 -1.0000  1.7500  0.0610
+
+ No Bonds Detected
+
+ No Bond Angles Detected
+
+ No Torsion Angles Detected
+
+ No Out-of-plane Angles Detected

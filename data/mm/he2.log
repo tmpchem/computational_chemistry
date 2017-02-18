@@ -1,0 +1,30 @@
+
+ -------- Energy Values --------
+   component         [kcal/mol]
+ -------------------------------
+   Total         |    -0.0018
+   Kinetic       |     0.0000
+   Potential     |    -0.0018
+   Non-bonded    |    -0.0018
+   Bonded        |     0.0000
+   Boundary      |     0.0000
+   van der Waals |    -0.0018
+   Electrostatic |     0.0000
+   Bonds         |     0.0000
+   Angles        |     0.0000
+   Torsions      |     0.0000
+   Out-of-planes |     0.0000
+
+ -------- Molecular Geometry and Non-bonded Parameters ---------
+      type     x         y         z       q      ro/2    eps
+ ---------------------------------------------------------------
+   1 | He    0.0000    0.0000    0.0000  0.0000  1.1810  0.0100
+   2 | He    0.0000    0.0000    3.5000  0.0000  1.1810  0.0100
+
+ No Bonds Detected
+
+ No Bond Angles Detected
+
+ No Torsion Angles Detected
+
+ No Out-of-plane Angles Detected

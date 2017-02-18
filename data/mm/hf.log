@@ -1,0 +1,33 @@
+
+ -------- Energy Values --------
+   component         [kcal/mol]
+ -------------------------------
+   Total         |     4.6425
+   Kinetic       |     0.0000
+   Potential     |     4.6425
+   Non-bonded    |     0.0000
+   Bonded        |     4.6425
+   Boundary      |     0.0000
+   van der Waals |     0.0000
+   Electrostatic |     0.0000
+   Bonds         |     4.6425
+   Angles        |     0.0000
+   Torsions      |     0.0000
+   Out-of-planes |     0.0000
+
+ -------- Molecular Geometry and Non-bonded Parameters ---------
+      type     x         y         z       q      ro/2    eps
+ ---------------------------------------------------------------
+   1 | H1    0.0000    0.0000    0.0000  0.0000  0.0000  0.0000
+   2 | F1    0.0000    0.0000    1.0000  0.0000  0.0000  0.0000
+
+ ------------------ Bond Length Data -------------------
+          k_b     r_eq     r_ij   types    energy atoms
+ -------------------------------------------------------
+   1 |  673.90   0.9170   1.0000 (H1-F1)   4.6425 (1-2)
+
+ No Bond Angles Detected
+
+ No Torsion Angles Detected
+
+ No Out-of-plane Angles Detected

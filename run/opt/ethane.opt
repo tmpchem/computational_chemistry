@@ -1,0 +1,6 @@
+MOLECULE    ../../geom/xyzq/ethane.xyzq
+OPTTYPE                              CG
+OPTCRITERIA                     DEFAULT
+NMAXITER                            150
+GEOMOUT       ../../data/opt/ethane.xyz
+ENERGYOUT     ../../data/opt/ethane.dat

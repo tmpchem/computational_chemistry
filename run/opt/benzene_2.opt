@@ -1,0 +1,6 @@
+MOLECULE    ../../geom/xyzq/benzene_2.xyzq
+OPTTYPE                                 CG
+OPTCRITERIA                        DEFAULT
+NMAXITER                               400
+GEOMOUT       ../../data/opt/benzene_2.xyz
+ENERGYOUT     ../../data/opt/benzene_2.dat

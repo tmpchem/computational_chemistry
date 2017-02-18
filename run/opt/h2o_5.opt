@@ -1,0 +1,6 @@
+MOLECULE    ../../geom/xyzq/h2o_5.xyzq
+OPTTYPE                             CG
+OPTCRITERIA                    DEFAULT
+NMAXITER                           200
+GEOMOUT       ../../data/opt/h2o_5.xyz
+ENERGYOUT     ../../data/opt/h2o_5.dat

@@ -376,9 +376,9 @@ class Molecule:
 
         self.dielectric = 1.0
         self.mass = 0.0
-        self.k_box = 0.0
-        self.bound = 0.0
-        self.boundtype = 'none'
+        self.k_box = 250.0
+        self.bound = 1.0 * 10**100
+        self.boundtype = 'sphere'
         self.origin = numpy.zeros(3)
         self.vol = float('inf')
         self.temp = 0.0

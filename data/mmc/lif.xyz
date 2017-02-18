@@ -1,0 +1,4004 @@
+2
+geometry at conf 1
+Li   0.000   0.000   0.000
+F    0.000   0.000   4.000
+2
+geometry at conf 1
+Li  -0.125   0.129   0.138
+F    0.009   0.089   3.836
+2
+geometry at conf 2
+Li  -0.145   0.022   0.206
+F    0.174  -0.011   3.816
+2
+geometry at conf 3
+Li  -0.144   0.138   0.292
+F    0.315  -0.187   3.729
+2
+geometry at conf 4
+Li  -0.247   0.108   0.255
+F    0.367  -0.302   3.648
+2
+geometry at conf 5
+Li  -0.289  -0.010   0.323
+F    0.533  -0.523   3.602
+2
+geometry at conf 6
+Li  -0.324   0.074   0.376
+F    0.481  -0.295   3.665
+2
+geometry at conf 7
+Li  -0.360   0.103   0.378
+F    0.612  -0.420   3.595
+2
+geometry at conf 8
+Li  -0.378   0.171   0.268
+F    0.596  -0.521   3.407
+2
+geometry at conf 9
+Li  -0.447   0.246   0.439
+F    0.661  -0.546   3.263
+2
+geometry at conf 10
+Li  -0.539   0.331   0.463
+F    0.611  -0.534   3.197
+2
+geometry at conf 11
+Li  -0.466   0.128   0.533
+F    0.699  -0.635   3.250
+2
+geometry at conf 12
+Li  -0.488   0.113   0.638
+F    0.621  -0.609   3.221
+2
+geometry at conf 13
+Li  -0.428   0.051   0.665
+F    0.600  -0.514   3.216
+2
+geometry at conf 14
+Li  -0.447   0.041   0.930
+F    0.698  -0.457   3.188
+2
+geometry at conf 15
+Li  -0.327   0.271   0.879
+F    0.625  -0.449   3.069
+2
+geometry at conf 16
+Li  -0.294   0.232   0.786
+F    0.525  -0.437   2.976
+2
+geometry at conf 17
+Li  -0.424   0.206   0.839
+F    0.419  -0.525   2.939
+2
+geometry at conf 18
+Li  -0.296   0.106   0.721
+F    0.502  -0.513   2.846
+2
+geometry at conf 19
+Li  -0.041  -0.009   0.755
+F    0.488  -0.636   2.892
+2
+geometry at conf 20
+Li  -0.096  -0.105   0.735
+F    0.472  -0.649   2.780
+2
+geometry at conf 21
+Li  -0.018  -0.070   0.788
+F    0.436  -0.605   2.688
+2
+geometry at conf 22
+Li  -0.002   0.040   0.853
+F    0.488  -0.504   2.682
+2
+geometry at conf 23
+Li   0.123   0.172   0.936
+F    0.375  -0.375   2.704
+2
+geometry at conf 24
+Li   0.066   0.265   0.940
+F    0.553  -0.340   2.620
+2
+geometry at conf 25
+Li   0.229   0.147   0.910
+F    0.633  -0.372   2.526
+2
+geometry at conf 26
+Li   0.219   0.216   0.951
+F    0.650  -0.292   2.527
+2
+geometry at conf 27
+Li   0.078   0.168   0.886
+F    0.635  -0.238   2.462
+2
+geometry at conf 28
+Li   0.081   0.211   0.914
+F    0.652  -0.160   2.493
+2
+geometry at conf 29
+Li   0.092   0.227   0.930
+F    0.620  -0.152   2.522
+2
+geometry at conf 30
+Li   0.062   0.229   0.955
+F    0.615  -0.132   2.542
+2
+geometry at conf 31
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 32
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 33
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 34
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 35
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 36
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 37
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 38
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 39
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 40
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 41
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 42
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 43
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 44
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 45
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 46
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 47
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 48
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 49
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 50
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 51
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 52
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 53
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 54
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 55
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 56
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 57
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 58
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 59
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 60
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 61
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 62
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 63
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 64
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 65
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 66
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 67
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 68
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 69
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 70
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 71
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 72
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 73
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 74
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 75
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 76
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 77
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 78
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 79
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 80
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 81
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 82
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 83
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 84
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 85
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 86
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 87
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 88
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 89
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 90
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 91
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 92
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 93
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 94
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 95
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 96
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 97
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 98
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 99
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 100
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 101
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 102
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 103
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 104
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 105
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 106
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 107
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 108
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 109
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 110
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 111
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 112
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 113
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 114
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 115
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 116
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 117
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 118
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 119
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 120
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 121
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 122
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 123
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 124
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 125
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 126
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 127
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 128
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 129
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 130
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 131
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 132
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 133
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 134
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 135
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 136
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 137
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 138
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 139
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 140
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 141
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 142
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 143
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 144
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 145
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 146
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 147
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 148
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 149
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 150
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 151
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 152
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 153
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 154
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 155
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 156
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 157
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 158
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 159
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 160
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 161
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 162
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 163
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 164
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 165
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 166
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 167
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 168
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 169
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 170
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 171
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 172
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 173
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 174
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 175
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 176
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 177
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 178
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 179
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 180
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 181
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 182
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 183
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 184
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 185
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 186
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 187
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 188
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 189
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 190
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 191
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 192
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 193
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 194
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 195
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 196
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 197
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 198
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 199
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 200
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 201
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 202
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 203
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 204
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 205
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 206
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 207
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 208
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 209
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 210
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 211
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 212
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 213
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 214
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 215
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 216
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 217
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 218
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 219
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 220
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 221
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 222
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 223
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 224
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 225
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 226
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 227
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 228
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 229
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 230
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 231
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 232
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 233
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 234
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 235
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 236
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 237
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 238
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 239
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 240
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 241
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 242
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 243
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 244
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 245
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 246
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 247
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 248
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 249
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 250
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 251
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 252
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 253
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 254
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 255
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 256
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 257
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 258
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 259
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 260
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 261
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 262
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 263
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 264
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 265
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 266
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 267
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 268
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 269
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 270
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 271
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 272
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 273
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 274
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 275
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 276
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 277
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 278
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 279
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 280
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 281
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 282
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 283
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 284
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 285
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 286
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 287
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 288
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 289
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 290
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 291
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 292
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 293
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 294
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 295
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 296
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 297
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 298
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 299
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 300
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 301
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 302
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 303
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 304
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 305
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 306
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 307
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 308
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 309
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 310
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 311
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 312
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 313
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 314
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 315
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 316
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 317
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 318
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 319
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 320
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 321
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 322
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 323
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 324
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 325
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 326
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 327
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 328
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 329
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 330
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 331
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 332
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 333
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 334
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 335
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 336
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 337
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 338
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 339
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 340
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 341
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 342
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 343
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 344
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 345
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 346
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 347
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 348
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 349
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 350
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 351
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 352
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 353
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 354
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 355
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 356
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 357
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 358
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 359
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 360
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 361
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 362
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 363
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 364
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 365
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 366
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 367
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 368
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 369
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 370
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 371
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 372
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 373
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 374
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 375
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 376
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 377
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 378
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 379
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 380
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 381
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 382
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 383
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 384
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 385
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 386
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 387
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 388
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 389
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 390
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 391
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 392
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 393
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 394
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 395
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 396
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 397
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 398
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 399
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 400
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 401
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 402
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 403
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 404
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 405
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 406
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 407
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 408
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 409
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 410
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 411
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 412
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 413
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 414
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 415
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 416
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 417
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 418
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 419
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 420
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 421
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 422
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 423
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 424
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 425
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 426
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 427
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 428
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 429
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 430
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 431
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 432
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 433
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 434
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 435
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 436
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 437
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 438
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 439
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 440
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 441
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 442
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 443
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 444
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 445
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 446
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 447
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 448
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 449
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 450
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 451
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 452
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 453
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 454
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 455
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 456
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 457
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 458
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 459
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 460
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 461
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 462
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 463
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 464
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 465
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 466
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 467
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 468
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 469
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 470
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 471
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 472
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 473
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 474
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 475
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 476
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 477
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 478
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 479
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 480
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 481
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 482
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 483
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 484
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 485
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 486
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 487
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 488
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 489
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 490
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 491
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 492
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 493
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 494
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 495
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 496
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 497
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 498
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 499
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 500
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 501
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 502
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 503
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 504
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 505
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 506
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 507
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 508
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 509
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 510
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 511
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 512
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 513
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 514
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 515
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 516
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 517
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 518
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 519
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 520
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 521
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 522
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 523
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 524
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 525
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 526
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 527
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 528
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 529
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 530
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 531
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 532
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 533
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 534
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 535
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 536
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 537
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 538
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 539
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 540
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 541
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 542
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 543
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 544
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 545
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 546
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 547
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 548
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 549
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 550
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 551
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 552
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 553
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 554
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 555
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 556
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 557
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 558
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 559
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 560
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 561
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 562
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 563
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 564
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 565
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 566
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 567
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 568
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 569
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 570
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 571
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 572
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 573
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 574
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 575
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 576
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 577
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 578
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 579
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 580
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 581
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 582
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 583
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 584
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 585
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 586
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 587
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 588
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 589
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 590
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 591
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 592
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 593
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 594
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 595
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 596
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 597
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 598
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 599
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 600
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 601
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 602
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 603
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 604
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 605
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 606
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 607
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 608
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 609
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 610
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 611
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 612
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 613
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 614
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 615
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 616
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 617
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 618
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 619
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 620
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 621
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 622
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 623
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 624
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 625
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 626
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 627
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 628
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 629
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 630
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 631
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 632
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 633
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 634
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 635
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 636
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 637
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 638
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 639
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 640
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 641
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 642
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 643
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 644
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 645
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 646
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 647
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 648
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 649
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 650
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 651
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 652
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 653
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 654
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 655
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 656
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 657
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 658
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 659
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 660
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 661
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 662
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 663
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 664
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 665
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 666
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 667
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 668
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 669
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 670
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 671
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 672
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 673
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 674
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 675
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 676
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 677
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 678
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 679
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 680
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 681
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 682
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 683
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 684
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 685
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 686
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 687
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 688
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 689
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 690
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 691
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 692
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 693
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 694
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 695
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 696
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 697
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 698
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 699
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 700
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 701
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 702
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 703
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 704
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 705
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 706
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 707
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 708
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 709
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 710
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 711
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 712
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 713
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 714
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 715
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 716
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 717
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 718
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 719
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 720
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 721
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 722
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 723
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 724
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 725
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 726
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 727
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 728
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 729
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 730
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 731
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 732
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 733
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 734
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 735
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 736
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 737
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 738
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 739
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 740
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 741
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 742
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 743
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 744
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 745
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 746
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 747
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 748
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 749
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 750
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 751
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 752
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 753
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 754
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 755
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 756
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 757
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 758
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 759
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 760
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 761
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 762
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 763
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 764
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 765
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 766
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 767
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 768
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 769
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 770
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 771
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 772
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 773
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 774
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 775
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 776
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 777
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 778
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 779
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 780
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 781
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 782
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 783
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 784
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 785
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 786
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 787
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 788
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 789
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 790
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 791
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 792
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 793
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 794
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 795
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 796
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 797
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 798
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 799
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 800
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 801
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 802
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 803
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 804
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 805
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 806
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 807
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 808
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 809
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 810
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 811
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 812
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 813
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 814
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 815
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 816
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 817
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 818
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 819
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 820
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 821
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 822
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 823
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 824
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 825
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 826
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 827
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 828
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 829
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 830
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 831
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 832
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 833
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 834
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 835
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 836
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 837
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 838
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 839
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 840
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 841
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 842
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 843
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 844
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 845
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 846
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 847
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 848
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 849
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 850
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 851
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 852
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 853
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 854
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 855
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 856
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 857
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 858
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 859
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 860
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 861
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 862
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 863
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 864
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 865
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 866
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 867
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 868
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 869
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 870
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 871
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 872
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 873
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 874
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 875
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 876
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 877
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 878
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 879
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 880
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 881
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 882
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 883
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 884
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 885
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 886
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 887
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 888
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 889
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 890
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 891
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 892
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 893
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 894
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 895
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 896
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 897
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 898
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 899
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 900
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 901
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 902
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 903
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 904
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 905
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 906
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 907
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 908
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 909
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 910
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 911
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 912
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 913
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 914
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 915
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 916
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 917
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 918
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 919
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 920
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 921
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 922
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 923
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 924
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 925
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 926
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 927
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 928
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 929
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 930
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 931
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 932
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 933
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 934
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 935
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 936
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 937
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 938
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 939
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 940
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 941
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 942
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 943
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 944
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 945
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 946
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 947
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 948
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 949
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 950
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 951
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 952
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 953
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 954
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 955
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 956
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 957
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 958
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 959
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 960
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 961
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 962
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 963
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 964
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 965
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 966
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 967
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 968
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 969
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 970
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 971
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 972
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 973
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 974
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 975
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 976
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 977
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 978
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 979
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 980
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 981
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 982
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 983
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 984
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 985
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 986
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 987
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 988
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 989
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 990
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 991
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 992
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 993
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 994
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 995
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 996
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 997
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 998
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 999
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
+2
+geometry at conf 1000
+Li   0.064   0.228   0.955
+F    0.612  -0.135   2.543
