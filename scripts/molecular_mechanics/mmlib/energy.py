@@ -1,11 +1,17 @@
 
-"""Functions for computing molecular mechanics energy components."""
+"""Functions for computing molecular mechanics energy components.
+
+Includes conversion factors, energy functions for individual structural
+objects (atoms, bonds, angles, torsions, outofplanes), system energy
+components, and total energy member data for mmlib.molecule.Molecule
+objects.
+"""
 
 import math
 from mmlib import geomcalc
 
 def ceu2kcal():
-    """Conversion of electrostatic energy from [ceu] to [kcal/mol]"""
+    """Conversion of electrostatic energy from [ceu] to [kcal/mol]."""
     return 332.06375
 
 def kin2kcal():

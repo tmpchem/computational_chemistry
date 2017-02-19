@@ -1,5 +1,10 @@
 
-"""Classes and functions for handling molecular system data."""
+"""Classes and functions for handling molecular system data.
+
+Includes classes for representing geometry and parameter data for atoms,
+bonds, bond angles, torsion angles, outofplane angles, and entire
+molecular systems.
+"""
 
 import os, sys, math, numpy
 from mmlib import fileio, param, geomcalc, topology, energy, gradient
@@ -309,7 +314,7 @@ class Molecule:
         bonds (mmlib.molecule.Bond*): Array of Bond objects.
         angles (mmlib.molecule.Angle*): Array of Atom objects.
         torsions (mmlib.molecule.Torsion*): Array of Torsion objects.
-        outofplanes (mmlib.molecule.Outofplanes*): Array of Outofplane  
+        outofplanes (mmlib.molecule.Outofplane*): Array of Outofplane  
             objects.
         nonints (int**): Array of covalently bonded atomic indices.
 

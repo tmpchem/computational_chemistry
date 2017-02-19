@@ -1,5 +1,10 @@
 
-"""Classes and functions for optimizing molecular coordinates."""
+"""Classes and functions for optimizing molecular coordinates.
+
+Includes classes for propogating molecular coordinates towards
+a local potential energy minimum and storing the history of data
+on the trajectory towards the minimum.
+"""
 
 import os, sys, math, numpy
 from mmlib import energy, gradient, fileio
@@ -388,8 +393,8 @@ class Optimization:
 
     def print_status(self):
         """Print xyz-format geometry of system to trajectory file."""
-        comment = '%s, iteration %i' % (self.name, self.n_iter)
-        fileio.print_coords_file(self.gfile, self.mol, comment)
+        comment = 'iter %i' % (self.n_iter)
+        fileio.print_coords_file(self.gfile, self.mol, comment, 14, 8)
         self.print_energy(self.n_iter)
         self.gfile.flush()
         self.efile.flush()

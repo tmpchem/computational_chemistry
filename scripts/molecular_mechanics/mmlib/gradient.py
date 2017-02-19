@@ -1,5 +1,11 @@
 
-"""Functions for computing molecular mechanics energy gradient components."""
+"""Functions for computing molecular mechanics energy gradient components.
+
+Includes conversion factors, energy gradient magnitudes for individual
+structural objects (atoms, bonds, angles, torsions, outofplanes), system
+gradient components, and total energy gradient member data for
+mmlib.molecule.Molecule objects.
+"""
 
 import math, numpy
 from mmlib import energy, geomcalc, molecule

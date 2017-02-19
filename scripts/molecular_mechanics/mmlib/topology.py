@@ -1,5 +1,11 @@
 
-"""Functions for determining bonded structure of molecular systems."""
+"""Functions for determining bonded structure of molecular systems.
+
+Includes functions for determining bonds, angles, torsions, and
+outofplanes for an mmlib.molecule.Molecule object through atoms which
+are located within a threshold of the sum of interatomic covalent
+radii.
+"""
 
 from mmlib import geomcalc, param, molecule
 

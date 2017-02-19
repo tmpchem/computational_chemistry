@@ -1,3 +1,11 @@
+
+"""Functions for testing proper performance of mmlib modules.
+
+Warning: work in progress. Module is incomplete, and is subject to
+substantial change without notice until it achieves full testing
+coverage and a stable form.
+"""
+
 import os, sys, ast, math, numpy
 from mmlib import geomcalc, fileio, topology, energy
 

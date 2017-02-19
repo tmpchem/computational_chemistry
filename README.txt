@@ -59,7 +59,7 @@ xyz files are located in `[top_level_path]/geom/xyz` directory.
 
 The molecular_mechanics project contain scripts to compute molecular
 mechanics energy of a system (mm.py), molecular dynamics trajectories
-(md.py), Metropolis Monte Carlo ensembles (mmc.py), and optimize
+(md.py), Metropolis Monte Carlo ensembles (mc.py), and optimize
 molecular coordinates to potential energy minima (opt.py).
 
 The energy function and parameters in all cases is based on AMBER FF94
@@ -71,7 +71,7 @@ located in "amber14/dat/leap/parm/parm94.dat".
 
 Sample input files for mm are located in
 `[top_level_path]/geom/[file_type]` directories, where [file_type] =
-xyzq or prm. Sample input files for md and mmc are located in
+xyzq or prm. Sample input files for md and mc are located in
 `[top_level_path]/geom/sim` directory. Output files for each are
 demonstrated in samples, and may be written to any accessible file
 name.

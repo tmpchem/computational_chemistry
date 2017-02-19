@@ -1,5 +1,10 @@
 
-"""Functions for computing molecular geometry data."""
+"""Functions for computing molecular geometry data.
+
+Includes unit conversions, unit vectors, dot products, cross products,
+bond distances, bond angles, torsion angles, outofplane angles, and
+system volume.
+"""
 
 import math, numpy
 

@@ -1,5 +1,9 @@
 
-"""Functions and tables for AMBER94 molecular mechanics parameters."""
+"""Functions and dictionaries for AMBER94 molecular mechanics parameters.
+
+Includes parameters for atomic mass, atomic covalent radii, atomic van
+der waals, mm bonds, mm angles, mm torsions, and mm outofplanes.
+"""
 
 import sys
 

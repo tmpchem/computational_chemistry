@@ -1,8 +1,8 @@
 
 """Functions for printing, reading, and writing mmlib data.
 
-This module provides the interface to print molecular energy, gradient,
-geometry, topology, parameter, and simulation data to screen or file.
+Provides the interface to print molecular energy, gradient, geometry,
+topology, parameter, simulation, and optimization data to screen or file.
 """
 
 import os, sys, math, numpy
@@ -309,6 +309,33 @@ def get_opt_data(opt):
         elif (kwarg == 'energyout'):
             opt.energyout = kwargval
 
+def get_trajectory(traj_file):
+    """Read in molecular xyz coordinate sequences from xyz file.
+    
+    Input file contains `n_confs` molecular xyz-coordinate snapshots
+    with `n_atoms` atoms each. Start by reading in `n_atoms`, and
+    continue until file ends.
+    
+    Args:
+        traj_file (str): Path to input trajectory file.
+    
+    Returns:
+        traj (float***): Array of xyz-coordinates at each configuration
+            of molecule during trajectory.
+    """
+    traj_array = get_file_string_array(traj_file)
+    n_lines = len(traj_array)
+    n_atoms = int(traj_array[0][0])
+    n_confs = int(math.floor(n_lines / (n_atoms+2)))
+    traj = numpy.zeros((n_confs, n_atoms, 3))
+    for p in range(n_confs):
+        geom_start = p * (n_atoms+2)
+        for i in range(n_atoms):
+            atom_start = geom_start + i + 2
+            for j in range(3):
+                traj[p][i][j] = float(traj_array[atom_start][j+1])
+    return traj
+
 def print_coords(mol, comment):
     """Print atomic coordinates for a set of atoms.
     
@@ -328,7 +355,7 @@ def print_coords(mol, comment):
         print('\n', end='')
     print('\n', end='')
 
-def print_coords_file(ofile, mol, comment):
+def print_coords_file(ofile, mol, comment, totchar, decchar):
     """Print atomic coordinates to an open output file.
     
     Print to ofile all (float) 3N atomic cartesian coordinates [Angstrom]
@@ -338,13 +365,15 @@ def print_coords_file(ofile, mol, comment):
         ofile (file): Open file handle for printing coordinate data.
         mol (mmlib.molecule.Molecule): Molecule object with (float) 3N
             atomic cartesian coordinates [Angstrom].
-        comment(str): Comment string for xyz file comment line.
+        comment (str): Comment string for xyz file comment line.
+        totchar (str): Total number of characters in coordinate printing.
+        decchar (str): Post-decimal characters in coordinate printing.
     """
     ofile.write('%i\n%s\n' % (mol.n_atoms, comment))
     for i in range(mol.n_atoms):
         ofile.write('%-2s' % (mol.atoms[i].element))
         for j in range(3):
-            ofile.write(' %7.3f' % (mol.atoms[i].coords[j]))
+            ofile.write(' %*.*f' % (totchar, decchar, mol.atoms[i].coords[j]))
         ofile.write('\n')
 
 def print_gradient(mol, grad_type):
@@ -717,7 +746,7 @@ def get_input():
             print('xyzq or prm file for molecular mechanics\n')
         elif (prog_name == 'md.py'):
             print('simulation file for molecular dynamics\n')
-        elif (prog_name == 'mmc.py'):
+        elif (prog_name == 'mc.py'):
             print('simulation file for metropolis monte carlo\n')
         elif (prog_name == 'opt.py'):
             print('optimization file for energy minimization\n')

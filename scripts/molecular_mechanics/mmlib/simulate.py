@@ -1,5 +1,10 @@
 
-"""Classes and functions for handling molecular simulation data."""
+"""Classes and functions for handling molecular simulation data.
+
+Includes unit conversions and classes to do molecular dynamics and
+Metropolis Monte-Carlo simulations of mmlib.molecule.Molecule
+objects.
+"""
 
 import os, sys, math, time, numpy
 from mmlib import energy, fileio
@@ -27,7 +32,7 @@ class Simulation:
             relative or absolute, though absolute is safer.
         sim_type (str): Type of simulation.
             `md`: Molecular dynamics.
-            `mmc`: Metropolis Monte-Carlo.
+            `mc`: Metropolis Monte-Carlo.
     
     Attributes:
         infile (str): Input file (see Args).
@@ -72,7 +77,7 @@ class Simulation:
         self.statustime = 60.0
 
         self.tottime = 1.0
-        self.timestep = 1.0 * 10**-3
+        self.timestep = 0.001
         self.time = 1.0 * 10**-10
         self.eqtime = 0.0
         self.eqrate = 2.0
@@ -100,8 +105,8 @@ class Simulation:
         """Run simulation depending on simulation type."""
         if (self.simtype == 'md'):
             self.run_dynamics()
-        elif (self.simtype == 'mmc'):
-            self.run_mmc()
+        elif (self.simtype == 'mc'):
+            self.run_mc()
         else:
             print('Error: simulation type (%s) not recognized!' % (
                 self.simtype))
@@ -167,9 +172,10 @@ class Simulation:
         """
         self.open_output_files()
         self.initialize_vels()
-        self.check_print_md(self.timestep)
+        self.mol.get_energy('standard')
         self.mol.get_gradient('analytic')
         self.update_accs()
+        self.check_print_md(0.0, True)
         self.update_vels(0.5*self.timestep)
         while (self.time < self.tottime):
             self.update_coords(self.timestep, 1.0, 0.0)
@@ -184,7 +190,7 @@ class Simulation:
         self.check_print_md(self.timestep)
         self.close_output_files()
 
-    def run_mmc(self):
+    def run_mc(self):
         """Run Metropolis Monte-Carlo according to simulation parameters.
         
         For every configuration, compute the potential energy and compare
@@ -197,6 +203,7 @@ class Simulation:
         self.open_output_files()
         self.zero_vels()
         self.mol.get_energy('standard')
+        self.check_print_mc(0, True)
         penergy = self.mol.e_total
         while (self.conf < self.totconfs):
             self.get_rand_disp()
@@ -205,7 +212,7 @@ class Simulation:
             delta_e = self.mol.e_total - penergy
             bf = math.exp(min(1.0, -1.0*delta_e / (energy.kb()*self.temp)))
             if (bf >= numpy.random.random()):
-                self.check_print_mc()
+                self.check_print_mc(1)
                 self.conf += 1
                 self.n_accept += 1
                 penergy = self.mol.e_total
@@ -213,6 +220,7 @@ class Simulation:
                 self.disp_coords(-1.0*self.rand_disp)
                 self.n_reject += 1
             self.check_disp()
+        self.check_print_mc(0)
         self.close_output_files()
 
     def update_accs(self):
@@ -297,17 +305,14 @@ class Simulation:
         self.gfile = open(self.geomout, "w")
         self.efile = open(self.energyout, "w")
         self.print_energy_header()
-        self.print_energy()
-        self.print_geom()
-        self.print_status()
         self.stime = time.time()
         if (self.simtype == 'md'):
             self.gtime = 10**-10
             self.etime = 10**-10
-        elif (self.simtype == 'mmc'):
-            self.gconf = 1
-            self.econf = 1
-            self.dconf = 1
+        elif (self.simtype == 'mc'):
+            self.gconf = 0
+            self.econf = 0
+            self.dconf = 0
 
     def close_output_files(self):
         """Close output files for energy and geometry data printing."""
@@ -315,33 +320,33 @@ class Simulation:
         self.gfile.close()
         self.efile.close()
 
-    def check_print_md(self, timestep):
+    def check_print_md(self, timestep, print_all=False):
         """Check if printing of various md data is needed at current time."""
-        if (self.etime >= self.energytime):
+        if (print_all or self.etime >= self.energytime):
             self.print_energy()
             self.etime = 10**-10
-        if (self.gtime >= self.geomtime):
+        if (print_all or self.gtime >= self.geomtime):
             self.print_geom()
             self.gtime = 10**-10
-        if (time.time() - self.stime > self.statustime):
+        if (print_all or time.time() - self.stime > self.statustime):
             self.print_status()
             self.stime = time.time()
         self.etime += timestep
         self.gtime += timestep
 
-    def check_print_mc(self):
+    def check_print_mc(self, n_conf, print_all=False):
         """Check if printing of various mc data is need at current time."""
-        if (self.econf >= self.energyconf):
+        if (print_all or self.econf >= self.energyconf):
             self.print_energy()
             self.econf = 0
-        if (self.gconf >= self.geomconf):
+        if (print_all or self.gconf >= self.geomconf):
             self.print_geom()
             self.gconf = 0
-        if (time.time() - self.stime > self.statustime):
+        if (print_all or time.time() - self.stime > self.statustime):
             self.print_status()
             self.stime = time.time()
-        self.econf += 1
-        self.gconf += 1
+        self.econf += n_conf
+        self.gconf += n_conf
 
     def check_disp(self):
         """Check if changing magnitude of random displacment vector needed."""
@@ -353,26 +358,27 @@ class Simulation:
     def print_geom(self):
         """Print xyz-format geometry of system to trajectory file."""
         if (self.simtype == 'md'):
-            pstr = 'geometry at t = %.4f ps' % (self.time)
-        elif (self.simtype == 'mmc'):
-            pstr = 'geometry at conf %i' % (self.conf+1)
-        fileio.print_coords_file(self.gfile, self.mol, pstr)
+            pstr = '%.4f ps' % (self.time)
+        elif (self.simtype == 'mc'):
+            pstr = 'conf %i' % (self.conf+1)
+        fileio.print_coords_file(self.gfile, self.mol, pstr, 7, 3)
 
     def print_energy_header(self):
         """Print header of energy output columns to file."""
         e = self.efile
-        e.write('# energy of %s' % (self.mol.name))
+        e.write('# energy [kcal/mol] of %s' % (self.mol.name))
         if (self.simtype == 'md'):
-            e.write(' ( %.4f ps of eq)\n         time' % (self.eqtime))
-            e.write('    e_total         e_kin       e_pot  ')
-        elif (self.simtype == 'mmc'):
-            e.write('\n#      conf       e_total')
-        e.write('e_nonbond    e_bonded    e_boundary       e_vdw      e_elst')
-        e.write('      e_bond     e_angle   e_tors        e_oop')
+            e.write(' (%.4f ps of eq)\n#  time' % (self.eqtime))
+            e.write(' [ps] e_total      e_kin      e_pot  ')
+        elif (self.simtype == 'mc'):
+            e.write('\n#  conf     e_total  ')
+        e.write('e_nonbond   e_bonded  e_boundary      e_vdw     e_elst')
+        e.write('     e_bond    e_angle     e_tors      e_oop')
         if (self.simtype == 'md'):
-            e.write(' temperature    pressure\n')
+            e.write('     temp    press')
+        e.write('\n')
 
-    def print_val(self, totstr, decstr, val):
+    def print_val(self, totstr, decstr, val, ptype='f', n_space=1):
         """Write specified file to energy output file in indicated format.
         
         Args:
@@ -380,9 +386,12 @@ class Simulation:
             decstr (int): number of post-decimal characters in float print.
             val (float): energy value to be printed to file.
         """
-        self.efile.write(' %*.*f' % (totstr, decstr, val))
+        if (ptype == 'f'):
+            self.efile.write('%*s%*.*f' % (n_space, '', totstr, decstr, val))
+        elif (ptype == 'e'):
+            self.efile.write('%*s%*.*e' % (n_space, '', totstr, decstr, val))
 
-    def print_e_terms(self, totstr, decstr):
+    def print_e_terms(self, totstr, decstr, ptype):
         """Write energy terms at current configuration to energy file.
         
         Args:
@@ -393,29 +402,29 @@ class Simulation:
         eterms = [m.e_kinetic, m.e_potential, m.e_nonbonded, m.e_bonded,
             m.e_bound, m.e_vdw, m.e_elst, m.e_bonds, m.e_angles,
             m.e_torsions, m.e_outofplanes]
-        if (self.simtype == 'mmc'):
+        if (self.simtype == 'mc'):
             eterms = eterms[2:]
         for i in range(len(eterms)):
-            self.print_val(11, 4, eterms[i])
+            self.print_val(10, 3, eterms[i], ptype)
 
     def print_energy(self):
         """Print energy data to energy output file, depending on simtype"""
         if (self.simtype == 'md'):
-            self.print_val(11, 4, self.time)
-        elif (self.simtype == 'mmc'):
-            self.print_val(9, 0, self.conf+1)
-        self.print_val(13, 6, self.mol.e_total)
-        self.print_e_terms(11, 4)
+            self.print_val(7, 4, self.time, 'f', 0)
+        elif (self.simtype == 'mc'):
+            self.print_val(7, 0, self.conf, 'f', 0)
+        self.print_val(12, 5, self.mol.e_total, 'e')
+        self.print_e_terms(10, 3, 'e')
         if (self.simtype == 'md'):
-            self.print_val(11, 5, self.mol.temp)
-            self.print_val(11, 5, self.mol.press)
+            self.print_val(8, 3, self.mol.temp)
+            self.print_val(8, 3, self.mol.press)
         self.efile.write('\n')
 
     def print_status(self):
         """Print completion progress of simulation to screen"""
         if (self.simtype == 'md'):
             print('%.4f/%.4f ps' % (self.time, self.tottime), end='')
-        elif (self.simtype == 'mmc'):
+        elif (self.simtype == 'mc'):
             print('%i/%i confs' % (self.conf, self.totconfs), end='')
         print(' as of %s' % (time.strftime('%H:%M:%S')))
         self.gfile.flush()
