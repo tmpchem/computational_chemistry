@@ -6,7 +6,8 @@ topology, parameter, simulation, and optimization data to screen or file.
 """
 
 import os, sys, math, numpy
-from mmlib import param, geomcalc, topology, energy, molecule, optimize
+from mmlib import (param, geomcalc, topology, energy, molecule, simulate,
+    optimize, analyze)
 
 def get_file_string_array(infile_name):
     """Create a 2-d array of strings from input file name.
@@ -21,9 +22,9 @@ def get_file_string_array(infile_name):
     Returns:
         (str**): Contents of text file as an array of arrays of strings
     """
-    try:
+    if (os.path.exists(infile_name)):
         infile = open(infile_name, 'r')
-    except IOError:
+    else:
         print('Error: file (%s) does not exist!' % (infile_name))
         sys.exit()
     infile_data = infile.readlines()
@@ -218,16 +219,18 @@ def get_sim_data(sim):
     [kelvin], and (float / int) total time/confs [ps / none] (md / mc).
     
     Args:
-        sim (mmlib.simulate.Simulation): Simulation to append data.
+        sim (mmlib.simulate.Simulation): Simulation object to append data.
     """
     infile_array = get_file_string_array(sim.infile)
+    cwd = os.getcwd()
+    os.chdir(cwd)
     for q in range(len(infile_array)):
         if (len(infile_array[q]) < 2): continue
         kwarg = infile_array[q][0].lower()
         kwargval = infile_array[q][1]
         kwargarr = infile_array[q][1:]
         if (kwarg == 'molecule'):
-            sim.mol = molecule.Molecule(sim.indir + '/' + kwargval)
+            sim.mol = molecule.Molecule(os.path.realpath(kwargval))
         elif (kwarg == 'temperature'):
             sim.temp = float(kwargval)
         elif (kwarg == 'pressure'):
@@ -253,41 +256,45 @@ def get_sim_data(sim):
         elif (kwarg == 'geomconf'):
             sim.geomconf = int(kwargval)
         elif (kwarg == 'geomout'):
-            sim.geomout = sim.indir + '/' + kwargval
+            sim.geomout = os.path.realpath(kwargval)
         elif (kwarg == 'energytime'):
             sim.energytime = float(kwargval)
         elif (kwarg == 'energyconf'):
             sim.energyconf = int(kwargval)
         elif (kwarg == 'energyout'):
-            sim.energyout = sim.indir + '/' + kwargval
+            sim.energyout = os.path.realpath(kwargval)
         elif (kwarg == 'statustime'):
             sim.statustime = float(kwargval)
         elif (kwarg == 'eqtime'):
             sim.eqtime = float(kwargval)
         elif (kwarg == 'eqrate'):
             sim.eqrate = float(kwargval)
+    os.chdir(cwd)
 
 def get_opt_data(opt):
     """Parse contents of sim file into molecular simulation data.
     
-    Many molecular simulation parameters (dynamics, monte carlo, etc.)
-    can be determined by default, or overriden in a simulation file.
-    All listed values below can be set through the given keyword arguments.
-    
-    Mandatory values include (str) molecule [file path], (float) temperature
-    [kelvin], and (float / int) total time/confs [ps / none] (md / mc).
-    
+    Many molecular energy minimization parameters can be determined by
+    default, or overridden in an optimization file. All listed values
+    below can be set through the give keyword arguments.
+
+    The only mandatory value is (str) molecule [file path]. Setting
+    (str) geomout and (str) energyout is also strongly recommended.
+
     Args:
-        sim (mmlib.simulate.Simulation): Simulation to append data.
+        opt (mmlib.optimize.Optimization): Optimization object to
+            append data.
     """
     infile_array = get_file_string_array(opt.infile)
+    cwd = os.getcwd()
+    os.chdir(opt.indir)
     for q in range(len(infile_array)):
         if (len(infile_array[q]) < 2): continue
         kwarg = infile_array[q][0].lower()
         kwargval = infile_array[q][1]
         kwargarr = infile_array[q][1:]
         if (kwarg == 'molecule'):
-            opt.mol = molecule.Molecule(opt.indir + '/' + kwargval)
+            opt.mol = molecule.Molecule(os.path.realpath(kwargval))
         elif (kwarg == 'opttype'):
             opt.opt_type = kwargval.lower()
         elif (kwarg == 'optcriteria'):
@@ -305,9 +312,97 @@ def get_opt_data(opt):
         elif (kwarg == 'nmaxiter'):
             opt.n_maxiter = float(kwargval)
         elif (kwarg == 'geomout'):
-            opt.geomout = kwargval
+            opt.geomout = os.path.realpath(kwargval)
         elif (kwarg == 'energyout'):
-            opt.energyout = kwargval
+            opt.energyout = os.path.realpath(kwargval)
+    os.chdir(cwd)
+
+def get_analysis_data(ana):
+    """Parse contents of plt file into ensemble analysis data.
+    
+    Many simulation data analysis keywords can be determined by default,
+    or overridden in a plot file. All listed values below can be set
+    through the given keyword arguments.
+
+
+    can be determined by default, or overriden in a simulation file.
+    All listed values below can be set through the given keyword arguments.
+    
+    Mandatory values include (str) `input` [file path] and (str) `simtype`.
+    Setting `plotout` is also strongly recommended.
+    
+    Args:
+        ana (mmlib.analyze.Analysis): Analysis object to append data.
+    """
+    infile_array = get_file_string_array(ana.infile)
+    cwd = os.getcwd()
+    os.chdir(ana.indir)
+    for q in range(len(infile_array)):
+        if (len(infile_array[q]) < 2): continue
+        kwarg = infile_array[q][0].lower()
+        kwargval = infile_array[q][1]
+        kwargarr = infile_array[q][1:]
+        if (kwarg == 'input'):
+            ana.simfile = os.path.realpath(kwargval)
+            ana.simdir = os.path.dirname(ana.simfile)
+        elif (kwarg == 'simtype'):
+            ana.simtype = kwargval.lower()
+        elif (kwarg == 'plotout'):
+            ana.plotout = os.path.realpath(kwargval)
+        elif (kwarg == 'percentstart'):
+            ana.percent_start = float(kwargval)
+        elif (kwarg == 'percentstop'):
+            ana.percent_stop = float(kwargval)
+    os.chdir(cwd)
+
+def get_properties(prop_file):
+    """Read in molecular property sequences from simulation data file.
+    
+    Input file contains a commented (#) header with column identifier
+    keys and lines of snapshot data at various configurations of a
+    molecular simulation, identified either by time [ps] or configuration
+    number.
+    
+    First find the line the key labels are on, then find how many and
+    which lines contain data. Then find which column corresponds to each
+    key, and populate the data arrays into the dictionary entry of each
+    key.
+    
+    Args:
+        prop_file (str): Path to input property file.
+    
+    Returns:
+        prop (float**): Dictionary of property keys with array values
+            from each configuration of molecule during trajectory.
+    """
+    prop_array = get_file_string_array(prop_file)
+    n_lines = len(prop_array)
+    prop_keys = simulate.property_keys()
+    key1 = prop_keys[0]
+    key_line = 0
+    for i in range(n_lines):
+        if (key1 in prop_array[i]):
+            key_line = i
+            break
+    key1_col = prop_array[key_line].index(key1)
+    n_keys = len(prop_array[key_line]) - 1
+    n_confs = 0
+    excluded_lines = []
+    for i in range(len(prop_array)):
+        if ('#' in prop_array[i][0] or not len(prop_array[i]) == n_keys):
+            excluded_lines.append(i)
+        else:   
+            n_confs += 1
+    prop = {}
+    for j in range(n_keys):
+        key = prop_array[key_line][j+1]
+        prop[key] = numpy.zeros(n_confs)
+        confnum = 0
+        for i in range(n_lines):
+            if (not i in excluded_lines):
+                prop[key][confnum] = float(prop_array[i][j])
+                confnum += 1
+    return prop
 
 def get_trajectory(traj_file):
     """Read in molecular xyz coordinate sequences from xyz file.
@@ -715,7 +810,7 @@ def print_energy(mol):
     to screen per line.
     
     Args:
-        mol (mmlib.molecule.Molecule): Molecule with energy component
+        mol (mmlib.molecule.Molecule): Molecule object with energy component
             data.
     """
     header, n_banner = ' Energy Values ', 33
@@ -725,11 +820,36 @@ def print_energy(mol):
     labels = ['Total', 'Kinetic', 'Potential', 'Non-bonded', 'Bonded',
         'Boundary', 'van der Waals', 'Electrostatic', 'Bonds', 'Angles',
         'Torsions', 'Out-of-planes']
-    vals = [mol.e_total, mol.e_kinetic, mol.e_potential, mol.e_nonbonded,
-        mol.e_bonded, mol.e_bound, mol.e_vdw, mol.e_elst, mol.e_bonds,
-        mol.e_angles, mol.e_torsions, mol.e_outofplanes]
+    vals = ['e_total', 'e_kinetic', 'e_potential', 'e_nonbonded', 'e_bonded',
+        'e_bound', 'e_vdw', 'e_elst', 'e_bonds', 'e_angles', 'e_torsions',
+        'e_outofplanes']
     for i in range(len(vals)):
-        print('   %-13s | %10.4f' % (labels[i], vals[i]))
+        print('   %-13s | %10.4f' % (labels[i], getattr(mol, vals[i])))
+
+def print_averages(ana):
+    """Print list of expectation values in a table to screen.
+    
+    For each energy term in mmlib.analyze.property_dict() print (float)
+    average, standard deviation, minimum, and maximum value [kcal/mol]
+    to screen.
+
+    Args:
+        ana (mmlib.analyze.Analyze): Analyze object with energy component
+            expectation values.
+    """
+    header, n_banner = ' Energy Values [kcal/mol] ', 64
+    params = ['component', 'avg', 'std', 'min', 'max']
+    spaces = [3, 11, 8, 8, 8]
+    print_header(header, n_banner, params, spaces)
+    pdict = analyze.property_dict()
+    labels = ['Total', 'Kinetic', 'Potential', 'Non-bonded', 'Bonded',
+        'Boundary', 'van der Waals', 'Electrostatic', 'Bonds', 'Angles',
+        'Torsions', 'Out-of-planes']
+    vals = sorted(list(pdict.keys()), key = lambda x: pdict[x][3])
+    for i in range(len(vals)):
+        key = vals[i]
+        print('   %-13s | %10.3e %10.3e %10.3e %10.3e' % (labels[i],
+            ana.eavg[key], ana.estd[key], ana.emin[key], ana.emax[key]))
 
 def get_input():
     """Check for proper input argument syntax and return parsed result.

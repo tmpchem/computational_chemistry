@@ -490,6 +490,7 @@ class Molecule:
         """Caclculate approximate volume [A^3] of system."""
         geomcalc.get_volume(self)
 
+
     def print_data(self):
         """Print energy / geometry / topology data of molecule to screen."""
         fileio.print_energy(self)

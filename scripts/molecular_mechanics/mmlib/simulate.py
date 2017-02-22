@@ -15,7 +15,14 @@ def rgas():
 
 def acc_conv():
     """Conversion of acceleration from [kcal/(A*g) to [A/(ps^2)]."""
-    return 418.4
+    return 418.400000
+
+def property_keys():
+    """Physical property keys for output file data labels."""
+    pkeys = ['e_total', 'e_kin', 'e_pot', 'e_nonbond', 'e_bonded',
+        'e_boundary', 'e_vdw', 'e_elst', 'e_bond', 'e_angle',
+        'e_tors', 'e_oop', 'temp', 'press']
+    return pkeys
 
 class Simulation:
     """Simulation class for molecular simulation data.
@@ -66,8 +73,8 @@ class Simulation:
         geomconf (int): Number of configurations between geometry printing.
     """
     def __init__(self, infile_name, sim_type):
-        self.infile = os.getcwd() + '/' + infile_name
-        self.indir = '/'.join(self.infile.split('/')[:-1])
+        self.infile = os.path.realpath(infile_name)
+        self.indir = os.path.dirname(self.infile)
         self.simtype = sim_type
         self.mol = []
         self.temp = 298.15
@@ -99,7 +106,7 @@ class Simulation:
     def read_in_data(self):
         """Read in simulation data from input file."""
         fileio.get_sim_data(self)
-        self.temp += 1.0 * 10**-10
+        self.temp += 1.0 * 10**-20
 
     def run_simulation(self):
         """Run simulation depending on simulation type."""
@@ -321,7 +328,12 @@ class Simulation:
         self.efile.close()
 
     def check_print_md(self, timestep, print_all=False):
-        """Check if printing of various md data is needed at current time."""
+        """Check if printing of various md data is needed at current time.
+        
+        Args:
+            timestep (float): Simulation time [ps] between previous check.
+            print_all (bool): Print regardless of time status.
+        """
         if (print_all or self.etime >= self.energytime):
             self.print_energy()
             self.etime = 10**-10
@@ -335,7 +347,12 @@ class Simulation:
         self.gtime += timestep
 
     def check_print_mc(self, n_conf, print_all=False):
-        """Check if printing of various mc data is need at current time."""
+        """Check if printing of various mc data is need at current time.
+        
+        Args:
+            n_conf (int): Simulation configurations between previous check.
+            print_all (bool): Print regardless of configuration status.
+        """
         if (print_all or self.econf >= self.energyconf):
             self.print_energy()
             self.econf = 0
@@ -360,7 +377,7 @@ class Simulation:
         if (self.simtype == 'md'):
             pstr = '%.4f ps' % (self.time)
         elif (self.simtype == 'mc'):
-            pstr = 'conf %i' % (self.conf+1)
+            pstr = 'conf %i' % (self.conf)
         fileio.print_coords_file(self.gfile, self.mol, pstr, 7, 3)
 
     def print_energy_header(self):
@@ -369,7 +386,7 @@ class Simulation:
         e.write('# energy [kcal/mol] of %s' % (self.mol.name))
         if (self.simtype == 'md'):
             e.write(' (%.4f ps of eq)\n#  time' % (self.eqtime))
-            e.write(' [ps] e_total      e_kin      e_pot  ')
+            e.write('      e_total      e_kin      e_pot  ')
         elif (self.simtype == 'mc'):
             e.write('\n#  conf     e_total  ')
         e.write('e_nonbond   e_bonded  e_boundary      e_vdw     e_elst')
@@ -382,9 +399,13 @@ class Simulation:
         """Write specified file to energy output file in indicated format.
         
         Args:
-            totstr (int): total number of characters in float print.
-            decstr (int): number of post-decimal characters in float print.
-            val (float): energy value to be printed to file.
+            totstr (int): Total number of characters in float print.
+            decstr (int): Number of post-decimal characters in float print.
+            val (float): Energy value [kcal/mol] to be printed to file.
+            ptype (char): Type of number to print to output file:
+                `f`: Printf floating point.
+                `e`: Printf exponential.
+            n_space (int): Leading number of spaces before printing value.
         """
         if (ptype == 'f'):
             self.efile.write('%*s%*.*f' % (n_space, '', totstr, decstr, val))
