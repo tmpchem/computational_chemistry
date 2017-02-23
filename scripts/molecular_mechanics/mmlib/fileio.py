@@ -269,6 +269,8 @@ def get_sim_data(sim):
             sim.eqtime = float(kwargval)
         elif (kwarg == 'eqrate'):
             sim.eqrate = float(kwargval)
+        elif (kwarg == 'randomseed'):
+            sim.seed = int(kwargval)
     os.chdir(cwd)
 
 def get_opt_data(opt):
@@ -378,7 +380,7 @@ def get_properties(prop_file):
     prop_array = get_file_string_array(prop_file)
     n_lines = len(prop_array)
     prop_keys = simulate.property_keys()
-    key1 = prop_keys[0]
+    key1 = prop_keys[2]
     key_line = 0
     for i in range(n_lines):
         if (key1 in prop_array[i]):
@@ -837,18 +839,17 @@ def print_averages(ana):
         ana (mmlib.analyze.Analyze): Analyze object with energy component
             expectation values.
     """
-    header, n_banner = ' Energy Values [kcal/mol] ', 64
+    header, n_banner = ' Energy Component Properties [kcal/mol] ', 68
     params = ['component', 'avg', 'std', 'min', 'max']
-    spaces = [3, 11, 8, 8, 8]
+    spaces = [3, 11, 9, 9, 9]
     print_header(header, n_banner, params, spaces)
     pdict = analyze.property_dict()
-    labels = ['Total', 'Kinetic', 'Potential', 'Non-bonded', 'Bonded',
-        'Boundary', 'van der Waals', 'Electrostatic', 'Bonds', 'Angles',
-        'Torsions', 'Out-of-planes']
     vals = sorted(list(pdict.keys()), key = lambda x: pdict[x][3])
+    vals = [val for val in vals if val in ana.prop]
+    labels = [pdict[key][0] for key in vals]
     for i in range(len(vals)):
         key = vals[i]
-        print('   %-13s | %10.3e %10.3e %10.3e %10.3e' % (labels[i],
+        print('   %-13s | %11.4e %11.4e %11.4e %11.4e' % (labels[i],
             ana.eavg[key], ana.estd[key], ana.emin[key], ana.emax[key]))
 
 def get_input():

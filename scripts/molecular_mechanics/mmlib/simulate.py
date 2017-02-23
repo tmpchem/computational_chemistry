@@ -52,6 +52,8 @@ class Simulation:
         energyout (str): Energy printing output file path.
         statustime (float): Clock time between printing status to
             standard output [s].
+        seed (int): Random number generator seed for initial velocity
+            assignment (None by default).
 
         tottime (float): Total time [ps].
         time (float): Current time [ps].
@@ -82,6 +84,7 @@ class Simulation:
         self.geomout = 'geom.xyz'
         self.energyout = 'energy.dat'
         self.statustime = 60.0
+        self.seed = None
 
         self.tottime = 1.0
         self.timestep = 0.001
@@ -108,17 +111,6 @@ class Simulation:
         fileio.get_sim_data(self)
         self.temp += 1.0 * 10**-20
 
-    def run_simulation(self):
-        """Run simulation depending on simulation type."""
-        if (self.simtype == 'md'):
-            self.run_dynamics()
-        elif (self.simtype == 'mc'):
-            self.run_mc()
-        else:
-            print('Error: simulation type (%s) not recognized!' % (
-                self.simtype))
-            sys.exit()
-
     def initialize_vels(self):
         """Initialize atomic velocities depending on temperature.
         
@@ -129,6 +121,7 @@ class Simulation:
         """
         if (self.temp > 0.0):
             self.etemp = self.temp
+            numpy.random.seed(self.seed)
             for i in range(self.mol.n_atoms):
                 sigma = (math.sqrt(2.0 * rgas() * self.temp
                     / (3.0 * self.mol.atoms[i].mass)))
@@ -168,7 +161,7 @@ class Simulation:
                 randval = numpy.random.normal(0.0, self.dispmag)
                 self.rand_disp[i][j] = numpy.random.normal(0.0, self.dispmag)
 
-    def run_dynamics(self):
+    def run_md(self):
         """Run molecular dynamics according to simulation parameters.
         
         For every timestep, compute the potential energy and gradient
@@ -209,6 +202,7 @@ class Simulation:
         """
         self.open_output_files()
         self.zero_vels()
+        numpy.random.seed(self.seed)
         self.mol.get_energy('standard')
         self.check_print_mc(0, True)
         penergy = self.mol.e_total
@@ -388,7 +382,7 @@ class Simulation:
             e.write(' (%.4f ps of eq)\n#  time' % (self.eqtime))
             e.write('      e_total      e_kin      e_pot  ')
         elif (self.simtype == 'mc'):
-            e.write('\n#  conf     e_total  ')
+            e.write('\n#  conf       e_pot  ')
         e.write('e_nonbond   e_bonded  e_boundary      e_vdw     e_elst')
         e.write('     e_bond    e_angle     e_tors      e_oop')
         if (self.simtype == 'md'):

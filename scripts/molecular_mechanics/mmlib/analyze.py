@@ -21,18 +21,18 @@ def percent_image_plot():
 def property_dict():
     """Obtain legend labels, line colors, and priority for properties."""
     pdict = {
-        'e_total'   : ['Total',      12, '#000000',  1],
-        'e_kin'     : ['Kinetic',    11, '#007D34',  2],
-        'e_pot'     : ['Potential',   1, '#C10020',  3],
-        'e_nonbond' : ['Non-bonded',  7, '#0000FF',  4],
-        'e_bonded'  : ['Bonded',      2, '#FF6800',  5],
-        'e_boundary': ['Boundary',   10, '#551A8B',  6],
-        'e_vdw'     : ['Vdw',         8, '#00BFFF',  7],
-        'e_elst'    : ['Elst',        9, '#EEC900',  8],
-        'e_bond'    : ['Bonds',       3, '#F08080',  9],
-        'e_angle'   : ['Angles',      4, '#90EE90', 10],
-        'e_tors'    : ['Torsions',    5, '#FF83FA', 11],
-        'e_oop'     : ['Outofplanes', 6, '#A9A9A9', 12]}
+        'e_total'   : ['Total',      12, '#000000',  1, ],
+        'e_kin'     : ['Kinetic',    11, '#007D34',  2, ],
+        'e_pot'     : ['Potential',   1, '#C10020',  3, ],
+        'e_nonbond' : ['Non-bonded',  7, '#0000FF',  4, ],
+        'e_bonded'  : ['Bonded',      2, '#FF6800',  5, ],
+        'e_boundary': ['Boundary',   10, '#551A8B',  6, ],
+        'e_vdw'     : ['Vdw',         8, '#00BFFF',  7, ],
+        'e_elst'    : ['Elst',        9, '#EEC900',  8, ],
+        'e_bond'    : ['Bonds',       3, '#F08080',  9, ],
+        'e_angle'   : ['Angles',      4, '#90EE90', 10, ],
+        'e_tors'    : ['Torsions',    5, '#FF83FA', 11, ],
+        'e_oop'     : ['Outofplanes', 6, '#A9A9A9', 12, ]}
     return pdict
 
 class Plot:
@@ -46,6 +46,9 @@ class Plot:
             energy and geometry data.
  
     Attributes:
+        simtype (str): Type of molecular simulation:
+            `md`: Molecular dynamics.
+            `mc`: Metropolis Monte-Carlo.
         data (float**): Dictionary of energy component arrays [kcal/mol].
         plotout (str): File path to output file for plotting image.
         pstart (float): Percent of simulation completed at starting point
@@ -56,11 +59,12 @@ class Plot:
         figwidth (float): Width of output figure [inches].
         figheight (float): Height of output figure [inches].`
         figsize (float*): Tuple of figure dimensions [inches].
+        img_format (str): Format of plotting image file ('pdf' default).
         n_maxpoints (int): Maximum number of data points per component
             in final plotted image.
         n_terms (int): Number of energy component terms to plot.
 
-        line_colors (str*): Array of rgb hex color codes [#RRGGBB].
+        line_colors (str*): Array of rgb hex color codes [#rrggbb].
         line_priors (int*): Array of energy component plotting priorities.
         leg_labels (str*): Array of energy component legend labels.
         leg_priors (int*): Array of energy component legend priorities.
@@ -68,6 +72,7 @@ class Plot:
         xticchars (int*): Dictionary of order-of-magnitude xtic labels.
     """
     def __init__(self, ana):
+        self.simtype = ana.simtype
         self.data = ana.prop
         self.plotout = ana.plotout
         self.pstart = ana.percent_start
@@ -77,6 +82,7 @@ class Plot:
         self.figwidth = 7.5
         self.figheight = 4.5
         self.figsize = (self.figwidth, self.figheight)
+        self.img_format = 'pdf'
 
         ppi = point_per_inch()
         p_im = percent_image_plot()
@@ -96,9 +102,9 @@ class Plot:
                 self.leg_labels[key] = self.pdict[key][0]
                 self.leg_priors[key] = self.pdict[key][3]
                 self.ekeys.append(key)
-        self.ekeys = sorted(list(self.pdict), key=lambda x: self.pdict[x][1])
-
-        self.xticchars = {0: '', 3: 'k', 6: 'M', 3: 'B', 4: 'T', 5: 'P'}
+        self.ekeys = sorted(list(self.ekeys), key=lambda x: self.pdict[x][1])
+        
+        self.ticchars = {0: '', 1: 'k', 2: 'M', 3: 'B', 4: 'T', 5: 'P'}
 
 class TrajectoryPlot(Plot):
     """Plot class for plotting simulation trajectory data.
@@ -121,22 +127,27 @@ class TrajectoryPlot(Plot):
         title (str): Title string for plotting image.
         ylabel (str): Y-axis label string for plotting image.
         xlabel (str): X-axis label string for plotting image.
-        img_format (str): Format of plotting image file ('pdf' default).
+        xvar (str): Data file label for x-axis plotting variable.
+
         line_width (float): Plotting line width [pts].
         line_alpha (float): Opaqueness of line (0-1).
         line_label (str): Legend label for line (null, handled elsewhere).
+
         leg_linewidth (float): Linewidth in legend [pts].
         leg_col (int): Number of columns in legend.
         leg_fontsize (float): Font size of legend text [pts].
         leg_pos (float*): Tuple of legend position.
         leg_alpha (float): Opaqueness of legend (0-1).
         leg_framecolor (rgbhex): Color of legend outline (white).
+
         grid_color (rgbhex): Color of grid lines (black).
         grid_alpha (float): Opaqueness of grid lines (0-1).
         grid_linestyle (str): Style of grid lines (continuous).
+
         title_fontsize (float): Font size of title text [pts].
         yaxis_fontsize (float): Font size of yaxis label text [pts].
         xaxis_fontsize (float): Font size of xaxis label text [pts].
+
         xminpad (float): Pad on -x axis bound [relative].
         xmaxpad (float): Pad on +x axis bound [relative].
         yminpad (float): Pad on -y axis bound [relative].
@@ -145,11 +156,16 @@ class TrajectoryPlot(Plot):
     def __init__(self, ana):
         Plot.__init__(self, ana)
         self.name = ana.name
-
-        self.title = 'Molecular Dynamics Simulation of %s' % (self.name)
         self.ylabel = 'Energy Terms (kcal/mol)'
-        self.xlabel = 'Time (ps)'
-        self.img_format = 'pdf'
+        if (self.simtype == 'md'):
+            self.title = 'Molecular Dynamics Simualtion of '
+            self.xlabel = 'Time (ps)'
+            self.xvar = 'time'
+        elif (self.simtype == 'mc'):
+            self.title = 'Metropolis Monte-Carlo Simulation of '
+            self.xlabel = 'Configuration Number'
+            self.xvar = 'conf'
+        self.title += self.name
 
         self.line_width = 1.0
         self.line_alpha = 1.0
@@ -212,7 +228,7 @@ class TrajectoryPlot(Plot):
 
     def get_legend(self):
         """Set top-center legend for each energy component."""
-        self.ekeys = sorted(list(self.pdict), key=lambda x: self.pdict[x][3])
+        self.ekeys = sorted(list(self.ekeys), key=lambda x: self.pdict[x][3])
         for key in self.ekeys:
             plt.plot(0, 0,
                 linewidth = self.leg_linewidth,
@@ -229,8 +245,8 @@ class TrajectoryPlot(Plot):
 
     def get_axis_bounds(self):
         """Determine the extrema of x and y axes from data values."""
-        self.xmindat = self.data['time'][0]
-        self.xmaxdat = self.data['time'][len(self.data['time'])-1]
+        self.xmindat = self.data[self.xvar][0]
+        self.xmaxdat = self.data[self.xvar][len(self.data[self.xvar])-1]
         self.xrandat = self.xmaxdat - self.xmindat
         self.xmin = self.xmindat + (self.pstart*self.xrandat)/100.0
         self.xmax = self.xmindat + (self.pstop*self.xrandat)/100.0
@@ -262,7 +278,7 @@ class TrajectoryPlot(Plot):
 
     def get_point_indices(self):
         """Compute values needed for data down-sampling algorithm."""
-        self.n_confs = len(self.data['time'])
+        self.n_confs = len(self.data[self.xvar])
         self.n_start = int(math.floor(self.pstart * self.n_confs)/100.0)
         self.n_stop = int(math.ceil(self.pstop * self.n_confs)/100.0)
         self.n_points = self.n_stop - self.n_start
@@ -283,7 +299,7 @@ class TrajectoryPlot(Plot):
         for i in range(self.n_points):
             n_start = self.pranges[max(i-1,0)]
             n_stop = self.pranges[min(i+1, self.n_points)]
-            val_array = self.data['time'][n_start:n_stop]
+            val_array = self.data[self.xvar][n_start:n_stop]
             val = numpy.median(val_array)
             self.xvals[i] = val
     
@@ -301,8 +317,10 @@ class TrajectoryPlot(Plot):
         for key in self.ekeys:
             self.yvals[key] = numpy.zeros(self.n_points)
             for i in range(self.n_points):
-                n_start = self.pranges[max(i-1,0)]
-                n_stop = self.pranges[min(i+1, self.n_points)]
+                start_vals = self.pranges[max(0, i-1):i+1]
+                stop_vals  = self.pranges[i:min(i+2, self.n_points+2)]
+                n_start = int(math.ceil(numpy.average(start_vals)))
+                n_stop = int(math.ceil(numpy.average(stop_vals)))
                 val_array = self.data[key][n_start:n_stop]
                 if (i%2 == 0):
                     val = numpy.amax(val_array)
@@ -323,12 +341,21 @@ class TrajectoryPlot(Plot):
         self.xdelta = 0.1 * self.xres
         xminarr = self.xres * math.floor(self.xmin / self.xres)
         xmaxarr = self.xres * math.ceil(self.xmax / self.xres)
+        xmaxarr += self.xmaxpad * (xmaxarr - xminarr)
         self.xtics = numpy.arange(xminarr, xmaxarr, self.xres)
+        self.xticlabels = ['' for i in range(len(self.xtics))]
+        for i in range(len(self.xtics)):
+            exp = int(math.floor(math.log10(max(1, abs(self.xtics[i]))))/3)
+            val = self.xtics[i] / 10**(3*exp)
+            if (int(val) == val):
+                val = int(val)
+            self.xticlabels[i] = '%s%s' % (val, self.ticchars[exp])
+        plt.xticks(self.xtics, self.xticlabels)
 
     def get_yticks(self):
         """Determine array of Y-axis tick mark values."""
         self.ydig = int(math.floor(math.log10(self.yplotran)))
-        self.ylead = self.yran * 10**(-self.ydig)
+        self.ylead = (self.yhigh - self.ylow) * 10**(-self.ydig)
         self.ybase = 10.0
         if (self.ylead <= 2.0):
             self.ybase = 2.0
@@ -338,7 +365,16 @@ class TrajectoryPlot(Plot):
         self.ydelta = 0.1 * self.yres
         yminarr = self.yres * math.floor(self.ymin / self.yres)
         ymaxarr = self.yres * math.ceil(self.ymax / self.yres)
+        ymaxarr += self.ymaxpad * (ymaxarr - yminarr)
         self.ytics = numpy.arange(yminarr, ymaxarr, self.yres)
+        self.yticlabels = ['' for i in range(len(self.ytics))]
+        for i in range(len(self.ytics)):
+            exp = int(math.floor(math.log10(max(1, abs(self.ytics[i]))))/3)
+            val = self.ytics[i] / 10**(3*exp)
+            if (int(val) == val):
+                val = int(val)
+            self.yticlabels[i] = '%s%s' % (val, self.ticchars[exp])
+        plt.yticks(self.ytics, self.yticlabels)
     
 class Analysis:
     """Analysis class for computing ensemble simulation data.
@@ -430,11 +466,12 @@ class Analysis:
         self.emin = {}
         self.emax = {}
         for key in self.pdict:
-            keydata = self.prop[key]
-            self.eavg[key] = numpy.average(keydata)
-            self.estd[key] = numpy.std(keydata)
-            self.emin[key] = numpy.amin(keydata)
-            self.emax[key] = numpy.amax(keydata)
+            if (key in self.prop):
+                keydata = self.prop[key]
+                self.eavg[key] = numpy.average(keydata)
+                self.estd[key] = numpy.std(keydata)
+                self.emin[key] = numpy.amin(keydata)
+                self.emax[key] = numpy.amax(keydata)
 
 # end of module
 

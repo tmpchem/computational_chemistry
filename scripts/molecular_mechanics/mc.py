@@ -23,7 +23,7 @@ infile_name = mmlib.fileio.get_input()
 sim = mmlib.simulate.Simulation(infile_name, 'mc')
 
 # run molecular dynamics
-sim.run_simulation()
+sim.run_mc()
 
 # end of program
 
