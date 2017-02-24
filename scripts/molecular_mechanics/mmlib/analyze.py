@@ -328,54 +328,44 @@ class TrajectoryPlot(Plot):
                     val = numpy.amin(val_array)
                 self.yvals[key][i] = val
 
-    def get_xticks(self):
-        """Determine array of X-axis tick mark values."""
-        self.xdig = int(math.floor(math.log10(self.xplotran)))
-        self.xlead = self.xran * 10**(-self.xdig)
-        self.xbase = 10.0
-        if (self.xlead <= 2.0):
-            self.xbase = 2.0
-        elif (self.xlead <= 5.0):
-            self.xbase = 5.0
-        self.xres = self.xbase * 10**(self.xdig - 1)
-        self.xdelta = 0.1 * self.xres
-        xminarr = self.xres * math.floor(self.xmin / self.xres)
-        xmaxarr = self.xres * math.ceil(self.xmax / self.xres)
-        xmaxarr += self.xmaxpad * (xmaxarr - xminarr)
-        self.xtics = numpy.arange(xminarr, xmaxarr, self.xres)
-        self.xticlabels = ['' for i in range(len(self.xtics))]
-        for i in range(len(self.xtics)):
-            exp = int(math.floor(math.log10(max(1, abs(self.xtics[i]))))/3)
-            val = self.xtics[i] / 10**(3*exp)
+    def get_ticks(self, lower_bound, upper_bound, axis):
+        plot_range = upper_bound - lower_bound
+        range_power = int(math.floor(math.log10(plot_range)))
+        lead_digit = plot_range * 10**(-range_power)
+        base_digit = 10.0
+        if (lead_digit <= 2.0):
+            base_digit = 2.0
+        elif (lead_digit <= 5.0):
+            base_digit = 5.0
+        tick_res = base_digit * 10**(range_power)
+        tick_delta = 0.1 * tick_res
+        tick_min = tick_delta * (int(lower_bound / tick_delta) - 1)
+        tick_max = tick_delta * (int(upper_bound / tick_delta) + 1)
+        n_ticks = (tick_max - tick_min) / tick_delta + 1
+        ticks = list(numpy.linspace(tick_min, tick_max, n_ticks))
+        for i in range(len(ticks)-1, -1, -1):
+            if (ticks[i] < lower_bound or ticks[i] > upper_bound):
+                ticks.pop(i)
+        tick_labels = ['' for i in range(len(ticks))]
+        for i in range(len(ticks)):
+            exp = int(math.floor(math.log10(max(1, abs(ticks[i]))))/3)
+            val = ticks[i] / 10**(3*exp)
             if (int(val) == val):
                 val = int(val)
-            self.xticlabels[i] = '%s%s' % (val, self.ticchars[exp])
-        plt.xticks(self.xtics, self.xticlabels)
+            tick_labels[i] = '%s%s' % (val, self.ticchars[exp])
+        if (axis == 'x'):
+            plt.xticks(ticks, tick_labels)
+        elif (axis == 'y'):
+            plt.yticks(ticks, tick_labels)
+
+    def get_xticks(self):
+        """Determine array of X-axis tick mark values."""
+        self.get_ticks(self.xlow, self.xhigh, 'x')
 
     def get_yticks(self):
         """Determine array of Y-axis tick mark values."""
-        self.ydig = int(math.floor(math.log10(self.yplotran)))
-        self.ylead = (self.yhigh - self.ylow) * 10**(-self.ydig)
-        self.ybase = 10.0
-        if (self.ylead <= 2.0):
-            self.ybase = 2.0
-        elif (self.ylead <= 5.0):
-            self.ybase = 5.0
-        self.yres = self.ybase * 10**(self.ydig - 1)
-        self.ydelta = 0.1 * self.yres
-        yminarr = self.yres * math.floor(self.ymin / self.yres)
-        ymaxarr = self.yres * math.ceil(self.ymax / self.yres)
-        ymaxarr += self.ymaxpad * (ymaxarr - yminarr)
-        self.ytics = numpy.arange(yminarr, ymaxarr, self.yres)
-        self.yticlabels = ['' for i in range(len(self.ytics))]
-        for i in range(len(self.ytics)):
-            exp = int(math.floor(math.log10(max(1, abs(self.ytics[i]))))/3)
-            val = self.ytics[i] / 10**(3*exp)
-            if (int(val) == val):
-                val = int(val)
-            self.yticlabels[i] = '%s%s' % (val, self.ticchars[exp])
-        plt.yticks(self.ytics, self.yticlabels)
-    
+        self.get_ticks(self.ylow, self.yhigh, 'y')
+
 class Analysis:
     """Analysis class for computing ensemble simulation data.
     
