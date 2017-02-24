@@ -27,12 +27,12 @@ def property_dict():
         'e_nonbond' : ['Non-bonded',  7, '#0000FF',  4, ],
         'e_bonded'  : ['Bonded',      2, '#FF6800',  5, ],
         'e_boundary': ['Boundary',   10, '#551A8B',  6, ],
-        'e_vdw'     : ['Vdw',         8, '#00BFFF',  7, ],
-        'e_elst'    : ['Elst',        9, '#EEC900',  8, ],
+        'e_vdw'     : ['Vdw',         9, '#00BFFF',  7, ],
+        'e_elst'    : ['Elst',        8, '#EEC900',  8, ],
         'e_bond'    : ['Bonds',       3, '#F08080',  9, ],
         'e_angle'   : ['Angles',      4, '#90EE90', 10, ],
-        'e_tors'    : ['Torsions',    5, '#FF83FA', 11, ],
-        'e_oop'     : ['Outofplanes', 6, '#A9A9A9', 12, ]}
+        'e_tors'    : ['Torsions',    6, '#FF83FA', 11, ],
+        'e_oop'     : ['Outofplanes', 5, '#A9A9A9', 12, ]}
     return pdict
 
 class Plot:
@@ -158,7 +158,7 @@ class TrajectoryPlot(Plot):
         self.name = ana.name
         self.ylabel = 'Energy Terms (kcal/mol)'
         if (self.simtype == 'md'):
-            self.title = 'Molecular Dynamics Simualtion of '
+            self.title = 'Molecular Dynamics Simulation of '
             self.xlabel = 'Time (ps)'
             self.xvar = 'time'
         elif (self.simtype == 'mc'):
@@ -182,7 +182,7 @@ class TrajectoryPlot(Plot):
         self.grid_alpha = 0.10
         self.grid_linestyle = '-'        
 
-        self.title_fontsize = 12
+        self.title_fontsize = 14
         self.yaxis_fontsize = 12
         self.xaxis_fontsize = 12
 
@@ -215,9 +215,9 @@ class TrajectoryPlot(Plot):
 
     def get_labels(self):
         """Set labels to x-axis, y-axis, and title."""
-        plt.title(self.title)
-        plt.ylabel(self.ylabel)
-        plt.xlabel(self.xlabel)
+        plt.title(self.title, fontsize = self.title_fontsize)
+        plt.ylabel(self.ylabel, fontsize = self.yaxis_fontsize)
+        plt.xlabel(self.xlabel, fontsize = self.xaxis_fontsize)
 
     def get_grid(self):
         """Set grid parameters (transparent gray lines by default)."""
@@ -270,7 +270,7 @@ class TrajectoryPlot(Plot):
         self.get_xvals()
         self.get_yvals()
         for key in self.ekeys:
-            plt.plot(self.xvals, self.yvals[key],
+            plt.plot(self.xvals[key], self.yvals[key],
                 linewidth=self.line_width,
                 color=self.line_colors[key],
                 alpha=self.line_alpha,
@@ -295,14 +295,35 @@ class TrajectoryPlot(Plot):
         Point index function gives a range for each plotted point.
         X-axis values are chosen to be the median within the range.
         """
-        self.xvals = numpy.zeros(self.n_points)
-        for i in range(self.n_points):
-            n_start = self.pranges[max(i-1,0)]
-            n_stop = self.pranges[min(i+1, self.n_points)]
-            val_array = self.data[self.xvar][n_start:n_stop]
-            val = numpy.median(val_array)
-            self.xvals[i] = val
-    
+        #start_val = self.data[self.xvar][self.n_start]
+        #stop_val = self.data[self.xvar][self.n_stop-1]
+        #self.xvals = numpy.linspace(start_val, stop_val, self.n_points)
+        self.xvals = {}
+        for key in self.ekeys:
+            self.xvals[key] = numpy.zeros(self.n_points)
+            for i in range(self.n_points):
+                start_vals = self.pranges[max(0, i-1):i+1]
+                stop_vals  = self.pranges[i:min(i+2, self.n_points+2)]
+                n_start = int(math.ceil(numpy.average(start_vals)))
+                n_stop = int(math.ceil(numpy.average(stop_vals)))
+                val_array = self.data[key][n_start:n_stop]
+                if (i%2 == 0):
+                    ind = n_start + numpy.argmax(val_array)
+                else:
+                    ind = n_start + numpy.argmin(val_array)
+                self.xvals[key][i] = self.data[self.xvar][ind]
+
+        #self.xvals = numpy.zeros(self.n_points) 
+        #for i in range(self.n_points):
+        #    n_start = self.pranges[i]
+        #    n_stop = self.pranges[i+1]
+        #    val_array = self.data[self.xvar][n_start:n_stop]
+        #    if (i%2 == 0):
+        #        val = numpy.amax(val_array)
+        #    else:
+        #        val = numpy.amin(val_array)
+        #    self.xvals[i] = val
+
     def get_yvals(self):
         """Compute down-sampled y-axis data points.
         
@@ -341,7 +362,7 @@ class TrajectoryPlot(Plot):
         tick_delta = 0.1 * tick_res
         tick_min = tick_delta * (int(lower_bound / tick_delta) - 1)
         tick_max = tick_delta * (int(upper_bound / tick_delta) + 1)
-        n_ticks = (tick_max - tick_min) / tick_delta + 1
+        n_ticks = round((tick_max - tick_min) / tick_delta) + 1
         ticks = list(numpy.linspace(tick_min, tick_max, n_ticks))
         for i in range(len(ticks)-1, -1, -1):
             if (ticks[i] < lower_bound or ticks[i] > upper_bound):
@@ -349,7 +370,7 @@ class TrajectoryPlot(Plot):
         tick_labels = ['' for i in range(len(ticks))]
         for i in range(len(ticks)):
             exp = int(math.floor(math.log10(max(1, abs(ticks[i]))))/3)
-            val = ticks[i] / 10**(3*exp)
+            val = tick_delta * round(ticks[i] / tick_delta) / 10**(3*exp)
             if (int(val) == val):
                 val = int(val)
             tick_labels[i] = '%s%s' % (val, self.ticchars[exp])
