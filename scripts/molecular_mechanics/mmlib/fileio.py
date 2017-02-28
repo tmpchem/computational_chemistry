@@ -22,11 +22,10 @@ def get_file_string_array(infile_name):
     Returns:
         (str**): Contents of text file as an array of arrays of strings
     """
-    if (os.path.exists(infile_name)):
-        infile = open(infile_name, 'r')
-    else:
+    if (not os.path.exists(infile_name)):
         print('Error: file (%s) does not exist!' % (infile_name))
         sys.exit()
+    infile = open(infile_name, 'r')
     infile_data = infile.readlines()
     infile.close()
     infile_array = []
@@ -247,8 +246,8 @@ def get_sim_data(sim):
             sim.mol.origin = [float(kwargarr[i]) for i in range(3)]
         elif (kwarg == 'totaltime'):
             sim.tottime = float(kwargval)
-        elif (kwarg == 'totalconfs'):
-            sim.totconfs = int(kwargval)
+        elif (kwarg == 'totalconf'):
+            sim.totconf = int(kwargval)
         elif (kwarg == 'timestep'):
             sim.timestep = float(kwargval)
         elif (kwarg == 'geomtime'):
@@ -270,7 +269,7 @@ def get_sim_data(sim):
         elif (kwarg == 'eqrate'):
             sim.eqrate = float(kwargval)
         elif (kwarg == 'randomseed'):
-            sim.seed = int(kwargval)
+            sim.random_seed = int(kwargval) % (2**32)
     os.chdir(cwd)
 
 def get_opt_data(opt):
@@ -871,6 +870,8 @@ def get_input():
             print('simulation file for metropolis monte carlo\n')
         elif (prog_name == 'opt.py'):
             print('optimization file for energy minimization\n')
+        elif (prog_name == 'ana.py'):
+            print('plot file for data analysis\n')
         sys.exit()
     else:
         infile_name = sys.argv[1]

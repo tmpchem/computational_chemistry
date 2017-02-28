@@ -1,4 +1,5 @@
 MOLECULE    ../../geom/prm/lif.prm
+RANDOMSEED              2571494957
 TEMPERATURE                 0.00 K
 BOUNDARY                    10.0 A
 TOTALTIME                4.0000 ps

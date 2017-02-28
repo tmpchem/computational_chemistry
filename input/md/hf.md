@@ -1,4 +1,5 @@
 MOLECULE    ../../geom/prm/hf.prm
+RANDOMSEED             2982500747
 TEMPERATURE                 0.0 K
 BOUNDARY                   10.0 A
 TOTALTIME               0.1000 ps

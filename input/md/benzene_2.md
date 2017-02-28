@@ -1,4 +1,5 @@
 MOLECULE       ../../geom/xyzq/benzene_2.xyzq
+RANDOMSEED                          278049999
 TEMPERATURE                          298.15 K
 BOUNDARY                              21.75 A
 BOUNDARYSPRING             250.0 kcal/mol*A^2

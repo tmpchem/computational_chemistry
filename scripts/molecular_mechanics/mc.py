@@ -20,10 +20,10 @@ import mmlib
 infile_name = mmlib.fileio.get_input()
 
 # read in molecular and simulation data
-sim = mmlib.simulate.Simulation(infile_name, 'mc')
+sim = mmlib.simulate.MonteCarlo(infile_name)
 
 # run molecular dynamics
-sim.run_mc()
+sim.run()
 
 # end of program
 

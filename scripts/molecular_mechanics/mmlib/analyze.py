@@ -148,10 +148,10 @@ class TrajectoryPlot(Plot):
         yaxis_fontsize (float): Font size of yaxis label text [pts].
         xaxis_fontsize (float): Font size of xaxis label text [pts].
 
-        xminpad (float): Pad on -x axis bound [relative].
-        xmaxpad (float): Pad on +x axis bound [relative].
-        yminpad (float): Pad on -y axis bound [relative].
-        ymaxpad (float): Pad on +y axis bound [relative].
+        xminpad (float): Border pad on -x axis bound [fraction].
+        xmaxpad (float): Border pad on +x axis bound [fraction].
+        yminpad (float): Border pad on -y axis bound [fraction].
+        ymaxpad (float): Border pad on +y axis bound [fraction].
     """
     def __init__(self, ana):
         Plot.__init__(self, ana)
@@ -448,7 +448,7 @@ class Analysis:
         """Read in property and trajectory file names from input file."""
         cwd = os.getcwd()
         os.chdir(self.simdir)
-        self.sim = simulate.Simulation(self.simfile, self.simtype)
+        self.sim = simulate.Simulation(self.simfile)
         os.chdir(cwd)
         self.energyin = self.sim.energyout
         self.geomin = self.sim.geomout

@@ -1,8 +1,9 @@
 MOLECULE     ../../geom/prm/h2o.prm
+RANDOMSEED               2179125454
 TEMPERATURE                298.15 K
 BOUNDARY                    17.26 A
 BOUNDARYTYPE                 SPHERE
-TOTALCONFS                    10000
+TOTALCONF                    10000
 GEOMCONF                         10
 ENERGYCONF                       15
 GEOMOUT       ../../data/mc/h2o.xyz

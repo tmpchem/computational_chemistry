@@ -1,8 +1,9 @@
 MOLECULE       ../../geom/prm/he20.prm
+RANDOMSEED                   747663306
 TEMPERATURE                   298.15 K
 BOUNDARY                       46.86 A
 BOUNDARYTYPE                    SPHERE
-TOTALCONFS                       20000
+TOTALCONF                       20000
 GEOMCONF                           100
 ENERGYCONF                          25
 GEOMOUT         ../../data/mc/he20.xyz

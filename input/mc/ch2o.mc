@@ -1,8 +1,9 @@
 MOLECULE     ../../geom/prm/ch2o.prm
+RANDOMSEED                1941260823
 TEMPERATURE                 298.15 K
 BOUNDARY                     17.26 A
 BOUNDARYTYPE                  SPHERE
-TOTALCONFS                    400000
+TOTALCONF                    400000
 GEOMCONF                         500
 ENERGYCONF                       500
 GEOMOUT       ../../data/mc/ch2o.xyz

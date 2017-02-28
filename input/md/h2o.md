@@ -1,4 +1,5 @@
 MOLECULE   ../../geom/prm/h2o.prm
+RANDOMSEED             3473404960
 TEMPERATURE              298.15 K
 BOUNDARY                  17.26 A
 TOTALTIME               10.000 ps

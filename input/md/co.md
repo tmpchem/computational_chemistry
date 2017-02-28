@@ -1,4 +1,5 @@
 MOLECULE      ../../geom/prm/co.prm
+RANDOMSEED               1750761047
 TEMPERATURE                298.15 K
 BOUNDARY                    17.26 A
 BOUNDARYSPRING   250.0 kcal/mol*A^2

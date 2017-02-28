@@ -1,4 +1,5 @@
 MOLECULE    ../../geom/prm/he2.prm
+RANDOMSEED               450245880
 TEMPERATURE                  0.0 K
 BOUNDARY                    10.0 A
 TOTALTIME               10.0000 ps

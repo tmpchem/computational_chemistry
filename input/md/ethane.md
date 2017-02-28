@@ -1,4 +1,5 @@
 MOLECULE     ../../geom/prm/ethane.prm
+RANDOMSEED                  3435445132
 TEMPERATURE                   298.15 K
 BOUNDARY                       10.00 A
 BOUNDARYTYPE                    SPHERE
