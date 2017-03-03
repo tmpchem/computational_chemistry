@@ -11,11 +11,11 @@ import math, numpy
 from mmlib import energy, geomcalc, molecule
 
 def num_disp():
-    """Displacement distance [Angstrom] for numerical gradient"""
+    """Displacement distance [Angstrom] for numerical gradient."""
     return 1.0 * 10**-6
 
 def kcalamol2pa():
-    """Conversion from [kcal*A^3/mol] to [Pa] for pressure"""
+    """Conversion from [kcal*A^3/mol] to [Pa] for pressure."""
     return 69476.95
 
 def get_g_bond(r_ij, r_eq, k_b):
@@ -135,48 +135,52 @@ def get_g_bound_i(k_box, bound, coord, origin, boundtype):
         u_io = geomcalc.get_u_ij(origin, coord)
         scale = 1.0 if (r_io >= bound) else 0.0
         g_bound_i = 2.0 * scale * k_box * (r_io - bound) * u_io
-    elif (boundtype == 'none'):
-        pass
     return g_bound_i
 
-def get_gdir_inter(coords1, coords2):
+def get_gdir_inter(coords1, coords2, r_12=None):
     """Calculate direction of energy gradient between atom pair.
     
     Args:
-        coords1 (float*): 3 cartesian coordinates [Angstrom] of atom1.
-        coords2 (float*): 3 cartesian coordiantes [Angstrom] of atom2.
+        coords1 (float*): 3 Cartesian coordinates [Angstrom] of atom1.
+        coords2 (float*): 3 Cartesian coordiantes [Angstrom] of atom2.
+        r_ij (float): Distance between atom1 and atom2 (default None).
     
     Returns:
         gdir1 (float*), gdir2 (float*): unit vectors in the direction
             of max increasing inter-atomic distance.
     """
-    gdir1 = geomcalc.get_u_ij(coords2, coords1)
+    gdir1 = geomcalc.get_u_ij(coords2, coords1, r_12)
     gdir2 = -1.0 * gdir1
     return gdir1, gdir2
 
-def get_gdir_angle(coords1, coords2, coords3):
+def get_gdir_angle(coords1, coords2, coords3, r_21=None, r_23=None):
     """Calculate direction of energy gradients between bond angle atoms.
     
     Args:
         coords1 (float*): 3 cartesian coordinates [Angstrom] of atom1.
         coords2 (float*): 3 cartesian coordinates [Angstrom] of atom2.
         coords3 (float*): 3 cartesian coordinates [Angstrom] of atom3.
-    
+        r_21 (float): Distance between atom2 and atom1 (default None).
+        r_23 (float): Distance between atom2 and atom3 (default None).
+
     Returns:
         gdir1 (float*), gdir2 (float*), gdir3 (float*): vectors in the
             direction of max increasing bond angle.
     """
-    r_ji = geomcalc.get_r_ij(coords2, coords1)
-    r_jk = geomcalc.get_r_ij(coords2, coords3)
-    u_ji = geomcalc.get_u_ij(coords2, coords1)
-    u_jk = geomcalc.get_u_ij(coords2, coords3)
-    cp    = geomcalc.get_ucp(u_ji, u_jk)
-    gdir1 = geomcalc.get_ucp(u_ji, cp) / r_ji
-    gdir3 = geomcalc.get_ucp(cp, u_jk) / r_jk
+    if (not r_21):
+        r_21 = geomcalc.get_r_ij(coords2, coords1)
+    if (not r_23):
+        r_23 = geomcalc.get_r_ij(coords2, coords3)
+    u_21 = geomcalc.get_u_ij(coords2, coords1, r_21)
+    u_23 = geomcalc.get_u_ij(coords2, coords3, r_23)
+    cp = geomcalc.get_ucp(u_21, u_23)
+    gdir1 = geomcalc.get_ucp(u_21, cp) / r_21
+    gdir3 = geomcalc.get_ucp(cp, u_23) / r_23
     gdir2 = -1.0 * (gdir1 + gdir3)
     return gdir1, gdir2, gdir3
 
-def get_gdir_torsion(coords1, coords2, coords3, coords4):
+def get_gdir_torsion(coords1, coords2, coords3, coords4, r_12=None,
+        r_23=None, r_34=None):
     """Calculate direction of energy gradients between torsion atoms.
     
     Args:
@@ -184,31 +188,38 @@ def get_gdir_torsion(coords1, coords2, coords3, coords4):
         coords2 (float*): 3 cartesian coordinates [Angstrom] of atom2.
         coords3 (float*): 3 cartesian coordinates [Angstrom] of atom3.
         coords4 (float*): 3 cartesian coordinates [Angstrom] of atom4.
+        r_12 (float): Distance between atom1 and atom2 (default None).
+        r_23 (float): Distance between atom2 and atom3 (default None).
+        r_34 (float): Distance between atom3 and atom4 (default None).
     
     Returns:
         gdir1 (float*), gdir2 (float*), gdir3 (float*), gdir4 (float*):
             vectors in the direction of max increasing torsion angle.
     """
-    r_kl = geomcalc.get_r_ij(coords3, coords4)
-    r_ij = geomcalc.get_r_ij(coords1, coords2)
-    r_jk = geomcalc.get_r_ij(coords2, coords3)
-    u_ji = geomcalc.get_u_ij(coords2, coords1)
-    u_jk = geomcalc.get_u_ij(coords2, coords3)
-    u_kj = geomcalc.get_u_ij(coords3, coords2)
-    u_kl = geomcalc.get_u_ij(coords3, coords4)
-    a_ijk = geomcalc.get_a_ijk(coords1, coords2, coords3)
-    a_lkj = geomcalc.get_a_ijk(coords4, coords3, coords2)
-    s_ijk = math.sin(geomcalc.deg2rad() * a_ijk)
-    s_lkj = math.sin(geomcalc.deg2rad() * a_lkj)
-    c_ijk = math.cos(geomcalc.deg2rad() * a_ijk)
-    c_lkj = math.cos(geomcalc.deg2rad() * a_lkj)
-    gdir1 = geomcalc.get_ucp(u_ji, u_jk) / (r_ij*s_ijk)
-    gdir4 = geomcalc.get_ucp(u_kl, u_kj) / (r_kl*s_lkj)
-    gdir2 = gdir1*(r_ij/r_jk*c_ijk - 1.0) - gdir4*(r_kl/r_jk*c_lkj)
-    gdir3 = gdir4*(r_kl/r_jk*c_lkj - 1.0) - gdir1*(r_ij/r_jk*c_ijk)
+    if (not r_12):
+        r_12 = geomcalc.get_r_ij(coords1, coords2)
+    if (not r_23):
+        r_23 = geomcalc.get_r_ij(coords2, coords3)
+    if (not r_34):
+        r_34 = geomcalc.get_r_ij(coords3, coords4)
+    u_21 = geomcalc.get_u_ij(coords2, coords1, r_12)
+    u_34 = geomcalc.get_u_ij(coords3, coords4, r_34)
+    u_23 = geomcalc.get_u_ij(coords2, coords3, r_23)
+    u_32 = -1.0 * u_23
+    a_123 = geomcalc.get_a_ijk(coords1, coords2, coords3, r_12, r_23)
+    a_432 = geomcalc.get_a_ijk(coords4, coords3, coords2, r_34, r_23)
+    s_123 = math.sin(geomcalc.deg2rad() * a_123)
+    s_432 = math.sin(geomcalc.deg2rad() * a_432)
+    c_123 = math.cos(geomcalc.deg2rad() * a_123)
+    c_432 = math.cos(geomcalc.deg2rad() * a_432)
+    gdir1 = geomcalc.get_ucp(u_21, u_23) / (r_12*s_123)
+    gdir4 = geomcalc.get_ucp(u_34, u_32) / (r_34*s_432)
+    gdir2 = (r_12/r_23*c_123 - 1.0)*gdir1 - (r_34/r_23*c_432)*gdir4
+    gdir3 = (r_34/r_23*c_432 - 1.0)*gdir4 - (r_12/r_23*c_123)*gdir1
     return gdir1, gdir2, gdir3, gdir4
 
-def get_gdir_outofplane(coords1, coords2, coords3, coords4, oop):
+def get_gdir_outofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
+        r_32=None, r_34=None):
     """Calculate direction of energy gradients between outofplane atoms.
     
     Args:
@@ -216,31 +227,38 @@ def get_gdir_outofplane(coords1, coords2, coords3, coords4, oop):
         coords2 (float*): 3 cartesian coordinates [Angstrom] of atom2.
         coords3 (float*): 3 cartesian coordinates [Angstrom] of atom3.
         coords4 (float*): 3 cartesian coordinates [Angstrom] of atom4.
+        oop (float): Out-of-plane angles bewteen atoms 1, 2, 3, and 4.
+        r_31 (float): Distance between atom3 and atom1 (default None).
+        r_32 (float): Distance between atom3 and atom2 (default None).
+        r_34 (float): Distance between atom3 and atom4 (default None).
     
     Returns:
         gdir1 (float*), gdir2 (float*), gdir3 (float*), gdir4 (float*):
             vectors in the direction of max increasing outofplane angle.
     """
-    r_ki = geomcalc.get_r_ij(coords3, coords1)
-    r_kj = geomcalc.get_r_ij(coords3, coords2)
-    r_kl = geomcalc.get_r_ij(coords3, coords4)
-    u_ki = geomcalc.get_u_ij(coords3, coords1)
-    u_kj = geomcalc.get_u_ij(coords3, coords2)
-    u_kl = geomcalc.get_u_ij(coords3, coords4)
-    cp_kjkl = geomcalc.get_cp(u_kj, u_kl)
-    cp_klki = geomcalc.get_cp(u_kl, u_ki)
-    cp_kikj = geomcalc.get_cp(u_ki, u_kj)
-    a_ikj = geomcalc.get_a_ijk(coords1, coords3, coords2)
-    s_ikj = math.sin(geomcalc.deg2rad() * a_ikj)
-    c_ikj = math.cos(geomcalc.deg2rad() * a_ikj)
+    if (not r_31):
+        r_31 = geomcalc.get_r_ij(coords3, coords1)
+    if (not r_32):
+        r_32 = geomcalc.get_r_ij(coords3, coords2)
+    if (not r_34):
+        r_34 = geomcalc.get_r_ij(coords3, coords4)
+    u_31 = geomcalc.get_u_ij(coords3, coords1, r_31)
+    u_32 = geomcalc.get_u_ij(coords3, coords2, r_32)
+    u_34 = geomcalc.get_u_ij(coords3, coords4, r_34)
+    cp_3234 = geomcalc.get_cp(u_32, u_34)
+    cp_3431 = geomcalc.get_cp(u_34, u_31)
+    cp_3132 = geomcalc.get_cp(u_31, u_32)
+    a_132 = geomcalc.get_a_ijk(coords1, coords3, coords2)
+    s_132 = math.sin(geomcalc.deg2rad() * a_132)
+    c_132 = math.cos(geomcalc.deg2rad() * a_132)
     c_oop = math.cos(geomcalc.deg2rad() * oop)
     t_oop = math.tan(geomcalc.deg2rad() * oop)
-    gdir1 = ((1.0/r_ki)*(cp_kjkl/(c_oop*s_ikj)
-        - (t_oop/s_ikj**2)*(u_ki - c_ikj*u_kj)))
-    gdir2 = ((1.0/r_kj)*(cp_klki/(c_oop*s_ikj)
-        - (t_oop/s_ikj**2)*(u_kj - c_ikj*u_ki)))
-    gdir4 = ((1.0/r_kl)*(cp_kikj/(c_oop*s_ikj)
-        - (t_oop*u_kl)))
+    gdir1 = ((1.0/r_31)*(cp_3234/(c_oop*s_132)
+        - (t_oop/s_132**2)*(u_31 - c_132*u_32)))
+    gdir2 = ((1.0/r_32)*(cp_3431/(c_oop*s_132)
+        - (t_oop/s_132**2)*(u_32 - c_132*u_31)))
+    gdir4 = ((1.0/r_34)*(cp_3132/(c_oop*s_132)
+        - (t_oop*u_34)))
     gdir3 = -1.0*(gdir1 + gdir2 + gdir4)
     return gdir1, gdir2, gdir3, gdir4
 
@@ -251,14 +269,13 @@ def get_g_bonds(mol):
         mol (mmlib.molecule.Molecule): Molecule object with associated
             Bond objects with geometry and parameter data.
     """
-    mol.g_bonds = numpy.zeros((mol.n_atoms, 3))
+    mol.g_bonds.fill(0.0)
     for p in range(mol.n_bonds):
         b = mol.bonds[p]
         c1 = mol.atoms[b.at1].coords
         c2 = mol.atoms[b.at2].coords
-        b.r_ij = geomcalc.get_r_ij(c1, c2)
         b.grad = get_g_bond(b.r_ij, b.r_eq, b.k_b)
-        dir1, dir2 = get_gdir_inter(c1, c2)
+        dir1, dir2 = get_gdir_inter(c1, c2, b.r_ij)
         mol.g_bonds[b.at1] += b.grad * dir1
         mol.g_bonds[b.at2] += b.grad * dir2
 
@@ -269,15 +286,16 @@ def get_g_angles(mol):
         mol (mmlib.molecule.Molecule): Molecule object with associated
             Angle objects with geometry and parameter data.
     """
-    mol.g_angles = numpy.zeros((mol.n_atoms, 3))
+    mol.g_angles.fill(0.0)
     for p in range(mol.n_angles):
         a = mol.angles[p]
         c1 = mol.atoms[a.at1].coords
         c2 = mol.atoms[a.at2].coords
         c3 = mol.atoms[a.at3].coords
-        a.a_ijk = geomcalc.get_a_ijk(c1, c2, c3)
+        r12 = mol.bond_graph[a.at1][a.at2]
+        r23 = mol.bond_graph[a.at2][a.at3]
         a.grad = get_g_angle(a.a_ijk, a.a_eq, a.k_a)
-        dir1, dir2, dir3 = get_gdir_angle(c1, c2, c3)
+        dir1, dir2, dir3 = get_gdir_angle(c1, c2, c3, r12, r23)
         mol.g_angles[a.at1] += a.grad * dir1
         mol.g_angles[a.at2] += a.grad * dir2
         mol.g_angles[a.at3] += a.grad * dir3
@@ -289,16 +307,19 @@ def get_g_torsions(mol):
         mol (mmlib.molecule.Molecule): Molecule object with associated
             Torsion objects with geometry and parameter data.
     """
-    mol.g_torsions = numpy.zeros((mol.n_atoms, 3))
+    mol.g_torsions.fill(0.0)
     for p in range(mol.n_torsions):
         t = mol.torsions[p]
         c1 = mol.atoms[t.at1].coords
         c2 = mol.atoms[t.at2].coords
         c3 = mol.atoms[t.at3].coords
         c4 = mol.atoms[t.at4].coords
-        t.t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4)
+        r12 = mol.bond_graph[t.at1][t.at2]
+        r23 = mol.bond_graph[t.at2][t.at3]
+        r34 = mol.bond_graph[t.at3][t.at4]
         t.grad = get_g_torsion(t.t_ijkl, t.v_n, t.gam, t.n, t.paths)
-        dir1, dir2, dir3, dir4 = get_gdir_torsion(c1, c2, c3, c4)
+        dir1, dir2, dir3, dir4 = get_gdir_torsion(c1, c2, c3, c4, r12, r23,
+            r34)
         mol.g_torsions[t.at1] += t.grad * dir1
         mol.g_torsions[t.at2] += t.grad * dir2
         mol.g_torsions[t.at3] += t.grad * dir3
@@ -311,16 +332,19 @@ def get_g_outofplanes(mol):
         mol (mmlib.molecule.Molecule): Molecule object with associated
             Outofplane objects with geometry and parameter data.
     """
-    mol.g_outofplanes = numpy.zeros((mol.n_atoms, 3))
+    mol.g_outofplanes.fill(0.0)
     for p in range(mol.n_outofplanes):
         o = mol.outofplanes[p]
         c1 = mol.atoms[o.at1].coords
         c2 = mol.atoms[o.at2].coords
         c3 = mol.atoms[o.at3].coords
         c4 = mol.atoms[o.at4].coords
-        o.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
+        r31 = mol.bond_graph[o.at3][o.at1]
+        r32 = mol.bond_graph[o.at3][o.at2]
+        r34 = mol.bond_graph[o.at3][o.at4]
         o.grad = get_g_outofplane(o.o_ijkl, o.v_n)
-        dir1, dir2, dir3, dir4 = get_gdir_outofplane(c1, c2, c3, c4, o.o_ijkl)
+        dir1, dir2, dir3, dir4 = get_gdir_outofplane(c1, c2, c3, c4, o.o_ijkl,
+            r31, r32, r34)
         mol.g_outofplanes[o.at1] += o.grad * dir1
         mol.g_outofplanes[o.at2] += o.grad * dir2
         mol.g_outofplanes[o.at3] += o.grad * dir3
@@ -333,20 +357,20 @@ def get_g_nonbonded(mol):
         mol (mmlib.molecule.Molecule): Molecule object with associated
             Atom objects with geometry and parameter data.
     """
-    mol.g_nonbonded = numpy.zeros((mol.n_atoms, 3))
-    mol.g_vdw = numpy.zeros((mol.n_atoms, 3))
-    mol.g_elst = numpy.zeros((mol.n_atoms, 3))
-    # van der waals and electrostatic energy
+    mol.g_nonbonded.fill(0.0)
+    mol.g_vdw.fill(0.0)
+    mol.g_elst.fill(0.0)
     for i in range(mol.n_atoms):
-        atom1 = mol.atoms[i]
+        at1 = mol.atoms[i]
         for j in range(i+1, mol.n_atoms):
-            if (j in mol.nonints[i]): continue
-            atom2 = mol.atoms[j]
-            dir1, dir2 = get_gdir_inter(atom1.coords, atom2.coords)
-            r_ij = geomcalc.get_r_ij(atom1.coords, atom2.coords)
-            eps_ij = atom1.sreps * atom2.sreps
-            ro_ij = atom1.ro + atom2.ro
-            g_elst = get_g_elst_ij(r_ij, atom1.charge, atom2.charge,
+            if (j in mol.nonints[i]):
+                continue
+            at2 = mol.atoms[j]
+            r_ij = geomcalc.get_r_ij(at1.coords, at2.coords)
+            dir1, dir2 = get_gdir_inter(at1.coords, at2.coords, r_ij)
+            eps_ij = at1.sreps * at2.sreps
+            ro_ij = at1.ro + at2.ro
+            g_elst = get_g_elst_ij(r_ij, at1.charge, at2.charge,
                 mol.dielectric)
             g_vdw = get_g_vdw_ij(r_ij, eps_ij, ro_ij)
             mol.g_vdw[i] += g_vdw * dir1
@@ -361,7 +385,7 @@ def get_g_bound(mol):
         mol (mmlib.molecule.Molecule): Molecule object with boundary
             parameters and Atom objects with geometry data.
     """
-    mol.g_bound = numpy.zeros((mol.n_atoms, 3))
+    mol.g_bound.fill(0.0)
     k_box = mol.k_box
     bound = mol.bound
     origin = mol.origin
@@ -383,7 +407,7 @@ def get_g_totals(mol):
     """
     for i in range(mol.n_atoms):
         for j in range(3):
-            mol.g_bonded[i][j]  = mol.g_bonds[i][j] + mol.g_outofplanes[i][j]
+            mol.g_bonded[i][j] = mol.g_bonds[i][j] + mol.g_outofplanes[i][j]
             mol.g_bonded[i][j] += mol.g_torsions[i][j] + mol.g_angles[i][j]
             mol.g_nonbonded[i][j] = mol.g_vdw[i][j] + mol.g_elst[i][j]
             mol.g_total[i][j] = mol.g_bonded[i][j] + mol.g_nonbonded[i][j]
@@ -421,39 +445,42 @@ def get_g_numerical(mol):
         mol (mmlib.molecule.Molecule): Molecule object with energy
             gradient component data [kcal/(mol*A)].
     """
-    mol.g_bonds = numpy.zeros((mol.n_atoms, 3))
-    mol.g_angles = numpy.zeros((mol.n_atoms, 3))
-    mol.g_torsions = numpy.zeros((mol.n_atoms, 3))
-    mol.g_outofplanes = numpy.zeros((mol.n_atoms, 3))
-    mol.g_vdw = numpy.zeros((mol.n_atoms, 3))
-    mol.g_elst = numpy.zeros((mol.n_atoms, 3))
-    mol.g_bound = numpy.zeros((mol.n_atoms, 3))
-    num_disp = num_disp()
+    mol.g_bonds.fill(0.0)
+    mol.g_angles.fill(0.0)
+    mol.g_torsions.fill(0.0)
+    mol.g_outofplanes.fill(0.0)
+    mol.g_vdw.fill(0.0)
+    mol.g_elst.fill(0.0)
+    mol.g_bound.fill(0.0)
+    disp = num_disp()
     for i in range(mol.n_atoms):
         for j in range(3):
             q = mol.atoms[i].coords[j]
-            qp = q + 0.5*num_disp
-            qm = q - 0.5*num_disp
+            qp = q + 0.5*disp
+            qm = q - 0.5*disp
             mol.atoms[i].coords[j] = qp
-            mol.get_energy()
+            mol.update_internals()
+            mol.get_energy('standard')
             ep_bond, ep_ang = mol.e_bonds, mol.e_angles
             ep_tor, ep_oop = mol.e_torsions, mol.e_outofplanes
             ep_vdw, ep_elst = mol.e_vdw, mol.e_elst
             ep_bound = mol.e_bound
             mol.atoms[i].coords[j] = qm
-            mol.get_energy()
+            mol.update_internals()
+            mol.get_energy('standard')
             em_bond, em_ang = mol.e_bonds, mol.e_angles
             em_tor, em_oop = mol.e_torsions, mol.e_outofplanes
             em_vdw, em_elst = mol.e_vdw, mol.e_elst
             em_bound = mol.e_bound
             mol.atoms[i].coords[j] = q
-            mol.g_bonds[i][j] = (ep_bond - em_bond) / num_disp
-            mol.g_angles[i][j] = (ep_ang - em_ang) / num_disp
-            mol.g_torsions[i][j] = (ep_tor - em_tor) / num_disp
-            mol.g_outofplanes[i][j] = (ep_oop - em_oop) / num_disp
-            mol.g_vdw[i][j] = (ep_vdw - em_vdw) / num_disp
-            mol.g_elst[i][j] = (ep_elst - em_elst) / num_disp
-            mol.g_bound[i][j] = (ep_bound - em_bound) / num_disp
+            mol.g_bonds[i][j] = (ep_bond - em_bond) / disp
+            mol.g_angles[i][j] = (ep_ang - em_ang) / disp
+            mol.g_torsions[i][j] = (ep_tor - em_tor) / disp
+            mol.g_outofplanes[i][j] = (ep_oop - em_oop) / disp
+            mol.g_vdw[i][j] = (ep_vdw - em_vdw) / disp
+            mol.g_elst[i][j] = (ep_elst - em_elst) / disp
+            mol.g_bound[i][j] = (ep_bound - em_bound) / disp
+    mol.update_internals()
 
 # end of module
 

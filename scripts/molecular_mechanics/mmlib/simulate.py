@@ -312,8 +312,8 @@ class MolecularDynamics(Simulation):
         """
         for i in range(self.mol.n_atoms):
             for j in range(3):
-                self.mol.atoms[i].pcoords[j] = self.mol.atoms[i].coords[j]
                 self.mol.atoms[i].coords[j] += self.mol.atoms[i].vels[j] * dt
+        self.mol.update_internals()
 
     def check_print(self, timestep, print_all=False):
         """Check if printing of various md data is needed at current time.
@@ -383,6 +383,7 @@ class MonteCarlo(Simulation):
             `dispmag` value.
         energyconf (int): Number of configurations between energy printing.
         geomconf (int): Number of configurations between geometry printing.
+        rand_disp (float**): Random displacement vector of coordinates.
         cprintchar (int): Total characters for conf number printing.
     """
     def __init__(self, infile_name):
@@ -397,6 +398,7 @@ class MonteCarlo(Simulation):
         self.energyconf = 100
         self.geomconf = 100
         Simulation.__init__(self, infile_name)
+        self.rand_disp = numpy.zeros((self.mol.n_atoms, 3))
         self.cprintchar = 7
 
     def run(self):
@@ -440,7 +442,7 @@ class MonteCarlo(Simulation):
         distribution of mu = 0.0 and sigma = `dispmag` attribute for all
         3N atomic coordinates.
         """
-        self.rand_disp = numpy.zeros((self.mol.n_atoms, 3))
+        self.rand_disp.fill(0.0)
         for i in range(self.mol.n_atoms):
             for j in range(3):
                 randval = numpy.random.normal(0.0, self.dispmag)
@@ -460,8 +462,8 @@ class MonteCarlo(Simulation):
         """
         for i in range(self.mol.n_atoms):
             for j in range(3):
-                self.mol.atoms[i].pcoords[j] = self.mol.atoms[i].coords[j]
                 self.mol.atoms[i].coords[j] += disp_vector[i][j]
+        self.mol.update_internals()
 
     def changedisp(self):
         """Change root-mean-square magnitude of displacement vector.

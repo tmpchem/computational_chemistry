@@ -311,6 +311,8 @@ class Optimization:
         for i in range(self.mol.n_atoms):
             for j in range(3):
                 self.mol.atoms[i].coords[j] += disp_mag * disp_vector[i][j]
+        self.mol.update_internals()
+
     def copy_coords(self):
         """Create a copy of current molecular coordinates."""
         self.ccoords = numpy.zeros((self.mol.n_atoms, 3))

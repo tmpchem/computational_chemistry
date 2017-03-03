@@ -24,7 +24,7 @@ class Atom:
         at_mass (float): atomic mass [g/mol].
     
     Attributes:
-        attype (str): AMBER94 mm atom type.
+        type (str): AMBER94 mm atom type.
         coords (float*): 3 cartesian coordinates [Angstrom].
         ro (float): vdw radius [Angstrom].
         eps (float): vdw epsilon [kcal/mol].
@@ -33,14 +33,13 @@ class Atom:
         covard (float): covalent radius [Angstrom].
         vels (float*): 3 cartesian velocity components [Angstrom/ps].
         accs (float*): 3 cartesian acceleration components [A/(ps^2)].
-        pcoords (float*): 3 previous `coords` [Angstrom].
         pvels (float*): 3 previous `vels` [Angstrom/ps].
         paccs (float*): 3 previous `accs` [Angstrom/(ps^2)].
     """
-    def __init__(self, attype, coords, charge, ro, eps, mass):
-        self.attype = attype
-        self.element = attype[0].capitalize()
-        if (attype[-1].islower()): self.element += attype[-1]
+    def __init__(self, type, coords, charge, ro, eps, mass):
+        self.type = type
+        self.element = type[0].capitalize()
+        if (type[-1].islower()): self.element += type[-1]
         self.coords = coords
         self.charge = charge
         self.ro = ro
@@ -50,12 +49,11 @@ class Atom:
         self.covrad = param.get_cov_rad(self.element)
         self.vels = numpy.zeros(3)
         self.accs = numpy.zeros(3)
-        self.pcoords = numpy.zeros(3)
         self.pvels = numpy.zeros(3)
         self.paccs = numpy.zeros(3)
-    def set_attype(self, attype):
+    def set_type(self, type):
         """Set new (str) atom type."""
-        self.attype = attype
+        self.type = type
     def set_coords(self, coords):
         """Set new (float*) coodinates [Angstrom]."""
         self.coords = coords
@@ -415,21 +413,21 @@ class Molecule:
         self.g_outofplanes = numpy.zeros((self.n_atoms, 3))
         self.g_vdw = numpy.zeros((self.n_atoms, 3))
         self.g_elst = numpy.zeros((self.n_atoms, 3))
-        self.g_boundary = numpy.zeros((self.n_atoms, 3))
+        self.g_bound = numpy.zeros((self.n_atoms, 3))
         self.g_bonded = numpy.zeros((self.n_atoms, 3))
         self.g_nonbonded = numpy.zeros((self.n_atoms, 3))
         self.g_total = numpy.zeros((self.n_atoms, 3))
 
     def read_in_xyzq(self):
-        """Read in xyzq data from .xyzq input file"""
+        """Read in xyzq data from .xyzq input file."""
         fileio.get_geom(self)
 
     def read_in_prm(self):
-        """Read in prm data from .prm input file"""
+        """Read in prm data from .prm input file."""
         fileio.get_prm(self)
 
     def get_topology(self):
-        """Determine bonded topology of molecules from coordinates"""
+        """Determine bonded topology of molecules from coordinates."""
         topology.get_bond_graph(self)
         topology.get_bonds(self)
         topology.get_angles(self)
@@ -438,7 +436,7 @@ class Molecule:
         topology.get_nonints(self)
 
     def get_energy(self, kintype):
-        """Calculate (float) energy [kcal/mol] and all energy components"""
+        """Calculate (float) energy [kcal/mol] and all energy components."""
         energy.get_e_bonds(self)
         energy.get_e_angles(self)
         energy.get_e_torsions(self)
@@ -449,7 +447,7 @@ class Molecule:
         energy.get_e_totals(self)
 
     def get_gradient(self, grad_type):
-        """Calculate analytical or numerical gradient of energy
+        """Calculate analytical or numerical gradient of energy.
         
         Args:
             grad_type (str): Type of gradient:
@@ -466,7 +464,7 @@ class Molecule:
           sys.exit()
 
     def get_analytic_gradient(self):
-        """Calculate analytic (float**) gradient [kcal/(mol*A)] of energy"""
+        """Calculate analytic (float**) gradient [kcal/(mol*A)] of energy."""
         gradient.get_g_bonds(self)
         gradient.get_g_angles(self)
         gradient.get_g_torsions(self)
@@ -476,9 +474,16 @@ class Molecule:
         gradient.get_g_totals(self)
 
     def get_numerical_gradient(self):
-        """Calculate numerical (float**) gradient [kcal/(mol*A)] of energy"""
+        """Calculate numerical (float**) gradient [kcal/(mol*A)] of energy."""
         gradient.get_g_numerical(self)
         gradient.get_g_totals(self)
+
+    def update_internals(self):
+        """Update current values of internal degrees of freedom."""
+        topology.update_bonds(self)
+        topology.update_angles(self)
+        topology.update_torsions(self)
+        topology.update_outofplanes(self)
 
     def get_temperature(self):
         """Calculate instantaneous kinetic temperature [K] of system."""
@@ -489,7 +494,6 @@ class Molecule:
     def get_volume(self):
         """Caclculate approximate volume [A^3] of system."""
         geomcalc.get_volume(self)
-
 
     def print_data(self):
         """Print energy / geometry / topology data of molecule to screen."""
@@ -504,22 +508,22 @@ class Molecule:
         """Print energy and component data of molecule to screen."""
         fileio.print_energy(self)
     def print_geom(self):
-        """Print geometry data of molecule to screen"""
+        """Print geometry data of molecule to screen."""
         fileio.print_geom(self)
     def print_bonds(self):
-        """Print bond data of molecule to screen"""
+        """Print bond data of molecule to screen."""
         fileio.print_bonds(self)
     def print_angles(self):
-        """Print angle data of molecule to screen"""
+        """Print angle data of molecule to screen."""
         fileio.print_angles(self)
     def print_torsions(self):
-        """Print torsion data of molecule to screen"""
+        """Print torsion data of molecule to screen."""
         fileio.print_torsions(self)
     def print_outofplanes(self):
-        """Print outofplane data of molecule to screen"""
+        """Print outofplane data of molecule to screen."""
         fileio.print_outofplanes(self)
     def print_gradient(self):
-        """Print gradient data to screen"""
+        """Print gradient data to screen."""
         fileio.print_gradient(self, 'total')
 
 # end of module

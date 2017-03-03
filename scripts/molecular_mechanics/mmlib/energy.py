@@ -192,9 +192,6 @@ def get_e_bonds(mol):
     mol.e_bonds = 0.0
     for p in range(mol.n_bonds):
         b = mol.bonds[p]
-        c1 = mol.atoms[b.at1].coords
-        c2 = mol.atoms[b.at2].coords
-        b.r_ij = geomcalc.get_r_ij(c1, c2)
         b.energy = get_e_bond(b.r_ij, b.r_eq, b.k_b)
         mol.e_bonds += b.energy
 
@@ -211,10 +208,6 @@ def get_e_angles(mol):
     mol.e_angles = 0.0
     for p in range(mol.n_angles):
         a = mol.angles[p]
-        c1 = mol.atoms[a.at1].coords
-        c2 = mol.atoms[a.at2].coords
-        c3 = mol.atoms[a.at3].coords
-        a.a_ijk = geomcalc.get_a_ijk(c1, c2, c3)
         a.energy = get_e_angle(a.a_ijk, a.a_eq, a.k_a)
         mol.e_angles += a.energy
 
@@ -231,11 +224,6 @@ def get_e_torsions(mol):
     mol.e_torsions = 0.0
     for p in range(mol.n_torsions):
         t = mol.torsions[p]
-        c1 = mol.atoms[t.at1].coords
-        c2 = mol.atoms[t.at2].coords
-        c3 = mol.atoms[t.at3].coords
-        c4 = mol.atoms[t.at4].coords
-        t.t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4)
         t.energy = get_e_torsion(t.t_ijkl, t.v_n, t.gam, t.n, t.paths)
         mol.e_torsions += t.energy
 
@@ -252,11 +240,6 @@ def get_e_outofplanes(mol):
     mol.e_outofplanes = 0.0
     for p in range(mol.n_outofplanes):
         o = mol.outofplanes[p]
-        c1 = mol.atoms[o.at1].coords
-        c2 = mol.atoms[o.at2].coords
-        c3 = mol.atoms[o.at3].coords
-        c4 = mol.atoms[o.at4].coords
-        o.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4)
         o.e = get_e_outofplane(o.o_ijkl, o.v_n)
         mol.e_outofplanes += o.e
 

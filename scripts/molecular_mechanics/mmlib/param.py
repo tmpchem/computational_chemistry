@@ -266,9 +266,9 @@ def get_vdw_param(at_type):
         vdw (float, float): van der waals parameters for atom type:
             ro/2 and eps.
     """
-    try:
+    if (at_type in vdw_params):
         vdw = vdw_params[at_type]
-    except KeyError:
+    else:
         print('Error: atom type (%s) not found!' % (at_type))
         sys.exit()
     return vdw
@@ -282,9 +282,9 @@ def get_at_mass(element):
     Returns:
         at_mass (float): average periodic table mass of element.
     """
-    try:
+    if (element in at_masses):
         at_mass = at_masses[element]
-    except KeyError:
+    else:
         print('Error: atomic mass for element (%s) not found!' % (element))
         sys.exit()
     return at_mass
@@ -298,9 +298,9 @@ def get_cov_rad(element):
     Returns:
         cov_rad (float): covalent radius [Angstrom] of atom.
     """
-    try:
+    if (element in cov_radii):
         cov_rad = cov_radii[element]
-    except KeyError:
+    else:
         print('Error: covalent radius for element (%s) not found!' % (element))
         sys.exit()
     return cov_rad
@@ -316,17 +316,16 @@ def get_bond_param(at1_type, at2_type):
         bond (float, float): AMBER94 mm bond parameters for atom types:
             k_b [kcal/(mol*A^2)] and r_eq [Angstrom].
     """
-    try:
-        bond_types = '%-2s%-2s' % (at1_type, at2_type)
-        bond = bond_params[bond_types]
-    except KeyError:
-        try:
-            bond_types = '%-2s%-2s' % (at2_type, at1_type)
-            bond = bond_params[bond_types]
-        except KeyError:
-            print('Error: bond type (%s, %s) not recognized!' % (at1_type,
-                at2_type))
-            sys.exit()
+    b12_types = '%-2s%-2s' % (at1_type, at2_type)
+    b21_types = '%-2s%-2s' % (at2_type, at1_type)
+    if (b12_types in bond_params):
+        bond = bond_params[b12_types]
+    elif (b21_types in bond_params):
+        bond = bond_params[b21_types]
+    else:
+        print('Error: bond type (%s, %s) not recognized!' % (at1_type,
+            at2_type))
+        sys.exit()
     return bond
 
 def get_angle_param(at1_type, at2_type, at3_type):
@@ -341,17 +340,16 @@ def get_angle_param(at1_type, at2_type, at3_type):
         angle (float, float): AMBER94 mm angle parameters for atom types:
             k_a [kcal/(mol*rad^2)] and a_eq [degrees].
     """
-    try:
-        angle_types = '%-2s%-2s%-2s' % (at1_type, at2_type, at3_type)
-        angle = angle_params[angle_types]
-    except KeyError:
-        try:
-            angle_types = '%-2s%-2s%-2s' % (at3_type, at2_type, at1_type)
-            angle = angle_params[angle_types]
-        except KeyError:
-            print('Error: angle type (%s, %s, %s) not recognized!' % (
-                at1_type, at2_type, at3_type))
-            sys.exit()
+    a123_types = '%-2s%-2s%-2s' % (at1_type, at2_type, at3_type)
+    a321_types = '%-2s%-2s%-2s' % (at3_type, at2_type, at1_type)
+    if (a123_types in angle_params):
+        angle = angle_params[a123_types]
+    elif (a321_types in angle_params):
+        angle = angle_params[a321_types]
+    else:
+        print('Error: angle type (%s, %s, %s) not recognized!' % (at1_type,
+            at2_type, at3_type))
+        sys.exit()
     return angle
 
 def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
@@ -371,36 +369,31 @@ def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
     torsion = []
   
     # two-atom torsion potentials
-    try: 
-        torsion23_types = '%-2s%-2s' % (at2_type, at3_type)
-        torsion23 = torsion23_params[torsion23_types]
-        torsion.append(torsion23)
-    except KeyError:
-        try:
-            torsion23_types = '%-2s%-2s' % (at3_type, at2_type)
-            torsion23 = torsion23_params[torsion23_types]
-            torsion.append(torsion23)
-        except KeyError:
-            print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type,
-                at3_type))
-            sys.exit()
+    t23_types = '%-2s%-2s' % (at2_type, at3_type)
+    t32_types = '%-2s%-2s' % (at3_type, at2_type)
+    if (t23_types in torsion23_params):
+        t23 = torsion23_params[t23_types]
+        torsion.append(t23)
+    elif (t32_types in t23_params):
+        t23 = torsion23_params[t32_types]
+        torsion.append(t23)
+    else:
+        print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type,
+            at3_type))
+        sys.exit()
   
     # four-atom torsion potentials
-    try:
-        torsion1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type,
-            at3_type, at4_type)
-        torsion1234 = torsion1234_params[torsion1234_types]
-    except KeyError:
-        try:
-            torsion1234_types = '%-2s%-2s%-2s%-2s' % (at4_type, at3_type,
-                at2_type, at1_type)
-            torsion1234 = torsion1234_params[torsion1234_types]
-        except KeyError:
-            torsion1234 = []
-    for i in range(len(torsion1234)):
-        torsion.append(torsion1234[i])
+    t1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type, at3_type, at4_type)
+    t4321_types = '%-2s%-2s%-2s%-2s' % (at4_type, at3_type, at2_type, at1_type)
+    t1234 = []
+    if (t1234_types in torsion1234_params):
+        t1234 = torsion1234_params[t1234_types]
+    elif (t4321_types in torsion1234_params):
+            torsion1234 = torsion1234_params[t4321_types]
+    for i in range(len(t1234)):
+        torsion.append(t1234[i])
   
-    return torsion[0]
+    return torsion
 
 def get_outofplane_param(at1_type, at2_type, at3_type, at4_type):
     """Find outofplane parameters for 4 AMBER94 mm atom types:
@@ -416,48 +409,32 @@ def get_outofplane_param(at1_type, at2_type, at3_type, at4_type):
             vn/2 [kcal/mol].
     """
     oop = 0.0
-  
+
     # two-atom out-of-plane potentials
-    try:
-        oop34_types = '%-2s%-2s' % (at3_type, at4_type)
+    oop34 = 0.0
+    oop34_types = '%-2s%-2s' % (at3_type, at4_type)
+    if (oop34_types in oop34_params):
         oop34 = oop34_params[oop34_types]
-    except KeyError:
-        try:
-            oop34_types = '%-2s%-2s' % (at2_type, at1_type)
-            oop34 = oop34_params[oop34_types]
-        except KeyError:
-            oop34 = []
-    if (len(oop34) > 0):
+    if (oop34 > 0.0):
         oop = oop34
-  
+
     # three-atom out-of-plane potentials
-    try:
-        oop234_types = '%-2s%-2s%-2s' % (at2_type, at3_type, at4_type)
+    oop234 = 0.0
+    oop234_types = '%-2s%-2s%-2s' % (at2_type, at3_type, at4_type)
+    if (oop234_types in oop234_params):
         oop234 = oop234_params[oop234_types]
-    except KeyError:
-        try:
-            oop234_types = '%-2s%-2s%-2s' % (at3_type, at2_type, at1_type)
-            oop234 = oop234_params[oop234_types]
-        except KeyError:
-            oop234 = []
-    if (len(oop234) > 0):
+    if (oop234 > 0.0):
         oop = oop234
-  
+
     # four-atom out-of-plane potentials
-    try:
-        oop1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type, at3_type,
-            at4_type)
+    oop1234 = 0.0
+    oop1234_types = '%-2s%-2s%-2s%-2s' % (at1_type, at2_type, at3_type,
+        at4_type)
+    if (oop1234_types in oop1234_params):
         oop1234 = oop1234_params[oop1234_types]
-    except KeyError:
-        try:
-            oop1234_types = '%-2s%-2s%-2s%-2s' % (at4_type, at3_type,
-                at2_type, at1_type)
-            oop1234 = oop1234_params[oop1234_types]
-        except KeyError:
-            oop1234 = []
-    if (len(oop1234) > 0):
+    if (oop1234 > 0.0):
         oop = oop1234
-  
+
     return oop
 
 # end of module

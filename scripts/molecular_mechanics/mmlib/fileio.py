@@ -47,6 +47,7 @@ def get_geom(mol):
     """
     infile_array = get_file_string_array(mol.infile)
     mol.n_atoms = int(infile_array[0][0])
+    mol.bond_lenths = [{} for i in range(mol.n_atoms)]
     for i in range(mol.n_atoms):
         at_type = infile_array[i+2][0]
         at_coords = numpy.zeros(3)
@@ -57,8 +58,8 @@ def get_geom(mol):
             else at_type[0])
         at_mass = param.get_at_mass(at_element)
         at_ro, at_eps = param.get_vdw_param(at_type)
-        new_atom = molecule.Atom(at_type, at_coords, at_charge, at_ro,
-            at_eps, at_mass)
+        new_atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps,
+            at_mass)
         new_atom.set_covrad(param.get_cov_rad(at_element))
         mol.atoms.append(new_atom)
         mol.mass += at_mass
@@ -86,8 +87,7 @@ def get_atom(mol, record):
     at_element = (at_type[0:2].capitalize() if at_type[-1].islower()
         else at_type[0])
     at_mass = param.get_at_mass(at_element)
-    atom = molecule.Atom(at_type, at_coords, at_charge, at_ro,
-        at_eps, at_mass)
+    atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
     atom.set_covrad(param.get_cov_rad(at_element))
     mol.atoms.append(atom)
     mol.mass += at_mass
@@ -110,6 +110,8 @@ def get_bond(mol, record):
     r_ij = geomcalc.get_r_ij(c1, c2)
     bond = molecule.Bond(at1, at2, r_ij, r_eq, k_b)
     mol.bonds.append(bond)
+    mol.bond_graph[at1][at2] = r_ij
+    mol.bond_graph[at2][at1] = r_ij
 
 def get_angle(mol, record):
     """Parse angle record into an angle object and append to molecule.
@@ -194,6 +196,7 @@ def get_prm(mol):
         if (rec_type == 'atom'):
             get_atom(mol, record)
     mol.n_atoms = len(mol.atoms)
+    mol.bond_graph = [{} for i in range(mol.n_atoms)]
     for i in range(len(infile_array)):
         record = infile_array[i]
         rec_type = record[0].lower()
@@ -445,7 +448,7 @@ def print_coords(mol, comment):
     """
     print('%i\n%s\n' % (mol.n_atoms, comment), end='')
     for i in range(mol.n_atoms):
-        print('%-2s' % (mol.atoms[i].attype), end='')
+        print('%-2s' % (mol.atoms[i].type), end='')
         for j in range(3):
             print(' %12.6f' % (mol.atoms[i].coords[j]), end='')
         print('\n', end='')
@@ -500,7 +503,7 @@ def print_gradient(mol, grad_type):
     print('\n %s\n\n' % ('%s %s gradient' % (mol.grad_type,
         grad_type)), end='')
     for i in range(mol.n_atoms):
-        print('%-2s' % (mol.atoms[i].attype), end='')
+        print('%-2s' % (mol.atoms[i].type), end='')
         for j in range(3):
             print(' %12.6f' % (grad[i][j]), end='')
         print('\n', end='')
@@ -583,7 +586,7 @@ def print_geom(mol):
     n_banner = 65
     print_header(header, n_banner, params, spaces)
     for i in range(mol.n_atoms):
-        print('%4i | %-2s' % (i+1, mol.atoms[i].attype), end='')
+        print('%4i | %-2s' % (i+1, mol.atoms[i].type), end='')
         for j in range(3):
             print('%10.4f' % (mol.atoms[i].coords[j]), end='')
         print(' %7.4f %7.4f %7.4f' % (mol.atoms[i].charge,
@@ -606,7 +609,7 @@ def print_geom_file(outfile, mol):
     outfile.write('# %s Atoms (at, type, x, y, z, q, ro, eps)\n' % (
         mol.n_atoms))
     for i in range(mol.n_atoms):
-        outfile.write('ATOM %4i %-2s' % (i+1, mol.atoms[i].attype))
+        outfile.write('ATOM %4i %-2s' % (i+1, mol.atoms[i].type))
         for j in range(3):
             outfile.write(' %11.6f' % (mol.atoms[i].coords[j]))
         outfile.write(' %8.5f %7.4f %7.4f\n' % (mol.atoms[i].charge,
@@ -635,7 +638,7 @@ def print_bonds(mol):
     a = mol.atoms
     for p in range(mol.n_bonds):
         b = mol.bonds[p]
-        t1, t2 = a[b.at1].attype, a[b.at2].attype
+        t1, t2 = a[b.at1].type, a[b.at2].type
         pstr = '%4i | %7.2f %8.4f %8.4f (%2s-%2s) %8.4f (%i-%i)' % (p+1,
             b.k_b, b.r_eq, b.r_ij, t1, t2, b.energy, b.at1+1, b.at2+1)
         print(pstr)
@@ -681,7 +684,7 @@ def print_angles(mol):
     at = mol.atoms
     for p in range(mol.n_angles):
         a = mol.angles[p]
-        t1, t2, t3 = (at[a.at1].attype, at[a.at2].attype, at[a.at3].attype)
+        t1, t2, t3 = (at[a.at1].type, at[a.at2].type, at[a.at3].type)
         pstr = '%4i | %6.2f %7.3f %7.3f (%2s-%2s-%2s) %7.4f (%i-%i-%i)' % (
             p+1, a.k_a, a.a_eq, a.a_ijk, t1, t2, t3, a.energy, a.at1+1,
             a.at2+1, a.at3+1)
@@ -728,12 +731,12 @@ def print_torsions(mol):
     a = mol.atoms
     for p in range(mol.n_torsions):
         t = mol.torsions[p]
-        t1, t2 = a[t.at1].attype, a[t.at2].attype
-        t3, t4 = a[t.at3].attype, a[t.at4].attype
+        t1, t2 = a[t.at1].type, a[t.at2].type
+        t3, t4 = a[t.at3].type, a[t.at4].type
         pstr = '%4i | %6.2f %6.1f %8.3f %i %i (%2s-%2s-%2s-%2s)' % (p+1,
             t.v_n, t.gam, t.t_ijkl, t.n, t.paths, t1, t2, t3, t4)
-        pstr += ' %7.4f (%i-%i-%i-%i)' % (t.energy, t.at1+1, t.at2+2,
-            t.at3+1, t.at4+1)
+        pstr += ' %7.4f (%i-%i-%i-%i)' % (t.energy, t.at1+1, t.at2+1, t.at3+1,
+            t.at4+1)
         print(pstr)
 
 def print_torsions_file(outfile, mol):
@@ -778,8 +781,8 @@ def print_outofplanes(mol):
     a = mol.atoms
     for p in range(mol.n_outofplanes):
         o = mol.outofplanes[p]
-        t1, t2 = a[o.at1].attype, a[o.at2].attype
-        t3, t4 = a[o.at3].attype, a[o.at4].attype
+        t1, t2 = a[o.at1].type, a[o.at2].type
+        t3, t4 = a[o.at3].type, a[o.at4].type
         pstr = '%4i | %6.2f %7.3f (%2s-%2s-%2s-%2s) %7.4f (%i-%i-%i-%i)' % (
             p+1, o.v_n, o.o_ijkl, t1, t2, t3, t4, o.energy, o.at1+1, o.at2+1,
             o.at3+1, o.at4+1)
@@ -859,7 +862,7 @@ def get_input():
     the input file given as the second command line input string.
     """
     prog_name = sys.argv[0].split('/')[-1]
-    if (not len(sys.argv) == 2):
+    if (len(sys.argv) < 2):
         print('\nUsage: python %s INPUT_FILE\n' % (prog_name))
         print('  INPUT_FILE: ', end='')
         if (prog_name == 'mm.py'):
