@@ -138,7 +138,7 @@ def get_torsion(mol, record):
     
     Appends mmlib.molecule.Torsion object to mmlib.molecule.Molecule
     object. Contents of torsion object include (int) 4 atomic indices,
-    (float) barrier height [kcal/mol], (float) barrier offset [degrees],
+    (float) half-barrier height [kcal/mol], (float) barrier offset [degrees],
     (int) barrier frequency, (int) barrier paths, and (float) torsion
     angle [degrees].
     
@@ -170,10 +170,10 @@ def get_outofplane(mol, record):
         record (str*): Array of string from line of prm file.
     """
     at1, at2, at3, at4 = (int(record[1])-1, int(record[2])-1,
-        int(record[3])-1, int(record[4])-1)
+                          int(record[3])-1, int(record[4])-1)
     v_n = float(record[5])
     c1, c2, c3, c4 = (mol.atoms[at1].coords, mol.atoms[at2].coords,
-        mol.atoms[at3].coords, mol.atoms[at4].coords)
+                      mol.atoms[at3].coords, mol.atoms[at4].coords)
     o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4) 
     outofplane = molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n)
     mol.outofplanes.append(outofplane)
@@ -743,7 +743,7 @@ def print_torsions_file(outfile, mol):
     """Write out molecular torsion data and parameters to prm file.
     
     For each Torsion object in Molecule object, write to outfile a torsion
-    record, containing (int) 4 atomic indices, (float) barrier height
+    record, containing (int) 4 atomic indices, (float) half-barrier height
     [kcal/mol], (float) barrier offset [degrees], (int) barrier frequency,
     and (int) barrier paths.
     
@@ -763,9 +763,9 @@ def print_outofplanes(mol):
     """Print outofplane topology and parameters for a molecule to screen.
     
     Print a header banner for the section, and for each Outofplane object
-    in a Molecule object print (float) barrier height [kcal/mol], (float)
-    outofplane angle [degrees], (str) 4 atom types, (float) torsion energy
-    [kcal/mol], and (int) 4 atomic indices.
+    in a Molecule object print (float) half-barrier height [kcal/mol],
+    (float) outofplane angle [degrees], (str) 4 atom types, (float) torsion
+    energy [kcal/mol], and (int) 4 atomic indices.
 
     Args:
         mol (mmlib.molecule.Molecule): Molecule with Outofplane objects
@@ -774,7 +774,7 @@ def print_outofplanes(mol):
     if (mol.n_outofplanes > 0):
         header, n_banner = ' Out-of-plane Angle Data ', 55
         params = ['vn/2', 'o_ijkl', 'types', 'energy', 'atoms']
-        spaces = [8, 3, 5, 6, 3]
+        spaces = [9, 2, 5, 6, 3]
         print_header(header, n_banner, params, spaces)
     else:
         print('\n No Out-of-plane Angles Detected')
@@ -793,7 +793,7 @@ def print_outofplanes_file(outfile, mol):
     
     For each Outofplane object in Molecule object, write to outfile an
     outofplane record, containing (int) 4 atomic indices, and (float)
-    barrier height [kcal/mol].
+    half-barrier height [kcal/mol].
     
     Args:
         outfile (_io.TextIOWrapper): Output stream to open prm file.

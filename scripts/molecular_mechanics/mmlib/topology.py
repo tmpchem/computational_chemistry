@@ -11,15 +11,18 @@ import math
 from mmlib import geomcalc, param, molecule
 
 def bond_threshold():
-    """Threshold beyond covalent radii sum to determine bond cutoff"""
+    """Threshold beyond covalent radii sum to determine bond cutoff."""
     return 1.2
 
 def get_bond_graph(mol):
-    """Build graph of which atoms are covalently bonded
+    """Build graph of which atoms are covalently bonded and bond lengths.
     
     Search all atom pairs to find those within a threshold of the sum of
     the interatomic covalent radii. Append those found to the bond graph
-    of each Atom object within the Molecule object.
+    dictionary of each Atom object within the Molecule object.
+    
+    First atomic index is the array index. Second atomic index is a
+    dictionary key. The value is the bond length [Angstrom] of the bond.
     
     Args:
         mol (mmlib.molecule.Molecule): Molecule object with Atom objects
@@ -52,7 +55,7 @@ def get_bonds(mol):
         at1 = mol.atoms[i]
         for j in mol.bond_graph[i].keys():
             at2 = mol.atoms[j]
-            if (i < j):
+            if (i >= j):
                 r_ij = mol.bond_graph[i][j]
                 k_b, r_eq = param.get_bond_param(at1.type, at2.type)
                 if (k_b > 0.0):
@@ -184,7 +187,7 @@ def get_nonints(mol):
     
     If two atoms belong to a mutual bond, angle, and/or torsion, then
     they are 'bonded' and should not interact non-covalently. These
-    pairs are appended to a list and ignored during computation of
+    pairs are appended to a set and ignored during computation of
     non-bonded interaction energies.
     
     It is not necessary to include outofplanes, since these atoms are
@@ -194,24 +197,19 @@ def get_nonints(mol):
         mol (mmlib.molecule.Molecule): Molecule object with arrays of
             Bond, Angle, and Torsion objects.
     """
-    mol.nonints = [[] for i in range(mol.n_atoms)]
+    mol.nonints = [set([]) for i in range(mol.n_atoms)]
     for p in range(mol.n_bonds):
-        at1 = mol.bonds[p].at1
-        at2 = mol.bonds[p].at2
-        mol.nonints[at1].append(at2)
-        mol.nonints[at2].append(at1)
+        b = mol.bonds[p]
+        mol.nonints[b.at1].add(b.at2)
+        mol.nonints[b.at2].add(b.at1)
     for p in range(mol.n_angles):
-        at1 = mol.angles[p].at1
-        at3 = mol.angles[p].at3
-        mol.nonints[at1].append(at3)
-        mol.nonints[at3].append(at1)
+        a = mol.angles[p]
+        mol.nonints[a.at1].add(a.at3)
+        mol.nonints[a.at3].add(a.at1)
     for p in range(mol.n_torsions):
-        at1 = mol.torsions[p].at1
-        at4 = mol.torsions[p].at4
-        mol.nonints[at1].append(at4)
-        mol.nonints[at4].append(at1)
-    for i in range(mol.n_atoms):
-        mol.nonints[i] = sorted(list(set(mol.nonints[i])))
+        t = mol.torsions[p]
+        mol.nonints[t.at1].add(t.at4)
+        mol.nonints[t.at4].add(t.at1)
 
 def update_bonds(mol):
     """Update all bond lengths [Angstrom] within a molecule object.

@@ -55,7 +55,7 @@ def get_e_torsion(t_ijkl, v_n, gamma, nfold, paths):
     
     Args:
         t_ijkl (float): Torsion [degrees] between atoms i, j, k, and l.
-        v_n (float): Barrier height [kcal/mol] of torsion ijkl.
+        v_n (float): Half-barrier height [kcal/mol] of torsion ijkl.
         gamma (float): Barrier offset [degrees] of torsion ijkl.
         nfold (int): Barrier frequency of torsion ijkl.
         paths (int): Number of distinct paths in torsion ijkl.
@@ -73,7 +73,7 @@ def get_e_outofplane(o_ijkl, v_n):
     Args:
         o_ijkl (float): Outofplane angle [degrees] between atoms
             i, j, k, and l.
-        v_n (float): Barrier height [kcal/mol] of torsion ijkl.
+        v_n (float): Half-barrier height [kcal/mol] of torsion ijkl.
     
     Returns:
         e_outofplane (float): Energy [kcal/mol] of outofplane ijkl.
@@ -168,16 +168,16 @@ def get_e_nonbonded(mol):
     """
     mol.e_nonbonded, mol.e_vdw, mol.e_elst = 0.0, 0.0, 0.0
     for i in range(mol.n_atoms):
-        atom1 = mol.atoms[i]
+        at1 = mol.atoms[i]
         for j in range(i+1, mol.n_atoms):
-            atom2 = mol.atoms[j]
-            if (j in mol.nonints[i]): continue
-            r_ij = geomcalc.get_r_ij(atom1.coords, atom2.coords)
-            eps_ij = atom1.sreps * atom2.sreps
-            ro_ij = atom1.ro + atom2.ro
-            mol.e_elst += get_e_elst_ij(r_ij, atom1.charge, atom2.charge,
-                mol.dielectric)
-            mol.e_vdw += get_e_vdw_ij(r_ij, eps_ij, ro_ij)
+            if (not j in mol.nonints[i]):
+                at2 = mol.atoms[j]
+                r_ij = geomcalc.get_r_ij(at1.coords, at2.coords)
+                eps_ij = at1.sreps * at2.sreps
+                ro_ij = at1.ro + at2.ro
+                mol.e_elst += get_e_elst_ij(r_ij, at1.charge, at2.charge,
+                    mol.dielectric)
+                mol.e_vdw += get_e_vdw_ij(r_ij, eps_ij, ro_ij)
 
 def get_e_bonds(mol):
     """Update bond length values and compute bond energy of system.
@@ -254,16 +254,14 @@ def get_e_bound(mol):
             parameters and Atom objects containing cartesian coordinates.
     """
     mol.e_bound = 0.0
-    k_box = mol.k_box
-    bound = mol.bound
-    origin = mol.origin
-    boundtype = mol.boundtype
+    k = mol.k_box
+    b = mol.bound
+    orig = mol.origin
+    btype = mol.boundtype
     for i in range(mol.n_atoms):
-        atom = mol.atoms[i]
-        k_box = mol.k_box
-        atom.e_bound = get_e_bound_i(k_box, bound, atom.coords, origin,
-            boundtype)
-        mol.e_bound += atom.e_bound
+        at = mol.atoms[i]
+        at.e_bound = get_e_bound_i(k, b, at.coords, orig, btype)
+        mol.e_bound += at.e_bound
 
 def get_temperature(mol):
     """Update kinetic temperature using current kinetic energy per atom.

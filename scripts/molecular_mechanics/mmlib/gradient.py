@@ -51,7 +51,7 @@ def get_g_torsion(t_ijkl, v_n, gamma, n_fold, paths):
     
     Args:
         t_ijkl (float): Torsion [degrees] between atoms i, j, k, and l.
-        v_n (float): Barrier height [kcal/mol] of torsion ijkl.
+        v_n (float): Half-barrier height [kcal/mol] of torsion ijkl.
         gamma (float): Barrier offset [degrees] of torsion ijkl.
         n_fold (int): Barrier frequency of torsion ijkl.
         paths (int): Number of distinct paths in torsion ijkl.
@@ -69,7 +69,7 @@ def get_g_outofplane(o_ijkl, v_n):
     Args:
         o_ijkl (float): Outofplane angle [degrees] between atoms
             i, j, k, and l.
-        v_n (float): Barrier height [kcal/mol] of torsion ijkl.
+        v_n (float): Half-barrier height [kcal/mol] of outofplane ijkl.
     
     Returns:
         g_outofplane (float): Magnitude of energy gradient [kcal/(mol*A)].
@@ -363,20 +363,19 @@ def get_g_nonbonded(mol):
     for i in range(mol.n_atoms):
         at1 = mol.atoms[i]
         for j in range(i+1, mol.n_atoms):
-            if (j in mol.nonints[i]):
-                continue
-            at2 = mol.atoms[j]
-            r_ij = geomcalc.get_r_ij(at1.coords, at2.coords)
-            dir1, dir2 = get_gdir_inter(at1.coords, at2.coords, r_ij)
-            eps_ij = at1.sreps * at2.sreps
-            ro_ij = at1.ro + at2.ro
-            g_elst = get_g_elst_ij(r_ij, at1.charge, at2.charge,
-                mol.dielectric)
-            g_vdw = get_g_vdw_ij(r_ij, eps_ij, ro_ij)
-            mol.g_vdw[i] += g_vdw * dir1
-            mol.g_vdw[j] += g_vdw * dir2
-            mol.g_elst[i] += g_elst * dir1
-            mol.g_elst[j] += g_elst * dir2
+            if (not j in mol.nonints[i]):
+                at2 = mol.atoms[j]
+                r_ij = geomcalc.get_r_ij(at1.coords, at2.coords)
+                dir1, dir2 = get_gdir_inter(at1.coords, at2.coords, r_ij)
+                eps_ij = at1.sreps * at2.sreps
+                ro_ij = at1.ro + at2.ro
+                g_elst = get_g_elst_ij(r_ij, at1.charge, at2.charge,
+                    mol.dielectric)
+                g_vdw = get_g_vdw_ij(r_ij, eps_ij, ro_ij)
+                mol.g_vdw[i] += g_vdw * dir1
+                mol.g_vdw[j] += g_vdw * dir2
+                mol.g_elst[i] += g_elst * dir1
+                mol.g_elst[j] += g_elst * dir2
 
 def get_g_bound(mol):
     """Calculate boundary energy gradients for all atoms.

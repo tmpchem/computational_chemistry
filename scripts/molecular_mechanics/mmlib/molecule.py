@@ -186,7 +186,7 @@ class Torsion:
         at3 (str): Atom3 atomic index in Molecule.
         at4 (str): Atom4 atomic index in Molecule.
         t_ijkl (float): Current at1-at2-at3-at4 torsion angle [degrees].
-        v_n (float): Rotation barrier height [kcal/mol].
+        v_n (float): Rotation half-barrier height [kcal/mol].
         gamma (float): Barrier offset [degrees].
         nfold (int): Frequency of barrier.
         paths (int): Unique paths through torsion.
@@ -248,7 +248,7 @@ class Outofplane:
         at3 (str): Atom3 atomic index in Molecule.
         at4 (str): Atom4 atomic index in Molecule.
         o_ijkl (float): Current at1-at2-at3-at4 outofplane angle [degrees].
-        v_n (float): Barrier height [kcal/mol].
+        v_n (float): Half-barrier height [kcal/mol].
     Attributes:
         energy (float): Energy of outofplane [kcal/mol].
         grad (float): Energy gradient magnitude of outofplane [kcal/(mol*A)].
