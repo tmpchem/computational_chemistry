@@ -23,16 +23,17 @@ bool_pass = {True: 'PASS', False: 'FAIL'}
 
 # directory with test files
 mm_dir = os.path.dirname(os.path.realpath(__file__))
-test_dir = mm_dir + os.sep + 'tests' + os.sep
+test_dir = os.path.join(mm_dir, 'tests')
 
 # names of functions to be unit tested
-test_funcs = os.popen('ls %s' % (test_dir)).read()
-test_funcs = test_funcs.replace('.dat', '').replace('-', '.').split()
+test_funcs = os.listdir(test_dir)
+test_funcs = ''.join(test_funcs).replace('-', '.').split('.dat')[:-1]
 
 # file with test case reference values
 test_files = []
 for i in range(len(test_funcs)):
-    test_files.append(test_dir + test_funcs[i].replace('.', '-') + '.dat')
+    test_files.append(test_dir + os.sep + test_funcs[i].replace('.', '-')
+        + '.dat')
 
 # read in test case inputs and references from file
 def read_in_tests(file_name):
