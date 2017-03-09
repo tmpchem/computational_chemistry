@@ -225,7 +225,7 @@ def get_sim_data(sim):
     """
     infile_array = get_file_string_array(sim.infile)
     cwd = os.getcwd()
-    os.chdir(cwd)
+    os.chdir(sim.indir)
     for q in range(len(infile_array)):
         if (len(infile_array[q]) < 2): continue
         kwarg = infile_array[q][0].lower()

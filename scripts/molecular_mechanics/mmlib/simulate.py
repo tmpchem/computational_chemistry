@@ -68,7 +68,7 @@ class Simulation:
         self.geomout = 'geom.xyz'
         self.energyout = 'energy.dat'
         self.statustime = 60.0
-        self.random_seed = numpy.random.randint(2**32)
+        self.random_seed = numpy.random.randint(2**31)
         self.eprintdig = 3
         self.eprintchar = 10
         self.gprintdig = 3

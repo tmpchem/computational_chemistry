@@ -1,6 +1,4 @@
-import sys, math
-import numpy as np
-import numpy.linalg as la
+import sys, math, numpy
 
 #############################################################################
 #                       Welcome to geometry_analysis.py                     #
@@ -85,7 +83,7 @@ def get_geom(xyz_file_name):
     xyz_array = get_file_string_array(xyz_file_name)
     n_atoms = int(xyz_array[0][0])
     at_types = ['' for i in range(n_atoms)]
-    coords = np.zeros((n_atoms, 3))
+    coords = numpy.zeros((n_atoms, 3))
     for i in range(n_atoms):
         at_types[i] = xyz_array[i+2][0]
         for j in range(3):
@@ -344,12 +342,12 @@ def get_moi(geom):
                     moi[p][p] += at_mass * (coords[i][r]**2 + coords[i][s]**2)
                 else:
                     moi[p][q] += -at_mass * coords[i][p] * coords[i][q]
-    moi = np.matrix(moi)
+    moi = numpy.matrix(moi)
     return moi
 
 # calculate principal moments of inertia (eigenvalues of tensor)
 def get_prinmom(moi):
-    prinmom = la.eigvalsh(moi)
+    prinmom = numpy.linalg.eigvalsh(moi)
     return prinmom
 
 # calculate rotational frequencies in MHz and wavenumbers (cm^-1)
@@ -369,9 +367,9 @@ def get_rotfreq(prinmom):
 
 # rotate molecule to inertial frame of principal moments
 def get_inertial_coords(geom, moi):
-    moi_eigvals, moi_eigvecs = la.eig(moi)
+    moi_eigvals, moi_eigvecs = numpy.linalg.eig(moi)
     coords = geom[1]
-    coords = np.array(np.dot(coords, moi_eigvecs))
+    coords = numpy.array(numpy.dot(coords, moi_eigvecs))
     geom[1] = coords
     moi = get_moi(geom)
     order = [0, 1, 2]
@@ -381,10 +379,10 @@ def get_inertial_coords(geom, moi):
                 temp = order[p]
                 order[p] = order[q]
                 order[q] = temp
-    moveaxes = np.zeros((3, 3))
+    moveaxes = numpy.zeros((3, 3))
     for p in range(3):
         moveaxes[p][order[p]] = 1.0
-    coords = np.dot(coords, moveaxes)
+    coords = numpy.dot(coords, moveaxes)
     geom[1] = coords
     return geom
 

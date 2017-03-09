@@ -22,8 +22,8 @@ bool_eq_char = {True: '==', False: '!='}
 bool_pass = {True: 'PASS', False: 'FAIL'}
 
 # directory with test files
-mm_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
-test_dir = mm_dir + '/tests/'
+mm_dir = os.path.dirname(os.path.realpath(__file__))
+test_dir = mm_dir + os.sep + 'tests' + os.sep
 
 # names of functions to be unit tested
 test_funcs = os.popen('ls %s' % (test_dir)).read()

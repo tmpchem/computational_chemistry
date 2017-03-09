@@ -363,7 +363,7 @@ class Molecule:
         self.infile = os.path.realpath(infile_name)
         self.indir = os.path.dirname(self.infile)
         self.filetype = self.infile.split('.')[-1]
-        self.name = '.'.join(self.infile.split('/')[-1].split('.')[:-1])
+        self.name = os.path.splitext(os.path.basename(self.infile))[0]
         self.atoms = []
         self.bonds = []
         self.angles = []
