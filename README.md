@@ -7,7 +7,7 @@ Primary language is Python3, with toy programs to demonstrate modeling and
 analysis methods. Repository is always subject to change, and no guarantees 
 are made of the correctness of output.
 
-[yt]: youtube.com/tmpchem
+[yt]: https://www.youtube.com/tmpchem
 
 Table of contents
 -----------------
@@ -28,7 +28,7 @@ Most recent version of project is located in
 Git clone from GitHub. Requires a terminal, IDE, etc. to execute Python 
 scripts and ability to write to file system within project directories.
 
-[github]: github.com/tmpchem/computational_chemistry
+[github]: https://www.github.com/tmpchem/computational_chemistry
 
 <h2 id="prerequisites">Prerequisites</h2>
 
@@ -103,7 +103,7 @@ name.
 
 The sole author of this package is Trent M. Parker.
 
-- Email: tmpchemistry@gmail.com
+- Email: `tmpchemistry@gmail.com`
 - LinkedIn: https://www.linkedin.com/in/tmpchem
 - Youtube: https://www.youtube.com/tmpchem
 
