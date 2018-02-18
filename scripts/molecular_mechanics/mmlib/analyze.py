@@ -1,4 +1,3 @@
-
 """Classes and functions for analyzing and plotting simulation data.
 
 Contains classes to plot dynamic variation of energy and other property
@@ -6,9 +5,14 @@ data over the course of a simulation. Also contains classes to compute
 expectation values and various other ensemble properties.
 """
 
-import os, sys, math, numpy
+import math
 import matplotlib.pyplot as plt
-from mmlib import fileio, simulate
+import numpy
+import os
+import sys
+
+from mmlib import fileio
+from mmlib import simulate
 
 def point_per_inch():
     """Unit conversion between points and inches."""
@@ -105,6 +109,7 @@ class Plot:
         self.ekeys = sorted(list(self.ekeys), key=lambda x: self.pdict[x][1])
         
         self.ticchars = {0: '', 1: 'k', 2: 'M', 3: 'B', 4: 'T', 5: 'P'}
+
 
 class TrajectoryPlot(Plot):
     """Plot class for plotting simulation trajectory data.
@@ -295,9 +300,6 @@ class TrajectoryPlot(Plot):
         Point index function gives a range for each plotted point.
         X-axis values are chosen to be the median within the range.
         """
-        #start_val = self.data[self.xvar][self.n_start]
-        #stop_val = self.data[self.xvar][self.n_stop-1]
-        #self.xvals = numpy.linspace(start_val, stop_val, self.n_points)
         self.xvals = {}
         for key in self.ekeys:
             self.xvals[key] = numpy.zeros(self.n_points)
@@ -312,17 +314,6 @@ class TrajectoryPlot(Plot):
                 else:
                     ind = n_start + numpy.argmin(val_array)
                 self.xvals[key][i] = self.data[self.xvar][ind]
-
-        #self.xvals = numpy.zeros(self.n_points) 
-        #for i in range(self.n_points):
-        #    n_start = self.pranges[i]
-        #    n_stop = self.pranges[i+1]
-        #    val_array = self.data[self.xvar][n_start:n_stop]
-        #    if (i%2 == 0):
-        #        val = numpy.amax(val_array)
-        #    else:
-        #        val = numpy.amin(val_array)
-        #    self.xvals[i] = val
 
     def get_yvals(self):
         """Compute down-sampled y-axis data points.
@@ -386,6 +377,7 @@ class TrajectoryPlot(Plot):
     def get_yticks(self):
         """Determine array of Y-axis tick mark values."""
         self.get_ticks(self.ylow, self.yhigh, 'y')
+
 
 class Analysis:
     """Analysis class for computing ensemble simulation data.
@@ -483,6 +475,3 @@ class Analysis:
                 self.estd[key] = numpy.std(keydata)
                 self.emin[key] = numpy.amin(keydata)
                 self.emax[key] = numpy.amax(keydata)
-
-# end of module
-

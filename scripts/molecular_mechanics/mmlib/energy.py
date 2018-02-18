@@ -1,4 +1,3 @@
-
 """Functions for computing molecular mechanics energy components.
 
 Includes conversion factors, energy functions for individual structural
@@ -315,6 +314,3 @@ def get_e_totals(mol):
     mol.e_nonbonded = mol.e_vdw + mol.e_elst
     mol.e_potential = mol.e_bonded + mol.e_nonbonded + mol.e_bound
     mol.e_total = mol.e_kinetic + mol.e_potential
-
-# end of module
-

@@ -1,4 +1,3 @@
-
 """Functions for testing proper performance of mmlib modules.
 
 Warning: work in progress. Module is incomplete, and is subject to
@@ -6,8 +5,16 @@ substantial change without notice until it achieves full testing
 coverage and a stable form.
 """
 
-import os, sys, ast, math, numpy
-from mmlib import geomcalc, fileio, topology, energy
+import ast
+import math
+import numpy
+import os
+import sys
+
+from mmlib import energy
+from mmlib import fileio
+from mmlib import geomcalc
+from mmlib import topology
 
 # absolute and relative thresholds for float equality comparisons
 comp_coef = 1.0
@@ -119,6 +126,3 @@ def run_tests(printval):
         print('------------------------')
         print('%i/%i Function Tests Passed\n' % (nf_pass, nf_tests))
     return all_success
-
-# end of module
-

@@ -6,8 +6,14 @@ Metropolis Monte-Carlo simulations of mmlib.molecule.Molecule
 objects.
 """
 
-import os, sys, math, time, numpy
-from mmlib import energy, fileio
+import math
+import numpy
+import os
+import sys
+import time
+
+from mmlib import energy
+from mmlib import fileio
 
 def rgas():
     """Gas constant in unit of [amu*A^2/(ps^2*K)]."""
@@ -170,6 +176,7 @@ class Simulation:
         print(' as of %s' % (time.strftime('%H:%M:%S')))
         self.flush_buffers()
 
+
 class MolecularDynamics(Simulation):
     """Molecular dynamics class derived from Simulation base class.
     
@@ -192,7 +199,6 @@ class MolecularDynamics(Simulation):
         tprintdig (int): Post-decimal digits for time printing.
         tprintchar (int): Total characters for time printing.
     """
-
     def __init__(self, infile_name):
         self.simtype = 'md'
 
@@ -360,6 +366,7 @@ class MolecularDynamics(Simulation):
         e.write('e_vdw     e_elst     e_bond    e_angle     e_tors      ')
         e.write('e_oop\n')
 
+
 class MonteCarlo(Simulation):
     """Metropolis Monte-Carlo class derived from Simulation base class.
     
@@ -524,6 +531,3 @@ class MonteCarlo(Simulation):
         e.write('#  conf        e_pot  e_nonbond   ')
         e.write('e_bonded e_boundary      e_vdw     e_elst     e_bond    ')
         e.write('e_angle     e_tors      e_oop\n')
-
-# end of module
-

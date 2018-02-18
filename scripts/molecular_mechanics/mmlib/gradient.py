@@ -1,4 +1,3 @@
-
 """Functions for computing molecular mechanics energy gradient components.
 
 Includes conversion factors, energy gradient magnitudes for individual
@@ -7,8 +6,12 @@ gradient components, and total energy gradient member data for
 mmlib.molecule.Molecule objects.
 """
 
-import math, numpy
-from mmlib import energy, geomcalc, molecule
+import numpy
+import math
+
+from mmlib import energy
+from mmlib import geomcalc
+from mmlib import molecule
 
 def num_disp():
     """Displacement distance [Angstrom] for numerical gradient."""
@@ -480,6 +483,3 @@ def get_g_numerical(mol):
             mol.g_elst[i][j] = (ep_elst - em_elst) / disp
             mol.g_bound[i][j] = (ep_bound - em_bound) / disp
     mol.update_internals()
-
-# end of module
-

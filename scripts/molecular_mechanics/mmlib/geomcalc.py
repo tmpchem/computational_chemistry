@@ -1,4 +1,3 @@
-
 """Functions for computing molecular geometry data.
 
 Includes unit conversions, unit vectors, dot products, cross products,
@@ -6,7 +5,8 @@ bond distances, bond angles, torsion angles, outofplane angles, and
 system volume.
 """
 
-import math, numpy
+import numpy
+import math
 
 def rad2deg():
     """Conversion from radians to degrees."""
@@ -209,6 +209,3 @@ def get_volume(mol):
         mol.vol = (4.0/3.0) * math.pi * mol.bound**3
     else:
         mol.vol = float('inf')
-
-# end of module
-

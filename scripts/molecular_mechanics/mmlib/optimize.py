@@ -1,4 +1,3 @@
-
 """Classes and functions for optimizing molecular coordinates.
 
 Includes classes for propogating molecular coordinates towards
@@ -6,8 +5,14 @@ a local potential energy minimum and storing the history of data
 on the trajectory towards the minimum.
 """
 
-import os, sys, math, numpy
-from mmlib import energy, gradient, fileio
+import math
+import numpy
+import os
+import sys
+
+from mmlib import energy
+from mmlib import fileio
+from mmlib import gradient
 
 class Trajectory:
     """Trajectory class for optimization step history.
@@ -44,6 +49,7 @@ class Trajectory:
             for j in range(3):
                 self.coords[-1][i][j] = mol.atoms[i].coords[j]
                 self.grad[-1][i][j] = mol.g_total[i][j]
+
 
 class Optimization:
     """Optimization class for finding extremes of molecular energy.
@@ -246,7 +252,7 @@ class Optimization:
         disp_sign_same = True
         ref_energy = self.mol.e_total
         self.n_subiter = 0
-        # binary search tree to find upper bound on displacement magnitude
+        # binary search to find upper bound on displacement magnitude
         while (disp_sign_same):
             self.n_subiter += 1
             self.displace_coords(+1.0 * disp_mag, disp_vector)
@@ -263,7 +269,7 @@ class Optimization:
         self.adjust_disp_mag(self.n_subiter)
         numer = 1.0
         denom = 2.0
-        # binary search tree to find value of displacement within bounds
+        # binary search to find value of displacement within bounds
         for i in range(7):
             self.n_subiter += 1
             test_disp = disp_mag * numer / denom
@@ -411,6 +417,3 @@ class Optimization:
         """Close output files for convergence and geometry data printing."""
         self.gfile.close()
         self.efile.close()
-
-# end of module
-

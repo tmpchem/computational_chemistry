@@ -1,13 +1,22 @@
-
 """Functions for printing, reading, and writing mmlib data.
 
 Provides the interface to print molecular energy, gradient, geometry,
 topology, parameter, simulation, and optimization data to screen or file.
 """
 
-import os, sys, math, numpy
-from mmlib import (param, geomcalc, topology, energy, molecule, simulate,
-    optimize, analyze)
+import math
+import numpy
+import os
+import sys
+
+from mmlib import analyze
+from mmlib import energy
+from mmlib import geomcalc
+from mmlib import molecule
+from mmlib import optimize
+from mmlib import param
+from mmlib import simulate
+from mmlib import topology
 
 def get_file_string_array(infile_name):
     """Create a 2-d array of strings from input file name.
@@ -879,6 +888,3 @@ def get_input():
     else:
         infile_name = sys.argv[1]
     return infile_name
-
-# end of module
-

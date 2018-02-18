@@ -1,4 +1,3 @@
-
 """Classes and functions for handling molecular system data.
 
 Includes classes for representing geometry and parameter data for atoms,
@@ -6,8 +5,17 @@ bonds, bond angles, torsion angles, outofplane angles, and entire
 molecular systems.
 """
 
-import os, sys, math, numpy
-from mmlib import fileio, param, geomcalc, topology, energy, gradient
+import math
+import numpy
+import os
+import sys
+
+from mmlib import energy
+from mmlib import fileio
+from mmlib import geomcalc
+from mmlib import gradient
+from mmlib import param
+from mmlib import topology
 
 class Atom:
     """Atom class for atomic geometry and parameter data.
@@ -51,39 +59,51 @@ class Atom:
         self.accs = numpy.zeros(3)
         self.pvels = numpy.zeros(3)
         self.paccs = numpy.zeros(3)
+
     def set_type(self, type):
         """Set new (str) atom type."""
         self.type = type
+
     def set_coords(self, coords):
         """Set new (float*) coodinates [Angstrom]."""
         self.coords = coords
+
     def set_coord(self, index, coord):
         """Set new (float) ith coordinate [Angstrom]."""
         self.coords[index] = coords
+
     def set_mass(self, mass):
         """Set new (float) atomic mass [g/mol]."""
         self.mass = mass
+
     def set_charge(self, charge):
         """Set new (float) partial charge [e]."""
         self.charge = charge
+
     def set_ro(self, ro):
         """Set new (float) vdw radius [Angstrom]."""
         self.ro = ro
+
     def set_eps(self, eps):
         """Set new (float) vdw epsilon [kcal/mol]."""
         self.eps = eps
+
     def set_element(self, element):
         """Set new (str) atomic element."""
         self.element = element
+
     def set_covrad(self, covrad):
         """Set new (float) covalent radius [Angstrom]."""
         self.covrad = covrad
+
     def set_vels(self, vels):
         """Set new (float*) velocities [Angstrom/ps]."""
         self.vels = vels
+
     def set_accs(self, accs):
         """Set new (float*) accelerations [Angstrom/(ps^2)]."""
         self.accs = accs
+
 
 class Bond:
     """Bond class for bond geometry and parameter data.
@@ -114,18 +134,23 @@ class Bond:
     def set_at1(self, at1):
         """Set new (int) at1."""
         self.at1 = at1
+
     def set_at2(self, at2):
         """Set new (int) at2."""
         self.at2 = at2
+
     def set_r_ij(self, r_ij):
         """Set new (float)  [Angstrom]."""
         self.r_ij = r_ij
+
     def set_r_eq(self, r_eq):
         """Set new (float)  [Angstrom]."""
         self.r_eq = r_eq
+
     def set_k_b(self, k_b):
         """Set new (float)  [kcal/(mol*A^2)]."""
         self.k_b = k_b
+
 
 class Angle:
     """Angle class for angle geometry and parameter data.
@@ -158,21 +183,27 @@ class Angle:
     def set_at1(self, at1):
         """Set new (int) at1."""
         self.at1 = at1
+
     def set_at2(self, at2):
         """Set new (int) at2."""
         self.at2 = at2
+
     def set_at3(self, at3):
         """Set new (int) at3."""
         self.at3 = at3
+
     def set_a_ijk(self, a_ijk):
         """Set new (float) a_ijk [degrees]."""
         self.a_ijk = a_ijk
+
     def set_a_eq(self, a_eq):
         """Set new (float) a_eq [degrees]."""
         self.a_eq = a_eq
+
     def set_k_a(self, k_a):
         """Set new (float) k_a [kcal/(mol*rad^2)]."""
         self.k_a = k_a
+
 
 class Torsion:
     """Torsion class for torsion geometry and parameter data.
@@ -211,30 +242,39 @@ class Torsion:
     def set_at1(self, at1):
         """Set new (int) at1."""
         self.at1 = at1
+
     def set_at2(self, at2):
         """Set new (int) at2."""
         self.at2 = at2
+
     def set_at3(self, at3):
         """Set new (int) at3."""
         self.at3 = at3
+
     def set_at4(self, at4):
         """Set new (int) at4."""
         self.at4 = at4
+
     def set_t_ijkl(self, t_ijkl):
         """Set new (float) t_ijkl [degrees]."""
         self.t_ijkl = t_ijkl
+
     def set_v_n(self, v_n):
         """Set new (float) v_n [kcal/mol]."""
         self.v_n = v_n
+
     def set_gamma(self, gamma):
         """Set new (float) gamma [degrees]."""
         self.gam = gamma
+
     def set_nfold(self, nfold):
         """Set new (int) nfold."""
         self.nfold = nfold
+
     def set_paths(self, paths):
         """Set new (int) paths."""
         self.paths = paths
+
 
 class Outofplane:
     """Outofplane class for outofplane geometry and parameter data.
@@ -267,21 +307,27 @@ class Outofplane:
     def set_at1(self, at1):
         """Set new (int) at1."""
         self.at1 = at1
+
     def set_at2(self, at2):
         """Set new (int) at2."""
         self.at2 = at2
+
     def set_at3(self, at3):
         """Set new (int) at3."""
         self.at3 = at3
+
     def set_at4(self, at4):
         """Set new (int) at4."""
         self.at4 = at4
+
     def set_o_ijkl(self, o_ijkl):
         """Set new (float) o_ijkl [degrees]."""
         self.o_ijkl = o_ijkl
+
     def set_v_n(self, v_n):
         """Set new (float) v_n [kcal/mol]."""
         self.v_n = v_n
+
 
 class Molecule:
     """
@@ -507,24 +553,27 @@ class Molecule:
     def print_energy(self):
         """Print energy and component data of molecule to screen."""
         fileio.print_energy(self)
+
     def print_geom(self):
         """Print geometry data of molecule to screen."""
         fileio.print_geom(self)
+
     def print_bonds(self):
         """Print bond data of molecule to screen."""
         fileio.print_bonds(self)
+
     def print_angles(self):
         """Print angle data of molecule to screen."""
         fileio.print_angles(self)
+
     def print_torsions(self):
         """Print torsion data of molecule to screen."""
         fileio.print_torsions(self)
+
     def print_outofplanes(self):
         """Print outofplane data of molecule to screen."""
         fileio.print_outofplanes(self)
+
     def print_gradient(self):
         """Print gradient data to screen."""
         fileio.print_gradient(self, 'total')
-
-# end of module
-

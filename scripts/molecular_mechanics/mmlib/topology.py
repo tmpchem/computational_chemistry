@@ -1,4 +1,3 @@
-
 """Functions for determining bonded structure of molecular systems.
 
 Includes functions for determining bonds, angles, torsions, and
@@ -8,7 +7,10 @@ radii.
 """
 
 import math
-from mmlib import geomcalc, param, molecule
+
+from mmlib import geomcalc
+from mmlib import molecule
+from mmlib import param
 
 def bond_threshold():
     """Threshold beyond covalent radii sum to determine bond cutoff."""
@@ -273,6 +275,3 @@ def update_outofplanes(mol):
         c3 = mol.atoms[o.at3].coords
         c4 = mol.atoms[o.at4].coords
         o.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4, r31, r32, r34)
-
-# end of module
-
