@@ -1,7 +1,7 @@
 """Functions and dictionaries for AMBER94 molecular mechanics parameters.
 
-Includes parameters for atomic mass, atomic covalent radii, atomic van
-der waals, mm bonds, mm angles, mm torsions, and mm outofplanes.
+Includes parameters for atomic mass, atomic covalent radii, atomic van der
+waals, mm bonds, mm angles, mm torsions, and mm outofplanes.
 """
 
 import sys
@@ -282,181 +282,179 @@ oop1234_params = {
     ('NB','CW','CC','CT'): 1.1}
 
 def get_vdw_param(at_type):
-    """Find van der waals parameter for specified AMBER mm atom type.
-    
-    Args:
-        at_type (str): AMBER mm atom type.
-    
-    Returns:
-        vdw (float, float): van der waals parameters for atom type:
-            ro/2 and eps.
-    """
-    if (at_type in vdw_params):
-        vdw = vdw_params[at_type]
-    else:
-        print('Error: atom type (%s) not found!' % (at_type))
-        sys.exit()
-    return vdw
+  """Find van der waals parameter for specified AMBER mm atom type.
+  
+  Args:
+    at_type (str): AMBER mm atom type.
+  
+  Returns:
+    vdw (float, float): van der waals parameters for atom type: ro/2 and eps.
+  """
+  if (at_type in vdw_params):
+    vdw = vdw_params[at_type]
+  else:
+    print('Error: atom type (%s) not found!' % (at_type))
+    sys.exit()
+  return vdw
 
 def get_at_mass(element):
-    """Find the mass of an atom of a given element (periodic table avg).
-    
-    Args:
-        element (str): atomic element string.
-    
-    Returns:
-        at_mass (float): average periodic table mass of element.
-    """
-    if (element in at_masses):
-        at_mass = at_masses[element]
-    else:
-        print('Error: atomic mass for element (%s) not found!' % (element))
-        sys.exit()
-    return at_mass
+  """Find the mass of an atom of a given element (periodic table avg).
+  
+  Args:
+    element (str): atomic element string.
+  
+  Returns:
+    at_mass (float): average periodic table mass of element.
+  """
+  if (element in at_masses):
+    at_mass = at_masses[element]
+  else:
+    print('Error: atomic mass for element (%s) not found!' % (element))
+    sys.exit()
+  return at_mass
 
 def get_cov_rad(element):
-    """Find the covalent radius of an atom of a given element.
-    
-    Args:
-        element (str): atomic element string.
-    
-    Returns:
-        cov_rad (float): covalent radius [Angstrom] of atom.
-    """
-    if (element in cov_radii):
-        cov_rad = cov_radii[element]
-    else:
-        print('Error: covalent radius for element (%s) not found!' % (element))
-        sys.exit()
-    return cov_rad
+  """Find the covalent radius of an atom of a given element.
+  
+  Args:
+    element (str): atomic element string.
+  
+  Returns:
+    cov_rad (float): covalent radius [Angstrom] of atom.
+  """
+  if (element in cov_radii):
+    cov_rad = cov_radii[element]
+  else:
+    print('Error: covalent radius for element (%s) not found!' % (element))
+    sys.exit()
+  return cov_rad
 
 def get_bond_param(at1_type, at2_type):
-    """Find bond parameters for 2 AMBER94 mm atom types.
-    
-    Args:
-        at1_type (str): atom 1 AMBER94 mm atom type.
-        at2_type (str): atom 2 AMBER94 mm atom type.
-    
-    Returns:
-        bond (float, float): AMBER94 mm bond parameters for atom types:
-            k_b [kcal/(mol*A^2)] and r_eq [Angstrom].
-    """
-    b12_types = (at1_type, at2_type)
-    b21_types = (at2_type, at1_type)
-    if (b12_types in bond_params):
-        bond = bond_params[b12_types]
-    elif (b21_types in bond_params):
-        bond = bond_params[b21_types]
-    else:
-        print('Error: bond type (%s, %s) not recognized!' % (at1_type,
-            at2_type))
-        sys.exit()
-    return bond
+  """Find bond parameters for 2 AMBER94 mm atom types.
+  
+  Args:
+    at1_type (str): atom 1 AMBER94 mm atom type.
+    at2_type (str): atom 2 AMBER94 mm atom type.
+  
+  Returns:
+    bond (float, float): AMBER94 mm bond parameters for atom types:
+        * k_b [kcal/(mol*A^2)]
+        * r_eq [Angstrom].
+  """
+  b12_types = (at1_type, at2_type)
+  b21_types = (at2_type, at1_type)
+  if (b12_types in bond_params):
+    bond = bond_params[b12_types]
+  elif (b21_types in bond_params):
+    bond = bond_params[b21_types]
+  else:
+    print('Error: bond type (%s, %s) not recognized!' % (at1_type, at2_type))
+    sys.exit()
+  return bond
 
 def get_angle_param(at1_type, at2_type, at3_type):
-    """Find angle parameters for 3 AMBER94 mm atom types.
-    
-    Args:
-        at1_type (str): atom 1 AMBER94 mm atom type.
-        at2_type (str): atom 2 AMBER94 mm atom type.
-        at3_type (str): atom 3 AMBER94 mm atom type.
+  """Find angle parameters for 3 AMBER94 mm atom types.
+  
+  Args:
+    at1_type (str): atom 1 AMBER94 mm atom type.
+    at2_type (str): atom 2 AMBER94 mm atom type.
+    at3_type (str): atom 3 AMBER94 mm atom type.
 
-    Returns:
-        angle (float, float): AMBER94 mm angle parameters for atom types:
-            k_a [kcal/(mol*rad^2)] and a_eq [degrees].
-    """
-    a123_types = (at1_type, at2_type, at3_type)
-    a321_types = (at3_type, at2_type, at1_type)
-    if (a123_types in angle_params):
-        angle = angle_params[a123_types]
-    elif (a321_types in angle_params):
-        angle = angle_params[a321_types]
-    else:
-        print('Error: angle type (%s, %s, %s) not recognized!' % (at1_type,
-            at2_type, at3_type))
-        sys.exit()
-    return angle
+  Returns:
+    angle (float, float): AMBER94 mm angle parameters for atom types:
+        * k_a [kcal/(mol*rad^2)]
+        * a_eq [degrees].
+  """
+  a123_types = (at1_type, at2_type, at3_type)
+  a321_types = (at3_type, at2_type, at1_type)
+  if (a123_types in angle_params):
+    angle = angle_params[a123_types]
+  elif (a321_types in angle_params):
+    angle = angle_params[a321_types]
+  else:
+    print('Error: angle type (%s, %s, %s) not recognized!' % (
+        at1_type, at2_type, at3_type))
+    sys.exit()
+  return angle
 
 def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
-    """Find torsion parameters for 4 AMBER94 mm atom types:
-    
-    Args:
-        at1_type (str): atom 1 AMBER94 mm atom type.
-        at2_type (str): atom 2 AMBER94 mm atom type.
-        at3_type (str): atom 3 AMBER94 mm atom type.
-        at4_type (str): atom 4 AMBER94 mm atom type.
+  """Find torsion parameters for 4 AMBER94 mm atom types:
+  
+  Args:
+    at1_type (str): atom 1 AMBER94 mm atom type.
+    at2_type (str): atom 2 AMBER94 mm atom type.
+    at3_type (str): atom 3 AMBER94 mm atom type.
+    at4_type (str): atom 4 AMBER94 mm atom type.
 
-    Returns:
-        torsion (float, float, int, int): AMBER94 mm torsion parameters
-            for atom types: vn/2 [kcal/mol], gamma [degrees], n [],
-            and paths [].
-    """
-    torsion = []
-  
-    # two-atom torsion potentials
-    t23_types = (at2_type, at3_type)
-    t32_types = (at3_type, at2_type)
-    if (t23_types in torsion23_params):
-        t23 = torsion23_params[t23_types]
-        torsion.append(t23)
-    elif (t32_types in t23_params):
-        t23 = torsion23_params[t32_types]
-        torsion.append(t23)
-    else:
-        print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type,
-            at3_type))
-        sys.exit()
-  
-    # four-atom torsion potentials
-    t1234_types = (at1_type, at2_type, at3_type, at4_type)
-    t4321_types = (at4_type, at3_type, at2_type, at1_type)
-    t1234 = []
-    if (t1234_types in torsion1234_params):
-        t1234 = torsion1234_params[t1234_types]
-    elif (t4321_types in torsion1234_params):
-            torsion1234 = torsion1234_params[t4321_types]
-    for i in range(len(t1234)):
-        torsion.append(t1234[i])
-  
-    return torsion
+  Returns:
+    torsion (float, float, int, int): AMBER94 mm torsion parameters for atom
+        types: vn/2 [kcal/mol], gamma [degrees], n [], and paths [].
+  """
+  torsion = []
+
+  # two-atom torsion potentials
+  t23_types = (at2_type, at3_type)
+  t32_types = (at3_type, at2_type)
+  if (t23_types in torsion23_params):
+    t23 = torsion23_params[t23_types]
+    torsion.append(t23)
+  elif (t32_types in torsion23_params):
+    t23 = torsion23_params[t32_types]
+    torsion.append(t23)
+  else:
+    print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type, at3_type))
+    sys.exit()
+
+  # four-atom torsion potentials
+  t1234_types = (at1_type, at2_type, at3_type, at4_type)
+  t4321_types = (at4_type, at3_type, at2_type, at1_type)
+  t1234 = []
+  if (t1234_types in torsion1234_params):
+    t1234 = torsion1234_params[t1234_types]
+  elif (t4321_types in torsion1234_params):
+    t1234 = torsion1234_params[t4321_types]
+  for i in range(len(t1234)):
+    torsion.append(t1234[i])
+
+  return torsion
 
 def get_outofplane_param(at1_type, at2_type, at3_type, at4_type):
-    """Find outofplane parameters for 4 AMBER94 mm atom types:
+  """Find outofplane parameters for 4 AMBER94 mm atom types:
     
-    Args:
-        at1_type (str): atom 1 AMBER94 mm atom type.
-        at2_type (str): atom 2 AMBER94 mm atom type.
-        at3_type (str): atom 3 AMBER94 mm atom type.
-        at4_type (str): atom 4 AMBER94 mm atom type.
+  Args:
+    at1_type (str): atom 1 AMBER94 mm atom type.
+    at2_type (str): atom 2 AMBER94 mm atom type.
+    at3_type (str): atom 3 AMBER94 mm atom type.
+    at4_type (str): atom 4 AMBER94 mm atom type.
 
-    Returns:
-        torsion (float): AMBER94 mm outofplane parameters for atom types:
-            vn/2 [kcal/mol].
-    """
+  Returns:
+    torsion (float): AMBER94 mm outofplane parameters for atom types:
+        * vn/2 [kcal/mol].
+  """
 
-    # return four-atom out-of-plane potential if found
-    oop1234 = 0.0
-    oop1234_types = (at1_type, at2_type, at3_type, at4_type)
-    if (oop1234_types in oop1234_params):
-        oop1234 = oop1234_params[oop1234_types]
-    if (oop1234 > 0.0):
-        return oop1234
+  # return four-atom out-of-plane potential if found
+  oop1234 = 0.0
+  oop1234_types = (at1_type, at2_type, at3_type, at4_type)
+  if (oop1234_types in oop1234_params):
+    oop1234 = oop1234_params[oop1234_types]
+  if (oop1234 > 0.0):
+    return oop1234
 
-    # return three-atom out-of-plane potential if found
-    oop234 = 0.0
-    oop234_types = (at2_type, at3_type, at4_type)
-    if (oop234_types in oop234_params):
-        oop234 = oop234_params[oop234_types]
-    if (oop234 > 0.0):
-        return oop234
+  # return three-atom out-of-plane potential if found
+  oop234 = 0.0
+  oop234_types = (at2_type, at3_type, at4_type)
+  if (oop234_types in oop234_params):
+    oop234 = oop234_params[oop234_types]
+  if (oop234 > 0.0):
+    return oop234
 
-    # return two-atom out-of-plane potential if found
-    oop34 = 0.0
-    oop34_types = (at3_type, at4_type)
-    if (oop34_types in oop34_params):
-        oop34 = oop34_params[oop34_types]
-    if (oop34 > 0.0):
-        return oop34
+  # return two-atom out-of-plane potential if found
+  oop34 = 0.0
+  oop34_types = (at3_type, at4_type)
+  if (oop34_types in oop34_params):
+    oop34 = oop34_params[oop34_types]
+  if (oop34 > 0.0):
+    return oop34
 
-    # return zero if out-of-plane potential not found
-    return 0.0
+  # return zero if out-of-plane potential not found
+  return 0.0

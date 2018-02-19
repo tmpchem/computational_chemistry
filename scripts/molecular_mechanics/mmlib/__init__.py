@@ -1,7 +1,7 @@
 """Sub-modules in the mmlib module for molecular mechanics simulations.
 
-Includes modules with classes and functions for interpreting,
-manipulating, propogating, and outputting molecular mechanics data.
+Includes modules with classes and functions for interpreting, manipulating,
+propogating, and outputting molecular mechanics data.
 """
 
 from mmlib import analyze
