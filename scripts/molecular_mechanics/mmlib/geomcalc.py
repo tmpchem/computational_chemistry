@@ -59,10 +59,10 @@ def GetUij(coords_i, coords_j, r_ij=None):
   Returns:
       u_ij (float*): 3 unit vector components from point i to j.
   """
-  if (not r_ij):
+  if not r_ij:
     r_ij = GetRij(coords_i, coords_j)
   u_ij = numpy.zeros(3)
-  if (r_ij > 0.0):
+  if r_ij > 0.0:
     u_ij[0] = (coords_j[0] - coords_i[0]) / r_ij 
     u_ij[1] = (coords_j[1] - coords_i[1]) / r_ij 
     u_ij[2] = (coords_j[2] - coords_i[2]) / r_ij 
@@ -81,9 +81,9 @@ def GetUdp(uvec_i, uvec_j):
   udp  = uvec_i[0] * uvec_j[0]
   udp += uvec_i[1] * uvec_j[1]
   udp += uvec_i[2] * uvec_j[2]
-  if (udp > 1.0):
+  if udp > 1.0:
     udp = min(udp, 1.0)
-  elif (udp < -1.0):
+  elif udp < -1.0:
     udp = max(udp, -1.0)
   return udp
 
@@ -100,7 +100,7 @@ def GetUcp(uvec_i, uvec_j):
   ucp = numpy.zeros(3)
   cos_ijk = GetUdp(uvec_i, uvec_j)
   sin_ijk = math.sqrt(1.0 - cos_ijk**2)
-  if (sin_ijk > 0.0):
+  if sin_ijk > 0.0:
     ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1]) / sin_ijk 
     ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2]) / sin_ijk 
     ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0]) / sin_ijk 
@@ -119,7 +119,7 @@ def GetCp(uvec_i, uvec_j):
   ucp = numpy.zeros(3)
   cos_ijk = GetUdp(uvec_i, uvec_j)
   sin_ijk = math.sqrt(1 - cos_ijk**2)
-  if (sin_ijk > 0.0):
+  if sin_ijk > 0.0:
     ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1])
     ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2])
     ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0])
@@ -202,9 +202,9 @@ def GetVolume(mol):
   Args:
     mol (mmlib.molecule.Molecule): Molecule object with boundary data.
   """
-  if (mol.boundtype == 'cube'):
+  if mol.boundtype == 'cube':
     mol.vol = 8.0 * mol.bound**3
-  elif (mol.boundtype == 'sphere'):
+  elif mol.boundtype == 'sphere':
     mol.vol = (4.0/3.0) * math.pi * mol.bound**3
   else:
     mol.vol = float('inf')

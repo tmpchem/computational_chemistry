@@ -100,13 +100,13 @@ class Plot:
 
     self.ekeys = []
     for key in self.data:
-      if ('e_' in key):
+      if 'e_' in key:
         self.line_colors[key] = self.pdict[key][2]
         self.line_priors[key] = self.pdict[key][1]
         self.leg_labels[key] = self.pdict[key][0]
         self.leg_priors[key] = self.pdict[key][3]
         self.ekeys.append(key)
-    self.ekeys = sorted(list(self.ekeys), key=lambda x: self.pdict[x][1])
+    self.ekeys = sorted(list(self.ekeys), key=lambda x:self.pdict[x][1])
     
     self.ticchars = {0: '', 1: 'k', 2: 'M', 3: 'B', 4: 'T', 5: 'P'}
 
@@ -162,11 +162,11 @@ class TrajectoryPlot(Plot):
     Plot.__init__(self, ana)
     self.name = ana.name
     self.ylabel = 'Energy Terms (kcal/mol)'
-    if (self.simtype == 'md'):
+    if self.simtype == 'md':
       self.title = 'Molecular Dynamics Simulation of '
       self.xlabel = 'Time (ps)'
       self.xvar = 'time'
-    elif (self.simtype == 'mc'):
+    elif self.simtype == 'mc':
       self.title = 'Metropolis Monte-Carlo Simulation of '
       self.xlabel = 'Configuration Number'
       self.xvar = 'conf'
@@ -233,7 +233,7 @@ class TrajectoryPlot(Plot):
 
   def _GetLegend(self):
     """Set top-center legend for each energy component."""
-    self.ekeys = sorted(list(self.ekeys), key=lambda x: self.pdict[x][3])
+    self.ekeys = sorted(list(self.ekeys), key=lambda x:self.pdict[x][3])
     for key in self.ekeys:
       plt.plot(0, 0,
           linewidth = self.leg_linewidth,
@@ -310,7 +310,7 @@ class TrajectoryPlot(Plot):
         n_start = int(math.ceil(numpy.average(start_vals)))
         n_stop = int(math.ceil(numpy.average(stop_vals)))
         val_array = self.data[key][n_start:n_stop]
-        if (i%2 == 0):
+        if i%2 == 0:
           ind = n_start + numpy.argmax(val_array)
         else:
           ind = n_start + numpy.argmin(val_array)
@@ -335,7 +335,7 @@ class TrajectoryPlot(Plot):
         n_start = int(math.ceil(numpy.average(start_vals)))
         n_stop = int(math.ceil(numpy.average(stop_vals)))
         val_array = self.data[key][n_start:n_stop]
-        if (i%2 == 0):
+        if i%2 == 0:
           val = numpy.amax(val_array)
         else:
           val = numpy.amin(val_array)
@@ -347,9 +347,9 @@ class TrajectoryPlot(Plot):
     lead_digit = plot_range * 10**(-range_power)
 
     base_digit = 10.0
-    if (lead_digit <= 2.0):
+    if lead_digit <= 2.0:
       base_digit = 2.0
-    elif (lead_digit <= 5.0):
+    elif lead_digit <= 5.0:
       base_digit = 5.0
 
     tick_res = base_digit * 10**(range_power)
@@ -360,20 +360,20 @@ class TrajectoryPlot(Plot):
     n_ticks = round((tick_max - tick_min) / tick_delta) + 1
     ticks = list(numpy.linspace(tick_min, tick_max, n_ticks))
     for i in range(len(ticks)-1, -1, -1):
-      if (ticks[i] < lower_bound or ticks[i] > upper_bound):
+      if ticks[i] < lower_bound or ticks[i] > upper_bound:
         ticks.pop(i)
     
     tick_labels = ['' for i in range(len(ticks))]
     for i in range(len(ticks)):
       exp = int(math.floor(math.log10(max(1, abs(ticks[i]))))/3)
       val = tick_delta * round(ticks[i] / tick_delta) / 10**(3*exp)
-      if (int(val) == val):
+      if int(val) == val:
         val = int(val)
       tick_labels[i] = '%s%s' % (val, self.ticchars[exp])
     
-    if (axis == 'x'):
+    if axis == 'x':
       plt.xticks(ticks, tick_labels)
-    elif (axis == 'y'):
+    elif axis == 'y':
       plt.yticks(ticks, tick_labels)
 
   def _GetXTicks(self):
@@ -474,7 +474,7 @@ class Analysis:
     self.emin = {}
     self.emax = {}
     for key in self.pdict:
-      if (key in self.prop):
+      if key in self.prop:
         keydata = self.prop[key]
         self.eavg[key] = numpy.average(keydata)
         self.estd[key] = numpy.std(keydata)

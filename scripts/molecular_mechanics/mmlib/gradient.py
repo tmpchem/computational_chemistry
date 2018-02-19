@@ -125,12 +125,12 @@ def GetGBoundI(k_box, bound, coord, origin, boundtype):
     g_bound_i (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   g_bound_i = numpy.zeros(3)
-  if (boundtype == 'cube'):
+  if boundtype == 'cube':
     for j in range(3):
       sign = 1.0 if ((coord[j] - origin[j]) <= 0.0) else -1.0
       scale = 1.0 if (abs(coord[j] - origin[j]) >= bound) else 0.0
       g_bound_i[j] = (-2.0 * sign * scale * k_box * (abs(coord[j]) - bound))
-  elif (boundtype == 'sphere'):
+  elif boundtype == 'sphere':
     r_io = geomcalc.GetRij(origin, coord)
     u_io = geomcalc.GetUij(origin, coord)
     scale = 1.0 if (r_io >= bound) else 0.0
@@ -167,9 +167,9 @@ def GetGdirAngle(coords1, coords2, coords3, r_21=None, r_23=None):
     gdir1 (float*), gdir2 (float*), gdir3 (float*): vectors in the direction of
         max increasing bond angle.
   """
-  if (not r_21):
+  if not r_21:
     r_21 = geomcalc.GetRij(coords2, coords1)
-  if (not r_23):
+  if not r_23:
     r_23 = geomcalc.GetRij(coords2, coords3)
   u_21 = geomcalc.GetUij(coords2, coords1, r_21)
   u_23 = geomcalc.GetUij(coords2, coords3, r_23)
@@ -196,11 +196,11 @@ def GetGdirTorsion(coords1, coords2, coords3, coords4, r_12=None,
     gdir1 (float*), gdir2 (float*), gdir3 (float*), gdir4 (float*): Vectors in
         the direction of max increasing torsion angle.
   """
-  if (not r_12):
+  if not r_12:
     r_12 = geomcalc.GetRij(coords1, coords2)
-  if (not r_23):
+  if not r_23:
     r_23 = geomcalc.GetRij(coords2, coords3)
-  if (not r_34):
+  if not r_34:
     r_34 = geomcalc.GetRij(coords3, coords4)
   u_21 = geomcalc.GetUij(coords2, coords1, r_12)
   u_34 = geomcalc.GetUij(coords3, coords4, r_34)
@@ -236,11 +236,11 @@ def GetGdirOutofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
     gdir1 (float*), gdir2 (float*), gdir3 (float*), gdir4 (float*): Vectors in
         the direction of max increasing outofplane angle.
   """
-  if (not r_31):
+  if not r_31:
     r_31 = geomcalc.GetRij(coords3, coords1)
-  if (not r_32):
+  if not r_32:
     r_32 = geomcalc.GetRij(coords3, coords2)
-  if (not r_34):
+  if not r_34:
     r_34 = geomcalc.GetRij(coords3, coords4)
   u_31 = geomcalc.GetUij(coords3, coords1, r_31)
   u_32 = geomcalc.GetUij(coords3, coords2, r_32)
@@ -362,7 +362,7 @@ def GetGNonbonded(mol):
     for i in range(mol.n_atoms):
       at1 = mol.atoms[i]
       for j in range(i+1, mol.n_atoms):
-        if (not j in mol.nonints[i]):
+        if not j in mol.nonints[i]:
           at2 = mol.atoms[j]
           r_ij = geomcalc.GetRij(at1.coords, at2.coords)
           dir1, dir2 = GetGdirInter(at1.coords, at2.coords, r_ij)

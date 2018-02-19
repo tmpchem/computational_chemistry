@@ -48,7 +48,7 @@ def ReadInTests(file_name):
   infile.close()
   tests = []
   for line in infile_lines:
-    if (not line[0] == '#' and len(line.split(';')) > 1):
+    if not line[0] == '#' and len(line.split(';')) > 1:
       inputs = line.split(';')[0]
       ref = ast.literal_eval(line.split(';')[1].replace(' ',''))
       tests.append([inputs, ref])
@@ -57,12 +57,12 @@ def ReadInTests(file_name):
 # equality comparison of generic data types
 def EqualityComparison(val, ref):
   same = True
-  if   ('float' in str(type(val))):
+  if 'float' in str(type(val)):
     same *= math.isclose(ref, val, rel_tol=reltol, abs_tol=abstol)
-  elif (type(val) == int or type(val) == str):
+  elif type(val) == int or type(val) == str:
     same *= (val == ref)
   else:
-    if (not len(val) == len(ref)):
+    if not len(val) == len(ref):
       return False
     for i in range(len(val)):
       same *= EqualityComparison(val[i], ref[i])
@@ -70,17 +70,17 @@ def EqualityComparison(val, ref):
 
 # print result of an individual unit test
 def PrintSuccessTest(index, n_tests, success, val, ref, printval):
-  if (printval >= 2):
+  if printval >= 2:
     n_dig = int(math.ceil(math.log10(n_tests)))
     print('Test %0*i -> ' % (n_dig, index), end='')
     print('%s(%i)' % (bool_pass[success], success), end='')
-  if (printval >= 3):
+  if printval >= 3:
     eq = bool_eq_char[success]
-    if (type(val) in [float, numpy.float64]):
+    if type(val) in [float, numpy.float64]:
       ref_dig = int(math.floor(math.log10(max(ref, abstol))))
       print_dig = max(0, -comp_exp - ref_dig*(ref_dig>0))
       print(', %10.*f %s %10.*f' % (print_dig, val, eq, print_dig, ref), end='')
-    elif (type(val) in [int, str]):
+    elif type(val) in [int, str]:
       print(', %10s %s %10s' % (val, eq, ref), end='')
   if (printval >= 2):
     print('')
@@ -89,7 +89,7 @@ def PrintSuccessTest(index, n_tests, success, val, ref, printval):
 def PrintSuccessFunction(index, n_pass, n_fail, name, printval):
   n_tests = n_pass + n_fail
   success = (n_pass == n_tests)
-  if (printval >= 1):
+  if printval >= 1:
     print('--- Function Test %i -> ' % (index), end='')
     print('%s(%i) ---' % (bool_pass[success], success))
     print('(%s), %i/%i Subtests Passed\n' % (name, n_pass, n_tests))
@@ -117,7 +117,7 @@ def RunTests(printval):
     nf_pass += int(n_pass == n_tests)
     nf_fail += int(not n_pass == n_tests)
   all_success = (nf_pass == nf_tests)
-  if (printval >= 0):
+  if printval >= 0:
     print('------------------------')
     print('| All Tests -> ', end='')
     print('%s(%i) |' % (bool_pass[all_success], all_success))

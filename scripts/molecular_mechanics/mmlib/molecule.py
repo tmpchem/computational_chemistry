@@ -46,7 +46,7 @@ class Atom:
   def __init__(self, type, coords, charge, ro, eps, mass):
     self.type = type
     self.element = type[0].capitalize()
-    if (len(type) > 1 and type[-1].islower()):
+    if len(type) > 1 and type[-1].islower():
       self.element += type[-1]
     self.coords = coords
     self.charge = charge

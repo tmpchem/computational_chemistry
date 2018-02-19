@@ -290,7 +290,7 @@ def GetVdwParam(at_type):
   Returns:
     vdw (float, float): van der waals parameters for atom type: ro/2 and eps.
   """
-  if (at_type in vdw_params):
+  if at_type in vdw_params:
     vdw = vdw_params[at_type]
   else:
     print('Error: atom type (%s) not found!' % (at_type))
@@ -306,7 +306,7 @@ def GetAtMass(element):
   Returns:
     at_mass (float): average periodic table mass of element.
   """
-  if (element in at_masses):
+  if element in at_masses:
     at_mass = at_masses[element]
   else:
     print('Error: atomic mass for element (%s) not found!' % (element))
@@ -322,7 +322,7 @@ def GetCovRad(element):
   Returns:
     cov_rad (float): covalent radius [Angstrom] of atom.
   """
-  if (element in cov_radii):
+  if element in cov_radii:
     cov_rad = cov_radii[element]
   else:
     print('Error: covalent radius for element (%s) not found!' % (element))
@@ -343,9 +343,9 @@ def GetBondParam(at1_type, at2_type):
   """
   b12_types = (at1_type, at2_type)
   b21_types = (at2_type, at1_type)
-  if (b12_types in bond_params):
+  if b12_types in bond_params:
     bond = bond_params[b12_types]
-  elif (b21_types in bond_params):
+  elif b21_types in bond_params:
     bond = bond_params[b21_types]
   else:
     print('Error: bond type (%s, %s) not recognized!' % (at1_type, at2_type))
@@ -367,9 +367,9 @@ def GetAngleParam(at1_type, at2_type, at3_type):
   """
   a123_types = (at1_type, at2_type, at3_type)
   a321_types = (at3_type, at2_type, at1_type)
-  if (a123_types in angle_params):
+  if a123_types in angle_params:
     angle = angle_params[a123_types]
-  elif (a321_types in angle_params):
+  elif a321_types in angle_params:
     angle = angle_params[a321_types]
   else:
     print('Error: angle type (%s, %s, %s) not recognized!' % (
@@ -395,10 +395,10 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
   # two-atom torsion potentials
   t23_types = (at2_type, at3_type)
   t32_types = (at3_type, at2_type)
-  if (t23_types in torsion23_params):
+  if t23_types in torsion23_params:
     t23 = torsion23_params[t23_types]
     torsion.append(t23)
-  elif (t32_types in torsion23_params):
+  elif t32_types in torsion23_params:
     t23 = torsion23_params[t32_types]
     torsion.append(t23)
   else:
@@ -409,9 +409,9 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
   t1234_types = (at1_type, at2_type, at3_type, at4_type)
   t4321_types = (at4_type, at3_type, at2_type, at1_type)
   t1234 = []
-  if (t1234_types in torsion1234_params):
+  if t1234_types in torsion1234_params:
     t1234 = torsion1234_params[t1234_types]
-  elif (t4321_types in torsion1234_params):
+  elif t4321_types in torsion1234_params:
     t1234 = torsion1234_params[t4321_types]
   for i in range(len(t1234)):
     torsion.append(t1234[i])
@@ -435,25 +435,25 @@ def GetOutofplaneParam(at1_type, at2_type, at3_type, at4_type):
   # return four-atom out-of-plane potential if found
   oop1234 = 0.0
   oop1234_types = (at1_type, at2_type, at3_type, at4_type)
-  if (oop1234_types in oop1234_params):
+  if oop1234_types in oop1234_params:
     oop1234 = oop1234_params[oop1234_types]
-  if (oop1234 > 0.0):
+  if oop1234 > 0.0:
     return oop1234
 
   # return three-atom out-of-plane potential if found
   oop234 = 0.0
   oop234_types = (at2_type, at3_type, at4_type)
-  if (oop234_types in oop234_params):
+  if oop234_types in oop234_params:
     oop234 = oop234_params[oop234_types]
-  if (oop234 > 0.0):
+  if oop234 > 0.0:
     return oop234
 
   # return two-atom out-of-plane potential if found
   oop34 = 0.0
   oop34_types = (at3_type, at4_type)
-  if (oop34_types in oop34_params):
+  if oop34_types in oop34_params:
     oop34 = oop34_params[oop34_types]
-  if (oop34 > 0.0):
+  if oop34 > 0.0:
     return oop34
 
   # return zero if out-of-plane potential not found

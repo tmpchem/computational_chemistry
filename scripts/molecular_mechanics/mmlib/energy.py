@@ -165,7 +165,7 @@ def GetENonbonded(mol):
   for i in range(mol.n_atoms):
     at1 = mol.atoms[i]
     for j in range(i+1, mol.n_atoms):
-      if (not j in mol.nonints[i]):
+      if not j in mol.nonints[i]:
         at2 = mol.atoms[j]
         r_ij = geomcalc.GetRij(at1.coords, at2.coords)
         eps_ij = at1.sreps * at2.sreps
@@ -278,9 +278,9 @@ def GetEKinetic(mol, kintype):
       [default]: Use current velocities.
   """
   mol.e_kinetic = 0.0
-  if (kintype == 'nokinetic'):
+  if kintype == 'nokinetic':
     pass
-  elif (kintype == 'leapfrog'):
+  elif kintype == 'leapfrog':
     for p in range(mol.n_atoms):
       mass = mol.atoms[p].mass
       vels = 0.5*(mol.atoms[p].vels + mol.atoms[p].pvels)

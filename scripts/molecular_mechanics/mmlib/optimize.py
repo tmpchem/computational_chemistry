@@ -158,7 +158,7 @@ class Optimization:
   def Optimize(self):
     """Displace molecule to minimum energy molecular coordinates."""
     self.OpenOutputFiles()
-    while (self.n_iter < self.n_maxiter and not self.is_converged):
+    while self.n_iter < self.n_maxiter and not self.is_converged:
       self.n_iter += 1
       self._ChooseStepDirection(self.opt_type)
       self._LineSearch(-1.0 * self.step_dir)
@@ -178,9 +178,9 @@ class Optimization:
         'sd' (steepest descent): Travel along gradient.
         'cg' (conjugate gradient): Improve gradient using gradient history.
     """
-    if   (opt_type == 'sd'):
+    if opt_type == 'sd':
       self._GetSDStepDir()
-    elif (opt_type == 'cg'):
+    elif opt_type == 'cg':
       self._GetCGStepDir()
     else:
       print('Error: optimization type (%s) not recognized!' % (opt_type))
@@ -192,7 +192,7 @@ class Optimization:
 
   def GetCGStepDir(self):
     """Conjugate gradient optimization step direction vector."""
-    if (self.n_iter <= 1):
+    if self.n_iter <= 1:
       self.hvec = self.mol.g_total
       gamma = 0.0
     else:
@@ -227,7 +227,7 @@ class Optimization:
     self.are_converged[3] = (self.disp_rms < self.conv_disp_rms)
     self.are_converged[4] = (self.disp_max < self.conv_disp_max)
     for i in range(5):
-      if (self.must_converge[i] and not self.are_converged[i]):
+      if self.must_converge[i] and not self.are_converged[i]:
         self.is_converged = False
 
   def _LineSearch(self, disp_vector):
@@ -242,7 +242,7 @@ class Optimization:
     """
     self.GetDispDeriv(self.disp_mag, disp_vector)
     disp_mag = self.disp_mag
-    disp_sign = 1.0 if (self.disp_deriv <= 0.0) else -1.0
+    disp_sign = 1.0 if self.disp_deriv <= 0.0 else -1.0
     disp_mag *= disp_sign
     disp_sign_same = True
     ref_energy = self.mol.e_total
@@ -253,11 +253,11 @@ class Optimization:
       self.DisplaceCoords(+1.0 * disp_mag, disp_vector)
       self.GetDispDeriv(disp_mag, disp_vector)
       self.DisplaceCoords(-1.0 * disp_mag, disp_vector)
-      if (self.mol.e_total > ref_energy):
+      if self.mol.e_total > ref_energy:
         disp_mag *= 0.5
         break
       old_disp_sign = disp_sign
-      disp_sign = 1.0 if (self.disp_deriv <= 0.0) else -1.0
+      disp_sign = 1.0 if self.disp_deriv <= 0.0 else -1.0
       disp_sign_same = bool(disp_sign == old_disp_sign)
       disp_mag *= 2.0
     self.GetDispDeriv(disp_mag, disp_vector)
@@ -271,7 +271,7 @@ class Optimization:
       self.DisplaceCoords(+1.0 * test_disp, disp_vector)
       self.GetDispDeriv(disp_mag / (2**(-i)), disp_vector)
       self.DisplaceCoords(-1.0 * test_disp, disp_vector)
-      direc = 1.0 if (self.disp_deriv < 0.0) else -1.0
+      direc = 1.0 if self.disp_deriv < 0.0 else -1.0
       numer = 2*numer + direc
       denom = 2*denom
     disp_mag *= numer / denom
@@ -289,7 +289,7 @@ class Optimization:
       'default':   [1.0E-6,  1.0E-4, 2.0E-4, 1.0E-3, 2.0E-3],
       'tight':     [1.0E-8,  1.0E-5, 2.0E-5, 1.0E-4, 2.0E-4],
       'verytight': [1.0E-10, 1.0E-6, 2.0E-6, 1.0E-5, 2.0E-5]}
-    if (self.opt_str in opt_criteria_refs):
+    if self.opt_str in opt_criteria_refs:
       opt_vals = opt_criteria_refs[self.opt_str]
       self.conv_delta_e  = opt_vals[0]
       self.conv_grad_rms = opt_vals[1] 
@@ -334,7 +334,7 @@ class Optimization:
       n_subiter (int): Previous number of initial of doublings needed to switch
           the sign of the line derivative.
     """
-    if (n_subiter == 1):
+    if n_subiter == 1:
         self.disp_mag *= 0.7
     else:
         self.disp_mag *= 1.4
@@ -374,12 +374,12 @@ class Optimization:
     grms = math.sqrt(numpy.mean(grad**2))
     drms = math.sqrt(numpy.mean(disp**2))
     conv_str = [' ' for i in range(5)]
-    if (n_iter > 0):
-      conv_str[0] = '*' if (abs(delta_e) < self.conv_delta_e) else ' '
-      conv_str[1] = '*' if (gmax < self.conv_grad_max) else ' '
-      conv_str[2] = '*' if (grms < self.conv_grad_rms) else ' '
-      conv_str[3] = '*' if (dmax < self.conv_disp_max) else ' '
-      conv_str[4] = '*' if (drms < self.conv_disp_rms) else ' '
+    if n_iter > 0:
+      conv_str[0] = '*' if abs(delta_e) < self.conv_delta_e else ' '
+      conv_str[1] = '*' if gmax < self.conv_grad_max else ' '
+      conv_str[2] = '*' if grms < self.conv_grad_rms else ' '
+      conv_str[3] = '*' if dmax < self.conv_disp_max else ' '
+      conv_str[4] = '*' if drms < self.conv_disp_rms else ' '
     pstr  = '%3i' % (n_iter)
     pstr += ' %18.12f' % (t.energy[n_iter])
     pstr += ' %10.3e%s' % (delta_e, conv_str[0])

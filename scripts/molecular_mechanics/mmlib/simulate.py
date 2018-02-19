@@ -93,10 +93,10 @@ class Simulation:
     self.efile = open(self.energyout, "w")
     self._PrintEnergyHeader()
     self.stime = time.time()
-    if (self.simtype == 'md'):
+    if self.simtype == 'md':
       self.gtime = 10**-10
       self.etime = 10**-10
-    elif (self.simtype == 'mc'):
+    elif self.simtype == 'mc':
       self.gconf = 0
       self.econf = 0
       self.dconf = 0
@@ -115,9 +115,9 @@ class Simulation:
 
   def _PrintGeom(self):
     """Print xyz-format geometry of system to trajectory file."""
-    if (self.simtype == 'md'):
+    if self.simtype == 'md':
       pstr = '%.4f ps' % (self.time)
-    elif (self.simtype == 'mc'):
+    elif self.simtype == 'mc':
       pstr = 'conf %i' % (self.conf)
     fileio.PrintCoordsFile(
         self.gfile, self.mol, pstr, self.gprintchar, self.gprintdig)
@@ -134,9 +134,9 @@ class Simulation:
         * 'e': Printf exponential.
       n_space (int): Leading number of spaces before printing value.
     """
-    if (ptype == 'f'):
+    if ptype == 'f':
       self.efile.write('%*s%*.*f' % (n_space, '', totstr, decstr, val))
-    elif (ptype == 'e'):
+    elif ptype == 'e':
       self.efile.write('%*s%*.*e' % (n_space, '', totstr, decstr, val))
 
   def _PrintETerms(self, totstr, decstr, ptype):
@@ -150,16 +150,16 @@ class Simulation:
     eterms = [
         m.e_kinetic, m.e_potential, m.e_nonbonded, m.e_bonded, m.e_bound,
         m.e_vdw, m.e_elst, m.e_bonds, m.e_angles, m.e_torsions, m.e_outofplanes]
-    if (self.simtype == 'mc'):
+    if self.simtype == 'mc':
       eterms = eterms[2:]
     for i in range(len(eterms)):
       self._PrintVal(totstr, decstr, eterms[i], ptype)
 
   def _PrintEnergy(self):
     """Print energy data to energy output file, depending on simtype"""
-    if (self.simtype == 'md'):
+    if self.simtype == 'md':
       self._PrintVal(self.tprintchar, self.tprintdig, self.time, 'f', 0)
-    elif (self.simtype == 'mc'):
+    elif self.simtype == 'mc':
       self._PrintVal(self.cprintchar, 0, self.conf, 'f', 0)
     self._PrintVal(self.eprintchar+2, self.eprintdig+2, self.mol.e_total, 'e')
     self._PrintETerms(self.eprintchar, self.eprintdig, 'e')
@@ -167,10 +167,10 @@ class Simulation:
 
   def _PrintStatus(self):
     """Print completion progress of simulation to screen"""
-    if (self.simtype == 'md'):
+    if self.simtype == 'md':
       print('%.*f/%.*f ps' % (self.tprintdig, self.time, self.tprintdig, 
           self.tottime), end='')
-    elif (self.simtype == 'mc'):
+    elif self.simtype == 'mc':
         print('%i/%i confs' % (self.conf, self.totconf), end='')
     print(' as of %s' % (time.strftime('%H:%M:%S')))
     self._FlushBuffers()
@@ -229,13 +229,13 @@ class MolecularDynamics(Simulation):
     self._UpdateAccs()
     self._CheckPrint(0.0, True)
     self._UpdateVels(0.5*self.timestep)
-    while (self.time < self.tottime):
+    while self.time < self.tottime:
       self._UpdateCoords(self.timestep)
       self.mol.GetGradient('analytic')
       self._UpdateAccs()
       self._UpdateVels(self.timestep)
       self.mol.GetEnergy('leapfrog')
-      if (self.time < self.eqtime):
+      if self.time < self.eqtime:
         self._EquilibrateTemp()
       self._CheckPrint(self.timestep)
       self.time += self.timestep
@@ -250,7 +250,7 @@ class MolecularDynamics(Simulation):
     distribution. Then rescales velocities to match specified desired
     temperature.
     """
-    if (self.temp > 0.0):
+    if self.temp > 0.0:
       self.etemp = self.temp
       numpy.random.seed(self.random_seed)
       sigma_base = math.sqrt(2.0 * Rgas() * self.temp / 3.0)
@@ -325,13 +325,13 @@ class MolecularDynamics(Simulation):
       timestep (float): Simulation time [ps] between previous check.
       print_all (bool): Print regardless of time status.
     """
-    if (print_all or self.etime >= self.energytime):
+    if print_all or self.etime >= self.energytime:
       self._PrintEnergy()
       self.etime = 10**-10
-    if (print_all or self.gtime >= self.geomtime):
+    if print_all or self.gtime >= self.geomtime:
       self._PrintGeom()
       self.gtime = 10**-10
-    if (print_all or time.time() - self.stime > self.statustime):
+    if print_all or time.time() - self.stime > self.statustime:
       self._PrintStatus()
       self.stime = time.time()
     self.etime += timestep
@@ -419,13 +419,13 @@ class MonteCarlo(Simulation):
     self.mol.GetEnergy('standard')
     self._CheckPrint(0, True)
     penergy = self.mol.e_total
-    while (self.conf < self.totconf):
+    while self.conf < self.totconf:
       self._GetRandDisp()
       self._DispCoords(self.rand_disp)
       self.mol.GetEnergy('standard')
       delta_e = self.mol.e_total - penergy
       bf = math.exp(min(1.0, -1.0*delta_e / (energy.Kb()*self.temp)))
-      if (bf >= numpy.random.random()):
+      if bf >= numpy.random.random():
         self._CheckPrint(1)
         self.conf += 1
         self.n_accept += 1
@@ -484,13 +484,13 @@ class MonteCarlo(Simulation):
       n_conf (int): Simulation configurations between previous check.
       print_all (bool): Print regardless of configuration status.
     """
-    if (print_all or self.econf >= self.energyconf):
+    if print_all or self.econf >= self.energyconf:
       self._PrintEnergy()
       self.econf = 0
-    if (print_all or self.gconf >= self.geomconf):
+    if print_all or self.gconf >= self.geomconf:
       self._PrintGeom()
       self.gconf = 0
-    if (print_all or time.time() - self.stime > self.statustime):
+    if print_all or time.time() - self.stime > self.statustime:
       self._PrintStatus()
       self.stime = time.time()
     self.econf += n_conf
@@ -498,7 +498,7 @@ class MonteCarlo(Simulation):
 
   def _CheckDisp(self):
     """Check if changing magnitude of random displacment vector needed."""
-    if (self.dconf >= self.dispconf):
+    if self.dconf >= self.dispconf:
       self._ChangeDisp()
       self.dconf = 0
     self.dconf += 1

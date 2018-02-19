@@ -31,7 +31,7 @@ def _GetFileStringArray(infile_name):
   Returns:
     (str**): Contents of text file as an array of arrays of strings
   """
-  if (not os.path.exists(infile_name)):
+  if not os.path.exists(infile_name):
     print('Error: file (%s) does not exist!' % (infile_name))
     sys.exit()
   infile = open(infile_name, 'r')
@@ -198,20 +198,20 @@ def GetPrm(mol):
   for i in range(len(infile_array)):
     record = infile_array[i]
     rec_type = record[0].lower()
-    if (rec_type == 'atom'):
+    if rec_type == 'atom':
       _GetAtom(mol, record)
   mol.n_atoms = len(mol.atoms)
   mol.bond_graph = [{} for i in range(mol.n_atoms)]
   for i in range(len(infile_array)):
     record = infile_array[i]
     rec_type = record[0].lower()
-    if   (rec_type == 'bond'):
+    if rec_type == 'bond':
       _GetBond(mol, record)
-    elif (rec_type == 'angle'):
+    elif rec_type == 'angle':
       _GetAngle(mol, record)
-    elif (rec_type == 'torsion'):
+    elif rec_type == 'torsion':
       _GetTorsion(mol, record)
-    elif (rec_type == 'outofplane'):
+    elif rec_type == 'outofplane':
       _GetOutofplane(mol, record)
   mol.n_bonds = len(mol.bonds)
   mol.n_angles = len(mol.angles)
@@ -236,52 +236,52 @@ def GetSimData(sim):
   cwd = os.getcwd()
   os.chdir(sim.indir)
   for q in range(len(infile_array)):
-    if (len(infile_array[q]) < 2):
+    if len(infile_array[q]) < 2:
       continue
     kwarg = infile_array[q][0].lower()
     kwargval = infile_array[q][1]
     kwargarr = infile_array[q][1:]
-    if (kwarg == 'molecule'):
+    if kwarg == 'molecule':
       sim.mol = molecule.Molecule(os.path.realpath(kwargval))
-    elif (kwarg == 'temperature'):
+    elif kwarg == 'temperature':
       sim.temp = float(kwargval)
-    elif (kwarg == 'pressure'):
+    elif kwarg == 'pressure':
       sim.press = float(kwargval)
-    elif (kwarg == 'boundaryspring'):
+    elif kwarg == 'boundaryspring':
       sim.mol.k_box = float(kwargval)
-    elif (kwarg == 'boundary'):
+    elif kwarg == 'boundary':
       sim.mol.bound = float(kwargval)
       sim.mol.GetVolume()
-    elif (kwarg == 'boundarytype'):
+    elif kwarg == 'boundarytype':
       sim.mol.boundtype = kwargval.lower()
       sim.mol.GetVolume()
-    elif (kwarg == 'origin'):
+    elif kwarg == 'origin':
       sim.mol.origin = [float(kwargarr[i]) for i in range(3)]
-    elif (kwarg == 'totaltime'):
+    elif kwarg == 'totaltime':
       sim.tottime = float(kwargval)
-    elif (kwarg == 'totalconf'):
+    elif kwarg == 'totalconf':
       sim.totconf = int(kwargval)
-    elif (kwarg == 'timestep'):
+    elif kwarg == 'timestep':
       sim.timestep = float(kwargval)
-    elif (kwarg == 'geomtime'):
+    elif kwarg == 'geomtime':
       sim.geomtime = float(kwargval)
-    elif (kwarg == 'geomconf'):
+    elif kwarg == 'geomconf':
       sim.geomconf = int(kwargval)
-    elif (kwarg == 'geomout'):
+    elif kwarg == 'geomout':
       sim.geomout = os.path.realpath(kwargval)
-    elif (kwarg == 'energytime'):
+    elif kwarg == 'energytime':
       sim.energytime = float(kwargval)
-    elif (kwarg == 'energyconf'):
+    elif kwarg == 'energyconf':
       sim.energyconf = int(kwargval)
-    elif (kwarg == 'energyout'):
+    elif kwarg == 'energyout':
       sim.energyout = os.path.realpath(kwargval)
-    elif (kwarg == 'statustime'):
+    elif kwarg == 'statustime':
       sim.statustime = float(kwargval)
-    elif (kwarg == 'eqtime'):
+    elif kwarg == 'eqtime':
       sim.eqtime = float(kwargval)
-    elif (kwarg == 'eqrate'):
+    elif kwarg == 'eqrate':
       sim.eqrate = float(kwargval)
-    elif (kwarg == 'randomseed'):
+    elif kwarg == 'randomseed':
       sim.random_seed = int(kwargval) % (2**32)
   os.chdir(cwd)
 
@@ -302,32 +302,32 @@ def GetOptData(opt):
   cwd = os.getcwd()
   os.chdir(opt.indir)
   for q in range(len(infile_array)):
-    if (len(infile_array[q]) < 2):
+    if len(infile_array[q]) < 2:
       continue
     kwarg = infile_array[q][0].lower()
     kwargval = infile_array[q][1]
     kwargarr = infile_array[q][1:]
-    if (kwarg == 'molecule'):
+    if kwarg == 'molecule':
       opt.mol = molecule.Molecule(os.path.realpath(kwargval))
-    elif (kwarg == 'opttype'):
+    elif kwarg == 'opttype':
       opt.opt_type = kwargval.lower()
-    elif (kwarg == 'optcriteria'):
+    elif kwarg == 'optcriteria':
       opt.opt_str = kwargval.lower()
-    elif (kwarg == 'e_converge'):
+    elif kwarg == 'e_converge':
       opt.conv_delta_e = float(kwargval)
-    elif (kwarg == 'grms_converge'):
+    elif kwarg == 'grms_converge':
       opt.conv_grad_rms = float(kwargval)
-    elif (kwarg == 'gmax_converge'):
+    elif kwarg == 'gmax_converge':
       opt.conv_grad_max = float(kwargval)
-    elif (kwarg == 'drms_converge'):
+    elif kwarg == 'drms_converge':
       opt.conv_disp_rms = float(kwargval)
-    elif (kwarg == 'dmax_converge'):
+    elif kwarg == 'dmax_converge':
       opt.conv_disp_max = float(kwargval)
-    elif (kwarg == 'nmaxiter'):
+    elif kwarg == 'nmaxiter':
       opt.n_maxiter = float(kwargval)
-    elif (kwarg == 'geomout'):
+    elif kwarg == 'geomout':
       opt.geomout = os.path.realpath(kwargval)
-    elif (kwarg == 'energyout'):
+    elif kwarg == 'energyout':
       opt.energyout = os.path.realpath(kwargval)
   os.chdir(cwd)
 
@@ -348,21 +348,21 @@ def GetAnalysisData(ana):
   cwd = os.getcwd()
   os.chdir(ana.indir)
   for q in range(len(infile_array)):
-    if (len(infile_array[q]) < 2):
+    if len(infile_array[q]) < 2:
       continue
     kwarg = infile_array[q][0].lower()
     kwargval = infile_array[q][1]
     kwargarr = infile_array[q][1:]
-    if (kwarg == 'input'):
+    if kwarg == 'input':
       ana.simfile = os.path.realpath(kwargval)
       ana.simdir = os.path.dirname(ana.simfile)
-    elif (kwarg == 'simtype'):
+    elif kwarg == 'simtype':
       ana.simtype = kwargval.lower()
-    elif (kwarg == 'plotout'):
+    elif kwarg == 'plotout':
       ana.plotout = os.path.realpath(kwargval)
-    elif (kwarg == 'percentstart'):
+    elif kwarg == 'percentstart':
       ana.percent_start = float(kwargval)
-    elif (kwarg == 'percentstop'):
+    elif kwarg == 'percentstop':
       ana.percent_stop = float(kwargval)
   os.chdir(cwd)
 
@@ -390,7 +390,7 @@ def GetProperties(prop_file):
   key1 = prop_keys[2]
   key_line = 0
   for i in range(n_lines):
-    if (key1 in prop_array[i]):
+    if key1 in prop_array[i]:
       key_line = i
       break
   key1_col = prop_array[key_line].index(key1)
@@ -398,7 +398,7 @@ def GetProperties(prop_file):
   n_confs = 0
   excluded_lines = []
   for i in range(len(prop_array)):
-    if ('#' in prop_array[i][0] or not len(prop_array[i]) == n_keys):
+    if '#' in prop_array[i][0] or not len(prop_array[i]) == n_keys:
       excluded_lines.append(i)
     else:   
       n_confs += 1
@@ -408,7 +408,7 @@ def GetProperties(prop_file):
     prop[key] = numpy.zeros(n_confs)
     confnum = 0
     for i in range(n_lines):
-      if (not i in excluded_lines):
+      if not i in excluded_lines:
         prop[key][confnum] = float(prop_array[i][j])
         confnum += 1
   return prop
@@ -493,25 +493,25 @@ def PrintGradient(mol, grad_type):
         gradient components [kcal/(mol*Angstrom)].
     grad_type (str): Gradient component values to be printed to screen.
   """
-  if   (grad_type == 'total'):
+  if grad_type == 'total':
     grad = mol.g_total
-  elif (grad_type == 'nonbonded'):
+  elif grad_type == 'nonbonded':
     grad = mol.g_nonbonded
-  elif (grad_type == 'bonded'):
+  elif grad_type == 'bonded':
     grad = mol.g_bonded
-  elif (grad_type == 'boundary'):
+  elif grad_type == 'boundary':
     grad = mol.g_bound
-  elif (grad_type == 'vdw'):
+  elif grad_type == 'vdw':
     grad = mol.g_vdw
-  elif (grad_type == 'elst'):
+  elif grad_type == 'elst':
     grad = mol.g_elst
-  elif (grad_type == 'bonds'):
+  elif grad_type == 'bonds':
     grad = mol.g_bonds
-  elif (grad_type == 'angles'):
+  elif grad_type == 'angles':
     grad = mol.g_angles
-  elif (grad_type == 'torsions'):
+  elif grad_type == 'torsions':
     grad = mol.g_torsions
-  elif (grad_type == 'outofplanes'):
+  elif grad_type == 'outofplanes':
     grad = mol.g_outofplanes
   else:
     print('Error: grad type (%s) not recognized!' % (grad_type))
@@ -640,7 +640,7 @@ def PrintBonds(mol):
     mol (mmlib.molecule.Molecule): Molecule with Bond objects with data for
         printing.
   """
-  if (mol.n_bonds > 0):
+  if mol.n_bonds > 0:
     header, n_banner = ' Bond Length Data ', 57
     params = ['k_b', 'r_eq', 'r_ij', 'types', 'energy', 'atoms']
     spaces = [10, 5, 5, 3, 4, 1]
@@ -686,7 +686,7 @@ def PrintAngles(mol):
     mol (mmlib.molecule.Molecule): Molecule with Angle objects with data for
         printing.
   """
-  if (mol.n_angles > 0):
+  if mol.n_angles > 0:
     header, n_banner = ' Bond Angle Data ', 58
     params = ['k_a', 'a_eq', 'a_ijk', 'types', 'energy', 'atoms']
     spaces = [9, 3, 4, 4, 5, 2]
@@ -733,7 +733,7 @@ def PrintTorsions(mol):
     mol (mmlib.molecule.Molecule): Molecule with Torsion objects with data for
         printing.
   """
-  if (mol.n_torsions > 0):
+  if mol.n_torsions > 0:
     header, n_banner = ' Torsion Angle Data ', 67
     params = ['vn/2', 'gamma', 't_ijkl n p', 'types', 'energy', 'atoms']
     spaces = [9, 2, 3, 5, 6, 3]
@@ -784,7 +784,7 @@ def PrintOutofplanes(mol):
     mol (mmlib.molecule.Molecule): Molecule with Outofplane objects with data
         for printing.
   """
-  if (mol.n_outofplanes > 0):
+  if mol.n_outofplanes > 0:
     header, n_banner = ' Out-of-plane Angle Data ', 55
     params = ['vn/2', 'o_ijkl', 'types', 'energy', 'atoms']
     spaces = [9, 2, 5, 6, 3]
@@ -880,15 +880,15 @@ def GetInput():
   if (len(sys.argv) < 2):
     print('\nUsage: python %s INPUT_FILE\n' % (program_name))
     print('  INPUT_FILE: ', end='')
-    if (program_name == 'mm.py'):
+    if program_name == 'mm.py':
       print('xyzq or prm file for molecular mechanics\n')
-    elif (program_name == 'md.py'):
+    elif program_name == 'md.py':
       print('simulation file for molecular dynamics\n')
-    elif (program_name == 'mc.py'):
+    elif program_name == 'mc.py':
       print('simulation file for metropolis monte carlo\n')
-    elif (program_name == 'opt.py'):
+    elif program_name == 'opt.py':
       print('optimization file for energy minimization\n')
-    elif (program_name == 'ana.py'):
+    elif program_name == 'ana.py':
       print('plot file for data analysis\n')
     sys.exit()
   else:
