@@ -1,5 +1,8 @@
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 import mmlib
 
 #############################################################################
@@ -17,16 +20,13 @@ import mmlib
 #############################################################################
 
 # check input syntax
-infile_name = mmlib.fileio.get_input()
+infile_name = mmlib.fileio.GetInput()
 
 # read in molecular geometry and topology
 mol = mmlib.molecule.Molecule(infile_name)
 
 # calculate energy
-mol.get_energy('nokinetic')
+mol.GetEnergy('nokinetic')
 
 # print results to screen
-mol.print_data()
-
-# end of program
-
+mol.PrintData()

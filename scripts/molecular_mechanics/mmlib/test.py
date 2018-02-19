@@ -42,7 +42,7 @@ for i in range(len(test_funcs)):
       + '.dat')
 
 # read in test case inputs and references from file
-def read_in_tests(file_name):
+def ReadInTests(file_name):
   infile = open(file_name, "r")
   infile_lines = infile.readlines()
   infile.close()
@@ -55,7 +55,7 @@ def read_in_tests(file_name):
   return tests
 
 # equality comparison of generic data types
-def equality_comparison(val, ref):
+def EqualityComparison(val, ref):
   same = True
   if   ('float' in str(type(val))):
     same *= math.isclose(ref, val, rel_tol=reltol, abs_tol=abstol)
@@ -65,11 +65,11 @@ def equality_comparison(val, ref):
     if (not len(val) == len(ref)):
       return False
     for i in range(len(val)):
-      same *= equality_comparison(val[i], ref[i])
+      same *= EqualityComparison(val[i], ref[i])
   return same
 
 # print result of an individual unit test
-def print_success_test(index, n_tests, success, val, ref, printval):
+def PrintSuccessTest(index, n_tests, success, val, ref, printval):
   if (printval >= 2):
     n_dig = int(math.ceil(math.log10(n_tests)))
     print('Test %0*i -> ' % (n_dig, index), end='')
@@ -86,7 +86,7 @@ def print_success_test(index, n_tests, success, val, ref, printval):
     print('')
 
 # print result of an individual function test
-def print_success_function(index, n_pass, n_fail, name, printval):
+def PrintSuccessFunction(index, n_pass, n_fail, name, printval):
   n_tests = n_pass + n_fail
   success = (n_pass == n_tests)
   if (printval >= 1):
@@ -95,12 +95,12 @@ def print_success_function(index, n_pass, n_fail, name, printval):
     print('(%s), %i/%i Subtests Passed\n' % (name, n_pass, n_tests))
 
 # run unit tests for a given function
-def run_tests(printval):
+def RunTests(printval):
   print('')
   nf_tests = len(test_files)
   nf_pass, nf_fail = 0, 0
   for j in range(len(test_files)):
-    tests = read_in_tests(test_files[j])
+    tests = ReadInTests(test_files[j])
     name = test_funcs[j]
     n_tests = len(tests)
     n_pass, n_fail = 0, 0
@@ -109,11 +109,11 @@ def run_tests(printval):
       ref = tests[i][1]
       evalstr = '%s(%s)' % (test_funcs[j], inputs)
       val = eval(evalstr)
-      success = equality_comparison(val, ref)
-      print_success_test(i+1, n_tests, success, val, ref, printval)
+      success = EqualityComparison(val, ref)
+      PrintSuccessTest(i+1, n_tests, success, val, ref, printval)
       n_pass += int(success)
       n_fail += int(not success)
-    print_success_function(j+1, n_pass, n_fail, name, printval)
+    PrintSuccessFunction(j+1, n_pass, n_fail, name, printval)
     nf_pass += int(n_pass == n_tests)
     nf_fail += int(not n_pass == n_tests)
   all_success = (nf_pass == nf_tests)

@@ -40,66 +40,67 @@ class Atom:
     covard (float): covalent radius [Angstrom].
     vels (float*): 3 cartesian velocity components [Angstrom/ps].
     accs (float*): 3 cartesian acceleration components [A/(ps^2)].
-    pvels (float*): 3 previous `vels` [Angstrom/ps].
-    paccs (float*): 3 previous `accs` [Angstrom/(ps^2)].
+    pvels (float*): 3 previous 'vels' [Angstrom/ps].
+    paccs (float*): 3 previous 'accs' [Angstrom/(ps^2)].
   """
   def __init__(self, type, coords, charge, ro, eps, mass):
     self.type = type
     self.element = type[0].capitalize()
-    if (type[-1].islower()): self.element += type[-1]
+    if (len(type) > 1 and type[-1].islower()):
+      self.element += type[-1]
     self.coords = coords
     self.charge = charge
     self.ro = ro
     self.eps = eps
     self.sreps = math.sqrt(self.eps)
     self.mass = mass
-    self.covrad = param.get_cov_rad(self.element)
+    self.covrad = param.GetCovRad(self.element)
     self.vels = numpy.zeros(3)
     self.accs = numpy.zeros(3)
     self.pvels = numpy.zeros(3)
     self.paccs = numpy.zeros(3)
 
-  def set_type(self, type):
+  def SetType(self, type):
     """Set new (str) atom type."""
     self.type = type
 
-  def set_coords(self, coords):
+  def SetCoords(self, coords):
     """Set new (float*) coodinates [Angstrom]."""
     self.coords = coords
 
-  def set_coord(self, index, coord):
+  def SetCoord(self, index, coord):
     """Set new (float) ith coordinate [Angstrom]."""
     self.coords[index] = coords
 
-  def set_mass(self, mass):
+  def SetMass(self, mass):
     """Set new (float) atomic mass [g/mol]."""
     self.mass = mass
 
-  def set_charge(self, charge):
+  def SetCharge(self, charge):
     """Set new (float) partial charge [e]."""
     self.charge = charge
 
-  def set_ro(self, ro):
+  def SetRo(self, ro):
     """Set new (float) vdw radius [Angstrom]."""
     self.ro = ro
 
-  def set_eps(self, eps):
+  def SetEps(self, eps):
     """Set new (float) vdw epsilon [kcal/mol]."""
     self.eps = eps
 
-  def set_element(self, element):
+  def SetElement(self, element):
     """Set new (str) atomic element."""
     self.element = element
 
-  def set_covrad(self, covrad):
+  def SetCovRad(self, covrad):
     """Set new (float) covalent radius [Angstrom]."""
     self.covrad = covrad
 
-  def set_vels(self, vels):
+  def SetVels(self, vels):
     """Set new (float*) velocities [Angstrom/ps]."""
     self.vels = vels
 
-  def set_accs(self, accs):
+  def SetAccs(self, accs):
     """Set new (float*) accelerations [Angstrom/(ps^2)]."""
     self.accs = accs
 
@@ -127,26 +128,26 @@ class Bond:
     self.r_eq = r_eq
     self.k_b = k_b
 
-    self.energy = energy.get_e_bond(r_ij, r_eq, k_b)
-    self.grad = gradient.get_g_bond(r_ij, r_eq, k_b)
+    self.energy = energy.GetEBond(r_ij, r_eq, k_b)
+    self.grad = gradient.GetGBond(r_ij, r_eq, k_b)
 
-  def set_at1(self, at1):
+  def SetAt1(self, at1):
     """Set new (int) at1."""
     self.at1 = at1
 
-  def set_at2(self, at2):
+  def SetAt2(self, at2):
     """Set new (int) at2."""
     self.at2 = at2
 
-  def set_r_ij(self, r_ij):
+  def SetRij(self, r_ij):
     """Set new (float)  [Angstrom]."""
     self.r_ij = r_ij
 
-  def set_r_eq(self, r_eq):
+  def SetReq(self, r_eq):
     """Set new (float)  [Angstrom]."""
     self.r_eq = r_eq
 
-  def set_k_b(self, k_b):
+  def SetKb(self, k_b):
     """Set new (float)  [kcal/(mol*A^2)]."""
     self.k_b = k_b
 
@@ -155,7 +156,7 @@ class Angle:
   """Angle class for angle geometry and parameter data.
   
   Initialize attributes to specified argument values. Change by calling
-  appropriate `set_[param]` function.
+  appropriate 'set_[param]' function.
   
   Args / Attributes:
     at1 (str): Atom1 atomic index in Molecule.
@@ -176,30 +177,30 @@ class Angle:
     self.a_eq = a_eq
     self.k_a = k_a
 
-    self.energy = energy.get_e_angle(a_ijk, a_eq, k_a)
-    self.grad = gradient.get_g_angle(a_ijk, a_eq, k_a)
+    self.energy = energy.GetEAngle(a_ijk, a_eq, k_a)
+    self.grad = gradient.GetGAngle(a_ijk, a_eq, k_a)
 
-  def set_at1(self, at1):
+  def SetAt1(self, at1):
     """Set new (int) at1."""
     self.at1 = at1
 
-  def set_at2(self, at2):
+  def SetAt2(self, at2):
     """Set new (int) at2."""
     self.at2 = at2
 
-  def set_at3(self, at3):
+  def SetAt3(self, at3):
     """Set new (int) at3."""
     self.at3 = at3
 
-  def set_a_ijk(self, a_ijk):
+  def SetAijk(self, a_ijk):
     """Set new (float) a_ijk [degrees]."""
     self.a_ijk = a_ijk
 
-  def set_a_eq(self, a_eq):
+  def SetAeq(self, a_eq):
     """Set new (float) a_eq [degrees]."""
     self.a_eq = a_eq
 
-  def set_k_a(self, k_a):
+  def SetKa(self, k_a):
     """Set new (float) k_a [kcal/(mol*rad^2)]."""
     self.k_a = k_a
 
@@ -208,7 +209,7 @@ class Torsion:
   """Torsion class for torsion geometry and parameter data.
   
   Initialize attributes to specified argument values. Change
-  by calling appropriate `set_[param]` function.
+  by calling appropriate 'set_[param]' function.
   
   Args / Attributes:
     at1 (str): Atom1 atomic index in Molecule.
@@ -235,42 +236,42 @@ class Torsion:
     self.n = nfold
     self.paths = paths
 
-    self.energy = energy.get_e_torsion(t_ijkl, v_n, gamma, nfold, paths)
-    self.grad = gradient.get_g_torsion(t_ijkl, v_n, gamma, nfold, paths)
+    self.energy = energy.GetETorsion(t_ijkl, v_n, gamma, nfold, paths)
+    self.grad = gradient.GetGTorsion(t_ijkl, v_n, gamma, nfold, paths)
 
-  def set_at1(self, at1):
+  def SetAt1(self, at1):
     """Set new (int) at1."""
     self.at1 = at1
 
-  def set_at2(self, at2):
+  def SetAt2(self, at2):
     """Set new (int) at2."""
     self.at2 = at2
 
-  def set_at3(self, at3):
+  def SetAt3(self, at3):
     """Set new (int) at3."""
     self.at3 = at3
 
-  def set_at4(self, at4):
+  def SetAt4(self, at4):
     """Set new (int) at4."""
     self.at4 = at4
 
-  def set_t_ijkl(self, t_ijkl):
+  def SetTijkl(self, t_ijkl):
     """Set new (float) t_ijkl [degrees]."""
     self.t_ijkl = t_ijkl
 
-  def set_v_n(self, v_n):
+  def SetVn(self, v_n):
     """Set new (float) v_n [kcal/mol]."""
     self.v_n = v_n
 
-  def set_gamma(self, gamma):
+  def SetGamma(self, gamma):
     """Set new (float) gamma [degrees]."""
     self.gam = gamma
 
-  def set_nfold(self, nfold):
+  def SetNfold(self, nfold):
     """Set new (int) nfold."""
     self.nfold = nfold
 
-  def set_paths(self, paths):
+  def SetPaths(self, paths):
     """Set new (int) paths."""
     self.paths = paths
 
@@ -279,7 +280,7 @@ class Outofplane:
   """Outofplane class for outofplane geometry and parameter data.
   
   Initialize attributes to specified argument values. Change by calling
-  appropriate `set_[param]` function.
+  appropriate 'set_[param]' function.
   
   Args / Attributes:
     at1 (str): Atom1 atomic index in Molecule.
@@ -300,30 +301,30 @@ class Outofplane:
     self.o_ijkl = o_ijkl
     self.v_n = v_n
       
-    self.energy = energy.get_e_outofplane(o_ijkl, v_n)
-    self.grad = gradient.get_g_outofplane(o_ijkl, v_n)
+    self.energy = energy.GetEOutofplane(o_ijkl, v_n)
+    self.grad = gradient.GetGOutofplane(o_ijkl, v_n)
 
-  def set_at1(self, at1):
+  def SetAt1(self, at1):
     """Set new (int) at1."""
     self.at1 = at1
 
-  def set_at2(self, at2):
+  def SetAt2(self, at2):
     """Set new (int) at2."""
     self.at2 = at2
 
-  def set_at3(self, at3):
+  def SetAt3(self, at3):
     """Set new (int) at3."""
     self.at3 = at3
 
-  def set_at4(self, at4):
+  def SetAt4(self, at4):
     """Set new (int) at4."""
     self.at4 = at4
 
-  def set_o_ijkl(self, o_ijkl):
+  def SetOijkl(self, o_ijkl):
     """Set new (float) o_ijkl [degrees]."""
     self.o_ijkl = o_ijkl
 
-  def set_v_n(self, v_n):
+  def SetVn(self, v_n):
     """Set new (float) v_n [kcal/mol]."""
     self.v_n = v_n
 
@@ -332,8 +333,8 @@ class Molecule:
   """
   Molecule class for molecular geometry / topology / energy data.
   
-  Contains `n_atoms` Atom objects, `n_bonds` Bond objects, `n_angles` Angle'
-  objects, `n_torsions` Torsion objects, and `n_outofplanes` Outofplane objects,
+  Contains 'n_atoms' Atom objects, 'n_bonds' Bond objects, 'n_angles' Angle'
+  objects, 'n_torsions' Torsion objects, and 'n_outofplanes' Outofplane objects,
   with all their associated data.
   
   Also contains (float) energy and (float**) gradient total values and their
@@ -347,9 +348,9 @@ class Molecule:
     infile_name (str): xyzq or prm input file with molecule data.
   
   Attributes:
-    infile (str): Absolute path to `infile_name`
+    infile (str): Absolute path to 'infile_name'
     indir (str): Absolute path to infile directory.
-    filetype (str): Input file format: `xyzq` or `prm`.
+    filetype (str): Input file format: 'xyzq' or 'prm'.
     name (str): Name of molecule from input file name.
 
     atoms (mmlib.molecule.Atom*): Array of Atom objects.
@@ -369,7 +370,7 @@ class Molecule:
     mass (float): Sum of all atomic masses.
     k_box (float): Spring constant [kcal/(mol*A^2)] of boundary potential.
     bound (float): (spherical / cubic) dimensions of system [Angstrom].
-    boundtype (str): Type of boundary shape, `cube`, `sphere`, or `none`.
+    boundtype (str): Type of boundary shape, 'cube', 'sphere', or 'none'.
     origin (float*): Cartesian center of boundary object.
     vol (float): Volume of system [A^3].
     temp (float): Instantaneous kinetic temperature [K].
@@ -445,10 +446,10 @@ class Molecule:
     self.e_total = 0.0
 
     if (self.filetype == 'xyzq'):
-      self.read_in_xyzq()
-      self.get_topology()
+      self.ReadInXYZQ()
+      self.GetTopology()
     elif (self.filetype == 'prm'):
-      self.read_in_prm()
+      self.ReadInPrm()
         
     self.g_bonds = numpy.zeros((self.n_atoms, 3))
     self.g_angles = numpy.zeros((self.n_atoms, 3))
@@ -461,35 +462,35 @@ class Molecule:
     self.g_nonbonded = numpy.zeros((self.n_atoms, 3))
     self.g_total = numpy.zeros((self.n_atoms, 3))
 
-  def read_in_xyzq(self):
+  def ReadInXYZQ(self):
     """Read in xyzq data from .xyzq input file."""
-    fileio.get_geom(self)
+    fileio.GetGeom(self)
 
-  def read_in_prm(self):
+  def ReadInPrm(self):
     """Read in prm data from .prm input file."""
-    fileio.get_prm(self)
+    fileio.GetPrm(self)
 
-  def get_topology(self):
+  def GetTopology(self):
     """Determine bonded topology of molecules from coordinates."""
-    topology.get_bond_graph(self)
-    topology.get_bonds(self)
-    topology.get_angles(self)
-    topology.get_torsions(self)
-    topology.get_outofplanes(self)
-    topology.get_nonints(self)
+    topology.GetBondGraph(self)
+    topology.GetBonds(self)
+    topology.GetAngles(self)
+    topology.GetTorsions(self)
+    topology.GetOutofplanes(self)
+    topology.GetNonints(self)
 
-  def get_energy(self, kintype):
+  def GetEnergy(self, kintype):
     """Calculate (float) energy [kcal/mol] and all energy components."""
-    energy.get_e_bonds(self)
-    energy.get_e_angles(self)
-    energy.get_e_torsions(self)
-    energy.get_e_outofplanes(self)
-    energy.get_e_nonbonded(self)
-    energy.get_e_bound(self)
-    energy.get_e_kinetic(self, kintype)
-    energy.get_e_totals(self)
+    energy.GetEBonds(self)
+    energy.GetEAngles(self)
+    energy.GetETorsions(self)
+    energy.GetEOutofplanes(self)
+    energy.GetENonbonded(self)
+    energy.GetEBound(self)
+    energy.GetEKinetic(self, kintype)
+    energy.GetETotals(self)
 
-  def get_gradient(self, grad_type):
+  def GetGradient(self, grad_type):
     """Calculate analytical or numerical gradient of energy.
     
     Args:
@@ -499,80 +500,80 @@ class Molecule:
     """
     self.grad_type = grad_type
     if (grad_type == 'analytic'):
-      self.get_analytic_gradient()
+      self.GetAnalyticGradient()
     elif (grad_type == 'numerical'):
-      self.get_numerical_gradient()
+      self.GetNumericalGradient()
     else:
       print('Error: grad type (%s) not recognized!' % (grad_type))
       sys.exit()
 
-  def get_analytic_gradient(self):
+  def GetAnalyticGradient(self):
     """Calculate analytic (float**) gradient [kcal/(mol*A)] of energy."""
-    gradient.get_g_bonds(self)
-    gradient.get_g_angles(self)
-    gradient.get_g_torsions(self)
-    gradient.get_g_outofplanes(self)
-    gradient.get_g_nonbonded(self)
-    gradient.get_g_bound(self)
-    gradient.get_g_totals(self)
+    gradient.GetGBonds(self)
+    gradient.GetGAngles(self)
+    gradient.GetGTorsions(self)
+    gradient.GetGOutofplanes(self)
+    gradient.GetGNonbonded(self)
+    gradient.GetGBound(self)
+    gradient.GetGTotals(self)
 
-  def get_numerical_gradient(self):
+  def GetNumericalGradient(self):
     """Calculate numerical (float**) gradient [kcal/(mol*A)] of energy."""
-    gradient.get_g_numerical(self)
-    gradient.get_g_totals(self)
+    gradient.GetGNumerical(self)
+    gradient.GetGTotals(self)
 
-  def update_internals(self):
+  def UpdateInternals(self):
     """Update current values of internal degrees of freedom."""
-    topology.update_bonds(self)
-    topology.update_angles(self)
-    topology.update_torsions(self)
-    topology.update_outofplanes(self)
+    topology.UpdateBonds(self)
+    topology.UpdateAngles(self)
+    topology.UpdateTorsions(self)
+    topology.UpdateOutofplanes(self)
 
-  def get_temperature(self):
+  def GetTemperature(self):
     """Calculate instantaneous kinetic temperature [K] of system."""
-    energy.get_temperature(self)
+    energy.GetTemperature(self)
 
-  def get_pressure(self):
+  def GetPressure(self):
     """Calculate instantaneous kinetic pressure [Pa] of system."""
-    gradient.get_pressure(self)
+    gradient.GetPressure(self)
 
-  def get_volume(self):
+  def GetVolume(self):
     """Caclculate approximate volume [A^3] of system."""
-    geomcalc.get_volume(self)
+    geomcalc.GetVolume(self)
 
-  def print_data(self):
+  def PrintData(self):
     """Print energy / geometry / topology data of molecule to screen."""
-    fileio.print_energy(self)
-    fileio.print_geom(self)
-    fileio.print_bonds(self)
-    fileio.print_angles(self)
-    fileio.print_torsions(self)
-    fileio.print_outofplanes(self)
+    fileio.PrintEnergy(self)
+    fileio.PrintGeom(self)
+    fileio.PrintBonds(self)
+    fileio.PrintAngles(self)
+    fileio.PrintTorsions(self)
+    fileio.PrintOutofplanes(self)
 
-  def print_energy(self):
+  def PrintEnergy(self):
     """Print energy and component data of molecule to screen."""
-    fileio.print_energy(self)
+    fileio.PrintEnergy(self)
 
-  def print_geom(self):
+  def PrintGeom(self):
     """Print geometry data of molecule to screen."""
-    fileio.print_geom(self)
+    fileio.PrintGeom(self)
 
-  def print_bonds(self):
+  def PrintBonds(self):
     """Print bond data of molecule to screen."""
-    fileio.print_bonds(self)
+    fileio.PrintBonds(self)
 
-  def print_angles(self):
+  def PrintAngles(self):
     """Print angle data of molecule to screen."""
-    fileio.print_angles(self)
+    fileio.PrintAngles(self)
 
-  def print_torsions(self):
+  def PrintTorsions(self):
     """Print torsion data of molecule to screen."""
-    fileio.print_torsions(self)
+    fileio.PrintTorsions(self)
 
-  def print_outofplanes(self):
+  def PrintOutofplanes(self):
     """Print outofplane data of molecule to screen."""
-    fileio.print_outofplanes(self)
+    fileio.PrintOutofplanes(self)
 
-  def print_gradient(self):
+  def PrintGradient(self):
     """Print gradient data to screen."""
-    fileio.print_gradient(self, 'total')
+    fileio.PrintGradient(self, 'total')

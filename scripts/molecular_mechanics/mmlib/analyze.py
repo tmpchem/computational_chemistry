@@ -1,8 +1,8 @@
 """Classes and functions for analyzing and plotting simulation data.
 
-Contains classes to plot dynamic variation of energy and other property
-data over the course of a simulation. Also contains classes to compute
-expectation values and various other ensemble properties.
+Contains classes to plot dynamic variation of energy and other property data
+over the course of a simulation. Also contains classes to compute expectation
+values and various other ensemble properties.
 """
 
 import math
@@ -14,15 +14,15 @@ import sys
 from mmlib import fileio
 from mmlib import simulate
 
-def point_per_inch():
+def _PointsPerInch():
   """Unit conversion between points and inches."""
   return 72
 
-def percent_image_plot():
+def _PercentImagePlot():
   """Fraction of image width which is covered by the plot field."""
   return 0.75
 
-def property_dict():
+def _PropertyDict():
   """Obtain legend labels, line colors, and priority for properties."""
   pdict = {
       'e_total'   : ['Total',      12, '#000000',  1, ],
@@ -51,8 +51,8 @@ class Plot:
 
   Attributes:
     simtype (str): Type of molecular simulation:
-      `md`: Molecular dynamics.
-      `mc`: Metropolis Monte-Carlo.
+      'md': Molecular dynamics.
+      'mc': Metropolis Monte-Carlo.
     data (float**): Dictionary of energy component arrays [kcal/mol].
     plotout (str): File path to output file for plotting image.
     pstart (float): Percent of simulation completed at starting point of data
@@ -61,7 +61,7 @@ class Plot:
     pdict (list*): Dictionary of energy component plotting parameters.
 
     figwidth (float): Width of output figure [inches].
-    figheight (float): Height of output figure [inches].`
+    figheight (float): Height of output figure [inches].'
     figsize (float*): Tuple of figure dimensions [inches].
     img_format (str): Format of plotting image file ('pdf' default).
     n_maxpoints (int): Maximum number of data points per component in final
@@ -88,8 +88,8 @@ class Plot:
     self.figsize = (self.figwidth, self.figheight)
     self.img_format = 'pdf'
 
-    ppi = point_per_inch()
-    p_im = percent_image_plot()
+    ppi = _PointsPerInch()
+    p_im = _PercentImagePlot()
     self.n_maxpoints = int(math.floor(2.0 * ppi * self.figwidth * p_im))
     self.n_terms = len(self.data.keys()) - 1
 
@@ -196,42 +196,42 @@ class TrajectoryPlot(Plot):
     self.yminpad = 0.040
     self.ymaxpad = 0.320
 
-  def make_plot(self):
+  def MakePlot(self):
     """Execute functions needed to plot with appropriate parameters."""
     plt.figure(figsize=self.figsize)
-    self.get_lines()
-    self.get_axes()
-    self.get_xticks()
-    self.get_yticks()
-    self.get_labels()
-    self.get_grid()
-    self.get_legend()
-    self.output_plot()
+    self._GetLines()
+    self._GetAxes()
+    self._GetXticks()
+    self._GetYticks()
+    self._GetLabels()
+    self._GetGrid()
+    self._GetLegend()
+    self._OutputPlot()
 
-  def output_plot(self):
+  def _OutputPlot(self):
     """Finalize image and save to specified output file."""
     plt.savefig(self.plotout, format=self.img_format)
     plt.close()
 
-  def get_axes(self):
+  def _GetAxes(self):
     """Set the boundaries of the axes based on data values."""
-    self.get_axis_bounds()
+    self._GetAxisBounds()
     plt.axis([self.xlow, self.xhigh, self.ylow, self.yhigh])
 
-  def get_labels(self):
+  def _GetLabels(self):
     """Set labels to x-axis, y-axis, and title."""
     plt.title(self.title, fontsize = self.title_fontsize)
     plt.ylabel(self.ylabel, fontsize = self.yaxis_fontsize)
     plt.xlabel(self.xlabel, fontsize = self.xaxis_fontsize)
 
-  def get_grid(self):
+  def _GetGrid(self):
     """Set grid parameters (transparent gray lines by default)."""
     plt.grid(
         color = self.grid_color,
         alpha = self.grid_alpha,
         linestyle = self.grid_linestyle)
 
-  def get_legend(self):
+  def _GetLegend(self):
     """Set top-center legend for each energy component."""
     self.ekeys = sorted(list(self.ekeys), key=lambda x: self.pdict[x][3])
     for key in self.ekeys:
@@ -248,7 +248,7 @@ class TrajectoryPlot(Plot):
     frame = legend.get_frame()
     frame.set_edgecolor(self.leg_framecolor)
 
-  def get_axis_bounds(self):
+  def _GetAxisBounds(self):
     """Determine the extrema of x and y axes from data values."""
     self.xmindat = self.data[self.xvar][0]
     self.xmaxdat = self.data[self.xvar][len(self.data[self.xvar])-1]
@@ -259,8 +259,8 @@ class TrajectoryPlot(Plot):
     self.xlow  = self.xmin - self.xminpad * self.xran
     self.xhigh = self.xmax + self.xmaxpad * self.xran
     self.xplotran = self.xhigh - self.xlow
-    self.ymin =  float('inf')
-    self.ymax = -float('inf')
+    self.ymin = float('inf')
+    self.ymax = float('-inf')
     for key in self.ekeys:
       self.ymin = min(self.ymin, numpy.amin(self.data[key]))
       self.ymax = max(self.ymax, numpy.amax(self.data[key]))
@@ -269,11 +269,11 @@ class TrajectoryPlot(Plot):
     self.yhigh = self.ymax + self.ymaxpad * self.yran
     self.yplotran = self.yhigh - self.ylow
 
-  def get_lines(self):
+  def _GetLines(self):
     """Plot lines for each energy component during simulation."""
-    self.get_point_indices()
-    self.get_xvals()
-    self.get_yvals()
+    self._GetPoint_indices()
+    self._GetXVals()
+    self._GetYVals()
     for key in self.ekeys:
       plt.plot(
           self.xvals[key],
@@ -283,7 +283,7 @@ class TrajectoryPlot(Plot):
           alpha=self.line_alpha,
           label=self.line_label)
 
-  def get_point_indices(self):
+  def _GetPointIndices(self):
     """Compute values needed for data down-sampling algorithm."""
     self.n_confs = len(self.data[self.xvar])
     self.n_start = int(math.floor(self.pstart * self.n_confs)/100.0)
@@ -295,7 +295,7 @@ class TrajectoryPlot(Plot):
       self.pranges[i] = round(self.pranges[i])
     self.pranges = self.pranges.astype(int)
 
-  def get_xvals(self):
+  def _GetXVals(self):
     """Compute down-sampled x-axis data points.
     
     Point index function gives a range for each plotted point.
@@ -316,7 +316,7 @@ class TrajectoryPlot(Plot):
           ind = n_start + numpy.argmin(val_array)
         self.xvals[key][i] = self.data[self.xvar][ind]
 
-  def get_yvals(self):
+  def _GetYVals(self):
     """Compute down-sampled y-axis data points.
     
     Point index function gives a arnage for each plotted point.
@@ -341,7 +341,7 @@ class TrajectoryPlot(Plot):
           val = numpy.amin(val_array)
         self.yvals[key][i] = val
 
-  def get_ticks(self, lower_bound, upper_bound, axis):
+  def _GetTicks(self, lower_bound, upper_bound, axis):
     plot_range = upper_bound - lower_bound
     range_power = int(math.floor(math.log10(plot_range)))
     lead_digit = plot_range * 10**(-range_power)
@@ -362,6 +362,7 @@ class TrajectoryPlot(Plot):
     for i in range(len(ticks)-1, -1, -1):
       if (ticks[i] < lower_bound or ticks[i] > upper_bound):
         ticks.pop(i)
+    
     tick_labels = ['' for i in range(len(ticks))]
     for i in range(len(ticks)):
       exp = int(math.floor(math.log10(max(1, abs(ticks[i]))))/3)
@@ -369,16 +370,17 @@ class TrajectoryPlot(Plot):
       if (int(val) == val):
         val = int(val)
       tick_labels[i] = '%s%s' % (val, self.ticchars[exp])
+    
     if (axis == 'x'):
       plt.xticks(ticks, tick_labels)
     elif (axis == 'y'):
       plt.yticks(ticks, tick_labels)
 
-  def get_xticks(self):
+  def _GetXTicks(self):
     """Determine array of X-axis tick mark values."""
     self.get_ticks(self.xlow, self.xhigh, 'x')
 
-  def get_yticks(self):
+  def _GetYTicks(self):
     """Determine array of Y-axis tick mark values."""
     self.get_ticks(self.ylow, self.yhigh, 'y')
 
@@ -399,8 +401,8 @@ class Analysis:
     indir (str): Absolute path to directory of input file.
     pdict (list*): Dictionary with energy component data.
     simtype (str): Simulation type, options:
-      `md`: Molecular dynamics.
-      `mc`: Metropolis Monte Carlo.
+      'md': Molecular dynamics.
+      'mc': Metropolis Monte Carlo.
     simdir (str): File path to simulation input file.
     plotout (str): File path to trajectory plot output file.
     energyin (str): File path to input file with energy trajectory data.
@@ -421,7 +423,7 @@ class Analysis:
   def __init__(self, infile_name):
     self.infile = os.path.realpath(infile_name)
     self.indir = os.path.dirname(self.infile)
-    self.pdict = property_dict()
+    self.pdict = _PropertyDict()
 
     self.simtype = ''
     self.simfile = ''
@@ -432,41 +434,40 @@ class Analysis:
     self.percent_start = 0.0
     self.percent_stop = 100.0
 
-    self.read_in_data()
+    self.ReadInData()
 
-  def read_in_data(self):
+  def ReadInData(self):
     """Read in input parameters from input file."""
-    fileio.get_analysis_data(self)
-    self.read_in_files()
-    self.read_in_prop()
+    fileio.GetAnalysisData(self)
+    self._ReadInFiles()
+    self._ReadInProp()
 
-  def read_in_files(self):
+  def _ReadInFiles(self):
     """Read in property and trajectory file names from input file."""
     cwd = os.getcwd()
     os.chdir(self.simdir)
-    self.sim = simulate.Simulation(self.simfile)
+    sim = simulate.Simulation(self.simfile)
     os.chdir(cwd)
-    self.energyin = self.sim.energyout
-    self.geomin = self.sim.geomout
-    self.name = self.sim.mol.name
-    delattr(self, 'sim')
+    self.energyin = sim.energyout
+    self.geomin = sim.geomout
+    self.name = sim.mol.name
 
-  def read_in_prop(self):
+  def _ReadInProp(self):
     """Read in molecular properties from simulation energy file."""
-    self.prop = fileio.get_properties(self.energyin)
+    self.prop = fileio.GetProperties(self.energyin)
   
-  def read_in_geom(self):
+  def _ReadInGeom(self):
     """Read in molecular trajectory from simulation geometry file."""
-    self.traj = fileio.get_trajectory(self.geomin)
+    self.traj = fileio.GetTrajectory(self.geomin)
 
-  def run_analysis(self):
+  def RunAnalysis(self):
     """Plot dynamic energy data and print expectation values."""
     self.tplt = TrajectoryPlot(self)
-    self.tplt.make_plot()
-    self.get_energy_stats()
-    fileio.print_averages(self)
+    self.tplt.MakePlot()
+    self._GetEnergyStats()
+    fileio.PrintAverages(self)
 
-  def get_energy_stats(self):
+  def _GetEnergyStats(self):
     """Compute average, stdev, min, and max of each energy term."""
     self.eavg = {}
     self.estd = {}

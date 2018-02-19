@@ -1,5 +1,8 @@
-import os, sys
+import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 import mmlib
 
 #############################################################################
@@ -17,13 +20,10 @@ import mmlib
 #############################################################################
 
 # check input syntax
-infile_name = mmlib.fileio.get_input()
+infile_name = mmlib.fileio.GetInput()
 
 # read in ensemble geometry and energy data
 ana = mmlib.analyze.Analysis(infile_name)
 
 # compute and plot ensemble properties
-ana.run_analysis()
-
-# end of program
-
+ana.RunAnalysis()

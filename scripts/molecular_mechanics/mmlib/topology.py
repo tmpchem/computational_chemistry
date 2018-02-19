@@ -11,11 +11,11 @@ from mmlib import geomcalc
 from mmlib import molecule
 from mmlib import param
 
-def bond_threshold():
+def _BondThreshold():
   """Threshold beyond covalent radii sum to determine bond cutoff."""
   return 1.2
 
-def get_bond_graph(mol):
+def GetBondGraph(mol):
   """Build graph of which atoms are covalently bonded and bond lengths.
   
   Search all atom pairs to find those within a threshold of the sum of the
@@ -30,19 +30,19 @@ def get_bond_graph(mol):
         geometry and mm parameter data.
   """
   mol.bond_graph = [{} for i in range(mol.n_atoms)]
-  bond_thresh = bond_threshold()
+  bond_thresh = _BondThreshold()
   for i in range(mol.n_atoms):
     at1 = mol.atoms[i]
     for j in range(i+1, mol.n_atoms):
       at2 = mol.atoms[j]
       thresh = bond_thresh * (at1.covrad + at2.covrad)
-      r2_12 = geomcalc.get_r2_ij(at1.coords, at2.coords)
+      r2_12 = geomcalc.GetR2ij(at1.coords, at2.coords)
       if (r2_12 < thresh**2):
         r_12 = math.sqrt(r2_12)
         mol.bond_graph[i][j] = r_12
         mol.bond_graph[j][i] = r_12
 
-def get_bonds(mol):
+def GetBonds(mol):
   """Determine covalently bonded atoms from bond graph and get parameters.
   
   Search bond graph for bonded atom pairs, and parameter tables for mm
@@ -58,14 +58,14 @@ def get_bonds(mol):
       at2 = mol.atoms[j]
       if (i >= j):
         r_ij = mol.bond_graph[i][j]
-        k_b, r_eq = param.get_bond_param(at1.type, at2.type)
+        k_b, r_eq = param.GetBondParam(at1.type, at2.type)
         if (k_b > 0.0):
           mol.bonds.append(molecule.Bond(i, j, r_ij, r_eq, k_b))
   mol.bonds = sorted(mol.bonds, key=lambda b:b.at2)
   mol.bonds = sorted(mol.bonds, key=lambda b:b.at1)
   mol.n_bonds = len(mol.bonds)
 
-def get_angles(mol):
+def GetAngles(mol):
   """Determine bond angle atom triplets from bond graph and get parameters.
   
   Search bond graph for bond angle triplets, and parameter tables for mm
@@ -86,9 +86,8 @@ def get_angles(mol):
           continue
         at3 = mol.atoms[k]
         r_jk = mol.bond_graph[j][k]
-        a_ijk = geomcalc.get_a_ijk(
-            at1.coords, at2.coords, at3.coords, r_ij, r_jk)
-        k_a, a_eq = param.get_angle_param(at1.type, at2.type, at3.type)
+        a_ijk = geomcalc.GetAijk(at1.coords, at2.coords, at3.coords, r_ij, r_jk)
+        k_a, a_eq = param.GetAngleParam(at1.type, at2.type, at3.type)
         if (k_a > 0.0):
             mol.angles.append(molecule.Angle(i, j, k, a_ijk, a_eq, k_a))
   mol.angles = sorted(mol.angles, key=lambda a:a.at3)
@@ -96,7 +95,7 @@ def get_angles(mol):
   mol.angles = sorted(mol.angles, key=lambda a:a.at1)
   mol.n_angles = len(mol.angles)
     
-def get_torsions(mol):
+def GetTorsions(mol):
   """Determine torsion angle atom quartets and parameters from bond graph.
   
   Search bond graph for torsion angle quartets, and parameter tables for mm
@@ -124,10 +123,9 @@ def get_torsions(mol):
             continue
           at4 = mol.atoms[l]
           r_kl = mol.bond_graph[k][l]
-          t_ijkl = geomcalc.get_t_ijkl(at1.coords, at2.coords, at3.coords,
-                                       at4.coords, r_ij, r_jk, r_kl)
-          params = param.get_torsion_param(at1.type, at2.type, at3.type,
-                                           at4.type)
+          t_ijkl = geomcalc.GetTijkl(at1.coords, at2.coords, at3.coords,
+                                     at4.coords, r_ij, r_jk, r_kl)
+          params = param.GetTorsionParam(at1.type, at2.type, at3.type, at4.type)
           for p in range(len(params)):
               v_n, gamma, nfold, paths = params[p]
               if (v_n > 0.0):
@@ -139,7 +137,7 @@ def get_torsions(mol):
   mol.torsions = sorted(mol.torsions, key=lambda t:t.at1)
   mol.n_torsions = len(mol.torsions)
 
-def get_outofplanes(mol):
+def GetOutofplanes(mol):
   """Determine outofplane atom quartets and parameters from bond graph.
   
   Search bond graph for outofplane angle quartets, and parameter tables for mm
@@ -167,10 +165,9 @@ def get_outofplanes(mol):
             continue
           at2 = mol.atoms[j]
           r32 = mol.bond_graph[k][j]
-          o_ijkl = geomcalc.get_o_ijkl(at1.coords, at2.coords, at3.coords,
-                                       at4.coords, r31, r32, r34)
-          v_n = param.get_outofplane_param(at1.type, at2.type, at3.type,
-                                           at4.type)
+          o_ijkl = geomcalc.GetOijkl(at1.coords, at2.coords, at3.coords,
+                                     at4.coords, r31, r32, r34)
+          v_n = param.GetOutofplaneParam(at1.type, at2.type, at3.type, at4.type)
           if (v_n > 0.0):
             mol.outofplanes.append(molecule.Outofplane(i, j, k, l, o_ijkl, v_n))
   mol.outofplanes = sorted(mol.outofplanes, key=lambda o:o.at4)
@@ -179,7 +176,7 @@ def get_outofplanes(mol):
   mol.outofplanes = sorted(mol.outofplanes, key=lambda o:o.at1)
   mol.n_outofplanes = len(mol.outofplanes)
 
-def get_nonints(mol):
+def GetNonints(mol):
   """Determine which atomic pairs have bonded interactions.
   
   If two atoms belong to a mutual bond, angle, and/or torsion, then they are
@@ -206,7 +203,7 @@ def get_nonints(mol):
     mol.nonints[t.at1].add(t.at4)
     mol.nonints[t.at4].add(t.at1)
 
-def update_bonds(mol):
+def UpdateBonds(mol):
   """Update all bond lengths [Angstrom] within a molecule object.
   
   Args:
@@ -216,11 +213,11 @@ def update_bonds(mol):
     b = mol.bonds[p]
     c1 = mol.atoms[b.at1].coords
     c2 = mol.atoms[b.at2].coords
-    b.r_ij = geomcalc.get_r_ij(c1, c2)
+    b.r_ij = geomcalc.GetRij(c1, c2)
     mol.bond_graph[b.at1][b.at2] = b.r_ij
     mol.bond_graph[b.at2][b.at1] = b.r_ij
 
-def update_angles(mol):
+def UpdateAngles(mol):
   """Update all bond angles [degrees] within a molecule object.
   
   Args:
@@ -233,9 +230,9 @@ def update_angles(mol):
     c1 = mol.atoms[a.at1].coords
     c2 = mol.atoms[a.at2].coords
     c3 = mol.atoms[a.at3].coords
-    a.a_ijk = geomcalc.get_a_ijk(c1, c2, c3, r12, r23)
+    a.a_ijk = geomcalc.GetAijk(c1, c2, c3, r12, r23)
 
-def update_torsions(mol):
+def UpdateTorsions(mol):
   """Update all torsion angles [degrees] within a molecule object.
   
   Args:
@@ -250,9 +247,9 @@ def update_torsions(mol):
     c2 = mol.atoms[t.at2].coords
     c3 = mol.atoms[t.at3].coords
     c4 = mol.atoms[t.at4].coords
-    t.t_ijkl = geomcalc.get_t_ijkl(c1, c2, c3, c4, r12, r23, r34)
+    t.t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4, r12, r23, r34)
 
-def update_outofplanes(mol):
+def UpdateOutofplanes(mol):
   """Update all outofplane angles [degrees] within a molecule object.
   
   Args:
@@ -267,4 +264,4 @@ def update_outofplanes(mol):
     c2 = mol.atoms[o.at2].coords
     c3 = mol.atoms[o.at3].coords
     c4 = mol.atoms[o.at4].coords
-    o.o_ijkl = geomcalc.get_o_ijkl(c1, c2, c3, c4, r31, r32, r34)
+    o.o_ijkl = geomcalc.GetOijkl(c1, c2, c3, c4, r31, r32, r34)

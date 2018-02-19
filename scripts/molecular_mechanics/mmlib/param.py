@@ -281,7 +281,7 @@ oop1234_params = {
     ('NA','CW','CC','CT'): 1.1, ('NA','NC','CA','N2'): 1.1,
     ('NB','CW','CC','CT'): 1.1}
 
-def get_vdw_param(at_type):
+def GetVdwParam(at_type):
   """Find van der waals parameter for specified AMBER mm atom type.
   
   Args:
@@ -297,7 +297,7 @@ def get_vdw_param(at_type):
     sys.exit()
   return vdw
 
-def get_at_mass(element):
+def GetAtMass(element):
   """Find the mass of an atom of a given element (periodic table avg).
   
   Args:
@@ -313,7 +313,7 @@ def get_at_mass(element):
     sys.exit()
   return at_mass
 
-def get_cov_rad(element):
+def GetCovRad(element):
   """Find the covalent radius of an atom of a given element.
   
   Args:
@@ -329,7 +329,7 @@ def get_cov_rad(element):
     sys.exit()
   return cov_rad
 
-def get_bond_param(at1_type, at2_type):
+def GetBondParam(at1_type, at2_type):
   """Find bond parameters for 2 AMBER94 mm atom types.
   
   Args:
@@ -352,7 +352,7 @@ def get_bond_param(at1_type, at2_type):
     sys.exit()
   return bond
 
-def get_angle_param(at1_type, at2_type, at3_type):
+def GetAngleParam(at1_type, at2_type, at3_type):
   """Find angle parameters for 3 AMBER94 mm atom types.
   
   Args:
@@ -377,7 +377,7 @@ def get_angle_param(at1_type, at2_type, at3_type):
     sys.exit()
   return angle
 
-def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
+def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
   """Find torsion parameters for 4 AMBER94 mm atom types:
   
   Args:
@@ -418,7 +418,7 @@ def get_torsion_param(at1_type, at2_type, at3_type, at4_type):
 
   return torsion
 
-def get_outofplane_param(at1_type, at2_type, at3_type, at4_type):
+def GetOutofplaneParam(at1_type, at2_type, at3_type, at4_type):
   """Find outofplane parameters for 4 AMBER94 mm atom types:
     
   Args:

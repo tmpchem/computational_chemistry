@@ -13,15 +13,15 @@ import time
 from mmlib import energy
 from mmlib import fileio
 
-def rgas():
+def Rgas():
   """Gas constant in unit of [amu*A^2/(ps^2*K)]."""
   return 0.83144598
 
-def acc_conv():
+def AccConv():
   """Conversion of acceleration from [kcal/(A*g) to [A/(ps^2)]."""
   return 418.400000
 
-def property_keys():
+def PropertyKeys():
   """Physical property keys for output file data labels."""
   pkeys = [
       'e_total', 'e_kin', 'e_pot', 'e_nonbond', 'e_bonded', 'e_boundary',
@@ -79,18 +79,19 @@ class Simulation:
     self.gprintdig = 3
     self.gprintchar = 7
 
-    self.read_in_data()
+    self.ReadInData()
 
-  def read_in_data(self):
+  def ReadInData(self):
     """Read in simulation data from input file."""
-    fileio.get_sim_data(self)
-    self.temp += 1.0 * 10**-20
+    fileio.GetSimData(self)
+    # zero divison error workaround
+    self.temp += 1.0E-20
 
-  def open_output_files(self):
+  def _OpenOutputFiles(self):
     """Open output files for energy and geometry data printing."""
     self.gfile = open(self.geomout, "w")
     self.efile = open(self.energyout, "w")
-    self.print_energy_header()
+    self._PrintEnergyHeader()
     self.stime = time.time()
     if (self.simtype == 'md'):
       self.gtime = 10**-10
@@ -100,28 +101,28 @@ class Simulation:
       self.econf = 0
       self.dconf = 0
 
-  def close_output_files(self):
+  def _CloseOutputFiles(self):
     """Close output files for energy and geometry data printing."""
-    self.print_status()
+    self._PrintStatus()
     self.gfile.close()
     self.efile.close()
 
-  def flush_buffers(self):
+  def _FlushBuffers(self):
     """Flush buffers to output files and screen output."""
     self.gfile.flush()
     self.efile.flush()
     sys.stdout.flush()
 
-  def print_geom(self):
+  def _PrintGeom(self):
     """Print xyz-format geometry of system to trajectory file."""
     if (self.simtype == 'md'):
       pstr = '%.4f ps' % (self.time)
     elif (self.simtype == 'mc'):
       pstr = 'conf %i' % (self.conf)
-    fileio.print_coords_file(
+    fileio.PrintCoordsFile(
         self.gfile, self.mol, pstr, self.gprintchar, self.gprintdig)
 
-  def print_val(self, totstr, decstr, val, ptype='f', n_space=1):
+  def _PrintVal(self, totstr, decstr, val, ptype='f', n_space=1):
     """Write specified file to energy output file in indicated format.
     
     Args:
@@ -138,7 +139,7 @@ class Simulation:
     elif (ptype == 'e'):
       self.efile.write('%*s%*.*e' % (n_space, '', totstr, decstr, val))
 
-  def print_e_terms(self, totstr, decstr, ptype):
+  def _PrintETerms(self, totstr, decstr, ptype):
     """Write energy terms at current configuration to energy file.
     
     Args:
@@ -152,19 +153,19 @@ class Simulation:
     if (self.simtype == 'mc'):
       eterms = eterms[2:]
     for i in range(len(eterms)):
-      self.print_val(totstr, decstr, eterms[i], ptype)
+      self._PrintVal(totstr, decstr, eterms[i], ptype)
 
-  def print_energy(self):
+  def _PrintEnergy(self):
     """Print energy data to energy output file, depending on simtype"""
     if (self.simtype == 'md'):
-      self.print_val(self.tprintchar, self.tprintdig, self.time, 'f', 0)
+      self._PrintVal(self.tprintchar, self.tprintdig, self.time, 'f', 0)
     elif (self.simtype == 'mc'):
-      self.print_val(self.cprintchar, 0, self.conf, 'f', 0)
-    self.print_val(self.eprintchar+2, self.eprintdig+2, self.mol.e_total, 'e')
-    self.print_e_terms(self.eprintchar, self.eprintdig, 'e')
+      self._PrintVal(self.cprintchar, 0, self.conf, 'f', 0)
+    self._PrintVal(self.eprintchar+2, self.eprintdig+2, self.mol.e_total, 'e')
+    self._PrintETerms(self.eprintchar, self.eprintdig, 'e')
     self.efile.write('\n')
 
-  def print_status(self):
+  def _PrintStatus(self):
     """Print completion progress of simulation to screen"""
     if (self.simtype == 'md'):
       print('%.*f/%.*f ps' % (self.tprintdig, self.time, self.tprintdig, 
@@ -172,7 +173,7 @@ class Simulation:
     elif (self.simtype == 'mc'):
         print('%i/%i confs' % (self.conf, self.totconf), end='')
     print(' as of %s' % (time.strftime('%H:%M:%S')))
-    self.flush_buffers()
+    self._FlushBuffers()
 
 
 class MolecularDynamics(Simulation):
@@ -213,7 +214,7 @@ class MolecularDynamics(Simulation):
     self.tprintdig = 4
     self.tprintchar = 7
 
-  def run(self):
+  def Run(self):
     """Run molecular dynamics according to simulation parameters.
     
     For every timestep, compute the potential energy and gradient of the system.
@@ -221,27 +222,27 @@ class MolecularDynamics(Simulation):
     in time. Print molecular geometry and/or energy data to output files as
     desired. Run until total time reached.
     """
-    self.open_output_files()
-    self.initialize_vels()
-    self.mol.get_energy('standard')
-    self.mol.get_gradient('analytic')
-    self.update_accs()
-    self.check_print(0.0, True)
-    self.update_vels(0.5*self.timestep)
+    self._OpenOutputFiles()
+    self._InitializeVels()
+    self.mol.GetEnergy('standard')
+    self.mol.GetGradient('analytic')
+    self._UpdateAccs()
+    self._CheckPrint(0.0, True)
+    self._UpdateVels(0.5*self.timestep)
     while (self.time < self.tottime):
-      self.update_coords(self.timestep)
-      self.mol.get_gradient('analytic')
-      self.update_accs()
-      self.update_vels(self.timestep)
-      self.mol.get_energy('leapfrog')
+      self._UpdateCoords(self.timestep)
+      self.mol.GetGradient('analytic')
+      self._UpdateAccs()
+      self._UpdateVels(self.timestep)
+      self.mol.GetEnergy('leapfrog')
       if (self.time < self.eqtime):
-        self.equilibrate_temp()
-      self.check_print(self.timestep)
+        self._EquilibrateTemp()
+      self._CheckPrint(self.timestep)
       self.time += self.timestep
-    self.check_print(self.timestep)
-    self.close_output_files()
+    self._CheckPrint(self.timestep)
+    self._CloseOutputFiles()
 
-  def initialize_vels(self):
+  def _InitializeVels(self):
     """Initialize atomic velocities depending on temperature.
     
     Selects random velocities [Angstrom/ps] from Gaussian distribution
@@ -252,17 +253,17 @@ class MolecularDynamics(Simulation):
     if (self.temp > 0.0):
       self.etemp = self.temp
       numpy.random.seed(self.random_seed)
-      sigma_base = math.sqrt(2.0 * rgas() * self.temp / 3.0)
+      sigma_base = math.sqrt(2.0 * Rgas() * self.temp / 3.0)
       for i in range(self.mol.n_atoms):
         sigma = sigma_base * self.mol.atoms[i].mass**(-0.5)
         self.mol.atoms[i].vels = numpy.random.normal(0.0, sigma, 3)
-      self.mol.get_energy('standard')
+      self.mol.GetEnergy('standard')
       vscale = math.sqrt(self.temp / self.mol.temp)
       for i in range(self.mol.n_atoms):
         for j in range(3):
           self.mol.atoms[i].vels[j] *= vscale
 
-  def equilibrate_temp(self):
+  def _EquilibrateTemp(self):
     """Adjust velocities to equilibrate energy to set temperature.
     
     Computes exponential moving average of kinetic temperature and compares it
@@ -277,7 +278,7 @@ class MolecularDynamics(Simulation):
       for j in range(3):
         self.mol.atoms[i].vels[j] *= velscale
 
-  def update_accs(self):
+  def _UpdateAccs(self):
     """Update accelerations of atoms [Angstrom/(ps^2)].
     
     Force is the negative gradient of the potential energy. Find
@@ -287,9 +288,9 @@ class MolecularDynamics(Simulation):
       mass = self.mol.atoms[i].mass
       for j in range(3):
         self.mol.atoms[i].paccs[j] = self.mol.atoms[i].accs[j]
-        self.mol.atoms[i].accs[j] = -acc_conv() * self.mol.g_total[i][j] / mass
+        self.mol.atoms[i].accs[j] = -AccConv() * self.mol.g_total[i][j] / mass
 
-  def update_vels(self, dt):
+  def _UpdateVels(self, dt):
     """Update velocities of atoms [Angstrom/ps].
     
     Acceleration is the derivative of velocity with respect to time.
@@ -303,7 +304,7 @@ class MolecularDynamics(Simulation):
         self.mol.atoms[i].pvels[j] = self.mol.atoms[i].vels[j]
         self.mol.atoms[i].vels[j] += self.mol.atoms[i].accs[j] * dt
 
-  def update_coords(self, dt):
+  def _UpdateCoords(self, dt):
     """Update coordinates of atoms [Angstrom].
     
     Velocity is the derivative of position with respect to time. Find
@@ -315,9 +316,9 @@ class MolecularDynamics(Simulation):
     for i in range(self.mol.n_atoms):
       for j in range(3):
         self.mol.atoms[i].coords[j] += self.mol.atoms[i].vels[j] * dt
-    self.mol.update_internals()
+    self.mol.UpdateInternals()
 
-  def check_print(self, timestep, print_all=False):
+  def _CheckPrint(self, timestep, print_all=False):
     """Check if printing of various md data is needed at current time.
     
     Args:
@@ -325,18 +326,18 @@ class MolecularDynamics(Simulation):
       print_all (bool): Print regardless of time status.
     """
     if (print_all or self.etime >= self.energytime):
-      self.print_energy()
+      self._PrintEnergy()
       self.etime = 10**-10
     if (print_all or self.gtime >= self.geomtime):
-      self.print_geom()
+      self._PrintGeom()
       self.gtime = 10**-10
     if (print_all or time.time() - self.stime > self.statustime):
-      self.print_status()
+      self._PrintStatus()
       self.stime = time.time()
     self.etime += timestep
     self.gtime += timestep
 
-  def print_energy_header(self):
+  def _PrintEnergyHeader(self):
     """Print header of energy output columns to file."""
     e = self.efile
     e.write('#\n# INPUTFILE %s' % (self.infile))
@@ -379,7 +380,7 @@ class MonteCarlo(Simulation):
     totconf (int): Total number of configurations.
     conf (int): Current configuration number.
     dispmag (float): Magnitude of average random displacement [Angstrom].
-    dispinc (float): Rate constant for `dispmag` adjustment.
+    dispinc (float): Rate constant for 'dispmag' adjustment.
     n_accept (int): Number of accepted MMC trials.
     n_reject (int): Number of rejected MMC trials.
     dispconf (int): Number of configurations between adjusting 'dispmag' value.
@@ -403,7 +404,7 @@ class MonteCarlo(Simulation):
     self.rand_disp = numpy.zeros((self.mol.n_atoms, 3))
     self.cprintchar = 7
 
-  def run(self):
+  def Run(self):
     """Run Metropolis Monte-Carlo according to simulation parameters.
     
     For every configuration, compute the potential energy and compare to the
@@ -412,35 +413,35 @@ class MonteCarlo(Simulation):
     displacement to seek 50% acceptance. Print molecular geometry and/or energy
     data to output files as desired. Run until total configurations reached.
     """
-    self.open_output_files()
-    self.zero_vels()
+    self._OpenOutputFiles()
+    self._ZeroVels()
     numpy.random.seed(self.random_seed)
-    self.mol.get_energy('standard')
-    self.check_print(0, True)
+    self.mol.GetEnergy('standard')
+    self._CheckPrint(0, True)
     penergy = self.mol.e_total
     while (self.conf < self.totconf):
-      self.get_rand_disp()
-      self.disp_coords(self.rand_disp)
-      self.mol.get_energy('standard')
+      self._GetRandDisp()
+      self._DispCoords(self.rand_disp)
+      self.mol.GetEnergy('standard')
       delta_e = self.mol.e_total - penergy
-      bf = math.exp(min(1.0, -1.0*delta_e / (energy.kb()*self.temp)))
+      bf = math.exp(min(1.0, -1.0*delta_e / (energy.Kb()*self.temp)))
       if (bf >= numpy.random.random()):
-        self.check_print(1)
+        self._CheckPrint(1)
         self.conf += 1
         self.n_accept += 1
         penergy = self.mol.e_total
       else:
-        self.disp_coords(-1.0*self.rand_disp)
+        self._DispCoords(-1.0*self.rand_disp)
         self.n_reject += 1
-      self.check_disp()
-    self.check_print(0)
-    self.close_output_files()
+      self._CheckDisp()
+    self._CheckPrint(0)
+    self._CloseOutputFiles()
 
-  def get_rand_disp(self):
+  def _GetRandDisp(self):
     """Generate random displacment vector for coordinates.
     
     Random trial displacements for MMC are selected from a Gaussian distribution
-    of mu = 0.0 and sigma = `dispmag` attribute for all 3N atomic coordinates.
+    of mu = 0.0 and sigma = 'dispmag' attribute for all 3N atomic coordinates.
     """
     self.rand_disp.fill(0.0)
     for i in range(self.mol.n_atoms):
@@ -448,13 +449,13 @@ class MonteCarlo(Simulation):
         randval = numpy.random.normal(0.0, self.dispmag)
         self.rand_disp[i][j] = numpy.random.normal(0.0, self.dispmag)
 
-  def zero_vels(self):
+  def _ZeroVels(self):
     """Set all 3N atomic velocity components to zero."""
     for i in range(self.mol.n_atoms):
       for j in range(3):
         self.mol.atoms[i].vels[j] = 0.0
 
-  def disp_coords(self, disp_vector):
+  def _DispCoords(self, disp_vector):
     """Displace all 3N atomic coordinates by specified vector.
     
     Args:
@@ -463,9 +464,9 @@ class MonteCarlo(Simulation):
     for i in range(self.mol.n_atoms):
       for j in range(3):
         self.mol.atoms[i].coords[j] += disp_vector[i][j]
-    self.mol.update_internals()
+    self.mol.UpdateInternals()
 
-  def changedisp(self):
+  def _ChangeDisp(self):
     """Change root-mean-square magnitude of displacement vector.
     
     The MMC random displacement vector has mu = 0.0, and sigma = 'dispmag'
@@ -476,7 +477,7 @@ class MonteCarlo(Simulation):
     self.n_accept, self.n_reject = 0, 0
     self.dispmag *= math.exp(2.0 * self.dispinc * (p_accept - 0.5))
 
-  def check_print(self, n_conf, print_all=False):
+  def _CheckPrint(self, n_conf, print_all=False):
     """Check if printing of various mc data is need at current time.
     
     Args:
@@ -484,25 +485,25 @@ class MonteCarlo(Simulation):
       print_all (bool): Print regardless of configuration status.
     """
     if (print_all or self.econf >= self.energyconf):
-      self.print_energy()
+      self._PrintEnergy()
       self.econf = 0
     if (print_all or self.gconf >= self.geomconf):
-      self.print_geom()
+      self._PrintGeom()
       self.gconf = 0
     if (print_all or time.time() - self.stime > self.statustime):
-      self.print_status()
+      self._PrintStatus()
       self.stime = time.time()
     self.econf += n_conf
     self.gconf += n_conf
 
-  def check_disp(self):
+  def _CheckDisp(self):
     """Check if changing magnitude of random displacment vector needed."""
     if (self.dconf >= self.dispconf):
-      self.changedisp()
+      self._ChangeDisp()
       self.dconf = 0
     self.dconf += 1
 
-  def print_energy_header(self):
+  def _PrintEnergyHeader(self):
     """Print header of energy output columns to file."""
     e = self.efile
     e.write('#\n# INPUTFILE %s' % (self.infile))
