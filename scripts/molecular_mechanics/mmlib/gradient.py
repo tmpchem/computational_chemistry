@@ -431,7 +431,7 @@ def GetPressure(mol):
   """
   _GetVirial(mol)
   pv = mol.n_atoms * energy.Kb() * mol.temp
-  pv += mol.virial / (3.0 * mol.n_atoms)
+  pv += mol.virial / 3.0
   mol.press = KcalAMol2Pa() * pv / mol.vol
 
 def GetGNumerical(mol):
