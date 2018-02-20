@@ -542,8 +542,8 @@ class Molecule:
     elif (grad_type == 'numerical'):
       self.GetNumericalGradient()
     else:
-      print('Error: grad type (%s) not recognized!' % (grad_type))
-      sys.exit()
+      raise ValueError('Unexpected gradient type: %s\n'
+                       'Use \'analytic\' or \'numerical\'.' % (grad_type))
 
   def GetAnalyticGradient(self):
     """Calculate analytic (float**) gradient [kcal/(mol*A)] of energy."""

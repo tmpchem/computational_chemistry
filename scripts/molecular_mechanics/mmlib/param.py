@@ -293,8 +293,7 @@ def GetVdwParam(at_type):
   if at_type in vdw_params:
     return vdw_params[at_type]
   else:
-    print('Error: atom type (%s) not found!' % (at_type))
-    sys.exit()
+    raise ValueError('No vdw param found for atom type: %s' % (at_type))
 
 def GetAtMass(element):
   """Find the mass of an atom of a given element (periodic table avg).
@@ -308,8 +307,7 @@ def GetAtMass(element):
   if element in at_masses:
     return at_masses[element]
   else:
-    print('Error: atomic mass for element (%s) not found!' % (element))
-    sys.exit()
+    raise ValueError('No atomic mass found for element: %s' % (elemnt))
 
 def GetCovRad(element):
   """Find the covalent radius of an atom of a given element.
@@ -323,8 +321,7 @@ def GetCovRad(element):
   if element in cov_radii:
     return cov_radii[element]
   else:
-    print('Error: covalent radius for element (%s) not found!' % (element))
-    sys.exit()
+    raise ValueError('No covalent radius found for element: %s' % (element))
 
 def GetBondParam(at1_type, at2_type):
   """Find bond parameters for 2 AMBER94 mm atom types.
@@ -345,8 +342,8 @@ def GetBondParam(at1_type, at2_type):
   elif b21_types in bond_params:
     return bond_params[b21_types]
   else:
-    print('Error: bond type (%s, %s) not recognized!' % (at1_type, at2_type))
-    sys.exit()
+    raise ValueError('No bond parameters found for atom type pair: '
+                     '%s, %s' % (at1_type, at2_type))
 
 def GetAngleParam(at1_type, at2_type, at3_type):
   """Find angle parameters for 3 AMBER94 mm atom types.
@@ -368,9 +365,8 @@ def GetAngleParam(at1_type, at2_type, at3_type):
   elif a321_types in angle_params:
     return angle_params[a321_types]
   else:
-    print('Error: angle type (%s, %s, %s) not recognized!' % (
-        at1_type, at2_type, at3_type))
-    sys.exit()
+    raise ValueError('No angle parameters found for atom type triplet: '
+                     '%s, %s, %s' % (at1_type, at2_type, at3_type))
 
 def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
   """Find torsion parameters for 4 AMBER94 mm atom types:
@@ -397,8 +393,8 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
     t23 = torsion23_params[t32_types]
     torsion.append(t23)
   else:
-    print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type, at3_type))
-    sys.exit()
+    raise ValueError('No torsion parameters found for central atom pair: '
+                     '%s, %s' % (at2_type, at3_type))
 
   # four-atom torsion potentials if found
   t1234_types = (at1_type, at2_type, at3_type, at4_type)

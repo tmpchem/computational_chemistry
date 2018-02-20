@@ -33,8 +33,9 @@ def _GetFileStringArray(infile_name):
     (str**): Contents of text file as an array of arrays of strings
   """
   if not os.path.exists(infile_name):
-    print('Error: file (%s) does not exist!' % (infile_name))
-    sys.exit()
+    raise ValueError(
+        'attempted to read from file which does not exist: %s' % (infile_name))
+  
   infile = open(infile_name, 'r')
   infile_data = infile.readlines()
   infile.close()

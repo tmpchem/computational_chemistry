@@ -184,8 +184,8 @@ class Optimization:
     elif opt_type == 'cg':
       self._GetCGStepDir()
     else:
-      print('Error: optimization type (%s) not recognized!' % (opt_type))
-      sys.exit()
+      raise ValueError('Unexpected optimization type: %s\n'
+                       'Use \'sd\' or \'cg\'.' % (opt_type))
 
   def GetSDStepDir(self):
     """Steepest descent optimization step direction vector."""
