@@ -9,17 +9,10 @@ mmlib.molecule.Molecule objects.
 import numpy
 import math
 
+from mmlib import constants
 from mmlib import energy
 from mmlib import geomcalc
 from mmlib import molecule
-
-def _NumDisp():
-  """Displacement distance [Angstrom] for numerical gradient."""
-  return 1.0 * 10**-6
-
-def KcalAMol2Pa():
-  """Conversion from [kcal*A^3/mol] to [Pa] for pressure."""
-  return 69476.95
 
 def GetGBond(r_ij, r_eq, k_b):
   """Calculate energy gradient magnitude of bond stretch.
@@ -46,7 +39,7 @@ def GetGAngle(a_ijk, a_eq, k_a):
   Returns:
     g_angle (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_angle = 2.0 * k_a * (geomcalc.Deg2Rad() * (a_ijk - a_eq) )
+  g_angle = 2.0 * k_a * (constants.DEG2RAD * (a_ijk - a_eq) )
   return g_angle
 
 def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
@@ -63,7 +56,7 @@ def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
     g_torsion (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   g_torsion = -v_n * n_fold * math.sin(
-      geomcalc.Deg2Rad() * (n_fold * t_ijkl - gamma)) / paths
+      constants.DEG2RAD * (n_fold * t_ijkl - gamma)) / paths
   return g_torsion
 
 def GetGOutofplane(o_ijkl, v_n):
@@ -77,7 +70,7 @@ def GetGOutofplane(o_ijkl, v_n):
     g_outofplane (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   g_outofplane = (
-      -v_n * 2.0 * math.sin(geomcalc.Deg2Rad() * (2.0 * o_ijkl - 180.0)))
+      -2.0 * v_n * math.sin(constants.DEG2RAD * (2.0 * o_ijkl - 180.0)))
   return g_outofplane
 
 def GetGVdwIJ(r_ij, eps_ij, ro_ij):
@@ -107,7 +100,7 @@ def GetGElstIJ(r_ij, q_i, q_j, epsilon):
   Returns:
     e_elst_ij (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_elst_ij = -energy.Ceu2Kcal() * ( q_i * q_j ) / ( epsilon * r_ij**2 )
+  g_elst_ij = -constants.CEU2KCAL * q_i * q_j / (epsilon * r_ij**2)
   return g_elst_ij
 
 def GetGBoundI(k_box, bound, coord, origin, boundtype):
@@ -208,10 +201,10 @@ def GetGdirTorsion(coords1, coords2, coords3, coords4, r_12=None,
   u_32 = -1.0 * u_23
   a_123 = geomcalc.GetAijk(coords1, coords2, coords3, r_12, r_23)
   a_432 = geomcalc.GetAijk(coords4, coords3, coords2, r_34, r_23)
-  s_123 = math.sin(geomcalc.Deg2Rad() * a_123)
-  s_432 = math.sin(geomcalc.Deg2Rad() * a_432)
-  c_123 = math.cos(geomcalc.Deg2Rad() * a_123)
-  c_432 = math.cos(geomcalc.Deg2Rad() * a_432)
+  s_123 = math.sin(constants.DEG2RAD * a_123)
+  s_432 = math.sin(constants.DEG2RAD * a_432)
+  c_123 = math.cos(constants.DEG2RAD * a_123)
+  c_432 = math.cos(constants.DEG2RAD * a_432)
   gdir1 = geomcalc.GetUcp(u_21, u_23) / (r_12*s_123)
   gdir4 = geomcalc.GetUcp(u_34, u_32) / (r_34*s_432)
   gdir2 = (r_12/r_23*c_123 - 1.0)*gdir1 - (r_34/r_23*c_432)*gdir4
@@ -249,10 +242,10 @@ def GetGdirOutofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
   cp_3431 = geomcalc.GetCp(u_34, u_31)
   cp_3132 = geomcalc.GetCp(u_31, u_32)
   a_132 = geomcalc.GetAijk(coords1, coords3, coords2)
-  s_132 = math.sin(geomcalc.Deg2Rad() * a_132)
-  c_132 = math.cos(geomcalc.Deg2Rad() * a_132)
-  c_oop = math.cos(geomcalc.Deg2Rad() * oop)
-  t_oop = math.tan(geomcalc.Deg2Rad() * oop)
+  s_132 = math.sin(constants.DEG2RAD * a_132)
+  c_132 = math.cos(constants.DEG2RAD * a_132)
+  c_oop = math.cos(constants.DEG2RAD * oop)
+  t_oop = math.tan(constants.DEG2RAD * oop)
   gdir1 = ((1.0/r_31)*(cp_3234/(c_oop*s_132)
       - (t_oop/s_132**2)*(u_31 - c_132*u_32)))
   gdir2 = ((1.0/r_32)*(cp_3431/(c_oop*s_132)
@@ -430,9 +423,9 @@ def GetPressure(mol):
         virial data.
   """
   _GetVirial(mol)
-  pv = mol.n_atoms * energy.Kb() * mol.temp
+  pv = mol.n_atoms * constants.KB * mol.temp
   pv += mol.virial / 3.0
-  mol.press = KcalAMol2Pa() * pv / mol.vol
+  mol.press = constants.KCALAMOL2PA * pv / mol.vol
 
 def GetGNumerical(mol):
   """Update total numerical energy gradient [kcal/(mol*A)] of all atoms.
@@ -448,7 +441,7 @@ def GetGNumerical(mol):
   mol.g_vdw.fill(0.0)
   mol.g_elst.fill(0.0)
   mol.g_bound.fill(0.0)
-  disp = _NumDisp()
+  disp = constants.NUMDISP
   for i in range(mol.n_atoms):
     for j in range(3):
       q = mol.atoms[i].coords[j]

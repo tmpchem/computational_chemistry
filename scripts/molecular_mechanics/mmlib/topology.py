@@ -7,13 +7,10 @@ threshold of the sum of interatomic covalent radii.
 
 import math
 
+from mmlib import constants
 from mmlib import geomcalc
 from mmlib import molecule
 from mmlib import param
-
-def _BondThreshold():
-  """Threshold beyond covalent radii sum to determine bond cutoff."""
-  return 1.2
 
 def GetBondGraph(mol):
   """Build graph of which atoms are covalently bonded and bond lengths.
@@ -30,7 +27,7 @@ def GetBondGraph(mol):
         geometry and mm parameter data.
   """
   mol.bond_graph = [{} for i in range(mol.n_atoms)]
-  bond_thresh = _BondThreshold()
+  bond_thresh = constants.BONDTHRESHOLD
   for i in range(mol.n_atoms):
     at1 = mol.atoms[i]
     for j in range(i+1, mol.n_atoms):

@@ -7,13 +7,7 @@ distances, bond angles, torsion angles, outofplane angles, and system volume.
 import numpy
 import math
 
-def Rad2Deg():
-  """Conversion from radians to degrees."""
-  return 180.0 / math.pi
-
-def Deg2Rad():
-  """Conversion from degrees to radians."""
-  return math.pi / 180.0
+from mmlib import constants
 
 def GetR2ij(coords_i, coords_j):
   """Calculate square of distance between two 3d cartesian points.
@@ -141,7 +135,7 @@ def GetAijk(coords_i, coords_j, coords_k, r_ij=None, r_jk=None):
   u_ji = GetUij(coords_j, coords_i, r_ij)
   u_jk = GetUij(coords_j, coords_k, r_jk)
   dp_jijk = GetUdp(u_ji, u_jk)
-  a_ijk = Rad2Deg() * math.acos(dp_jijk)
+  a_ijk = constants.RAD2DEG * math.acos(dp_jijk)
   return a_ijk
 
 def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
@@ -166,7 +160,7 @@ def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
   u_kjkl = -GetUcp(u_jk, u_kl)
   dp_jijk_kjkl = GetUdp(u_jijk, u_kjkl)
   sign = 2.0*float(GetUdp(u_jijk, u_kl) <= 0.0) - 1.0
-  t_ijkl = Rad2Deg() * sign * math.acos(dp_jijk_kjkl)
+  t_ijkl = constants.RAD2DEG * sign * math.acos(dp_jijk_kjkl)
   return t_ijkl
 
 def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
@@ -190,7 +184,7 @@ def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
   u_kl = GetUij(coords_k, coords_l, r_kl)
   u_kikj = GetUcp(u_ki, u_kj)
   dp_kikj_kl = GetUdp(u_kikj, u_kl)
-  o_ijkl = Rad2Deg() * math.asin(dp_kikj_kl)
+  o_ijkl = constants.RAD2DEG * math.asin(dp_kikj_kl)
   return o_ijkl
 
 def GetVolume(mol):

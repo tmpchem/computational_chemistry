@@ -7,19 +7,8 @@ objects.
 """
 
 import math
+from mmlib import constants
 from mmlib import geomcalc
-
-def Ceu2Kcal():
-  """Conversion of electrostatic energy from [ceu] to [kcal/mol]."""
-  return 332.06375
-
-def Kin2Kcal():
-  """Conversion of kinetic energy from [amu*A^2/ps^2] to [kcal/mol]"""
-  return 0.00239005736
-
-def Kb():
-  """Boltzmann constant [kcal/(mol*K)]"""
-  return 0.001987204
 
 def GetEBond(r_ij, r_eq, k_b):
   """Calculate bond stretch energy between 2 bonded atoms.
@@ -46,7 +35,7 @@ def GetEAngle(a_ijk, a_eq, k_a):
   Returns:
     e_angle (float): Energy [kcal/mol] of angle ijk.
   """
-  e_angle = k_a * (geomcalc.Deg2Rad() * (a_ijk - a_eq) )**2
+  e_angle = k_a * (constants.DEG2RAD * (a_ijk - a_eq) )**2
   return e_angle
 
 def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
@@ -63,7 +52,7 @@ def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
     e_torsion (float): Energy [kcal/mol] of torsion ijkl.
   """
   e_torsion = v_n * (
-      1.0 + math.cos(geomcalc.Deg2Rad() * (nfold * t_ijkl - gamma))) / paths
+      1.0 + math.cos(constants.DEG2RAD * (nfold * t_ijkl - gamma))) / paths
   return e_torsion
 
 def GetEOutofplane(o_ijkl, v_n):
@@ -77,7 +66,7 @@ def GetEOutofplane(o_ijkl, v_n):
     e_outofplane (float): Energy [kcal/mol] of outofplane ijkl.
   """
   e_outofplane = (
-      v_n * (1.0 + math.cos(geomcalc.Deg2Rad() * (2.0 * o_ijkl - 180.0))))
+      v_n * (1.0 + math.cos(constants.DEG2RAD * (2.0 * o_ijkl - 180.0))))
   return e_outofplane
 
 def GetEVdwIJ(r_ij, eps_ij, ro_ij):
@@ -107,7 +96,7 @@ def GetEElstIJ(r_ij, q_i, q_j, epsilon):
   Returns:
     e_elst_ij (float): Electrostatic energy [kcal/mol] between pair ij.
   """
-  e_elst_ij = Ceu2Kcal() * ( q_i * q_j ) / ( epsilon * r_ij )
+  e_elst_ij = constants.CEU2KCAL * ( q_i * q_j ) / ( epsilon * r_ij )
   return e_elst_ij
 
 def GetEBoundI(k_box, bound, coords, origin, boundtype):
@@ -148,7 +137,7 @@ def GetEKineticI(mass, vels):
   """
   e_kin_i = 0.0
   for i in range(3):
-    e_kin_i += Kin2Kcal() * 0.5 * mass * vels[i]**2
+    e_kin_i += 0.5 * constants.KIN2KCAL * mass * vels[i]**2
   return e_kin_i
 
 def GetENonbonded(mol):
@@ -264,7 +253,7 @@ def GetTemperature(mol):
     mol (mmlib.molecule.Molecule): Molecule object with current (float) kinetic
         energy [kcal/mol].
   """
-  mol.temp = (2.0/3.0) * mol.e_kinetic / (Kb() * mol.n_atoms)
+  mol.temp = (2.0/3.0) * mol.e_kinetic / (constants.KB * mol.n_atoms)
 
 def GetEKinetic(mol, kintype):
   """Compute kinetic energy of all atoms in molecule.

@@ -10,24 +10,9 @@ import os
 import sys
 import time
 
+from mmlib import constants
 from mmlib import energy
 from mmlib import fileio
-
-def Rgas():
-  """Gas constant in unit of [amu*A^2/(ps^2*K)]."""
-  return 0.83144598
-
-def AccConv():
-  """Conversion of acceleration from [kcal/(A*g) to [A/(ps^2)]."""
-  return 418.400000
-
-def PropertyKeys():
-  """Physical property keys for output file data labels."""
-  pkeys = [
-      'e_total', 'e_kin', 'e_pot', 'e_nonbond', 'e_bonded', 'e_boundary',
-      'e_vdw', 'e_elst', 'e_bond', 'e_angle', 'e_tors', 'e_oop', 'temp',
-      'press']
-  return pkeys
 
 class Simulation:
   """Simulation base class for molecular simulation data.
@@ -253,7 +238,7 @@ class MolecularDynamics(Simulation):
     if self.temp > 0.0:
       self.etemp = self.temp
       numpy.random.seed(self.random_seed)
-      sigma_base = math.sqrt(2.0 * Rgas() * self.temp / 3.0)
+      sigma_base = math.sqrt(2.0 * constants.RGAS * self.temp / 3.0)
       for i in range(self.mol.n_atoms):
         sigma = sigma_base * self.mol.atoms[i].mass**(-0.5)
         self.mol.atoms[i].vels = numpy.random.normal(0.0, sigma, 3)
@@ -288,7 +273,8 @@ class MolecularDynamics(Simulation):
       mass = self.mol.atoms[i].mass
       for j in range(3):
         self.mol.atoms[i].paccs[j] = self.mol.atoms[i].accs[j]
-        self.mol.atoms[i].accs[j] = -AccConv() * self.mol.g_total[i][j] / mass
+        self.mol.atoms[i].accs[j] = (
+            -constants.ACCCONV * self.mol.g_total[i][j] / mass)
 
   def _UpdateVels(self, dt):
     """Update velocities of atoms [Angstrom/ps].
@@ -424,14 +410,14 @@ class MonteCarlo(Simulation):
       self._DispCoords(self.rand_disp)
       self.mol.GetEnergy('standard')
       delta_e = self.mol.e_total - penergy
-      bf = math.exp(min(1.0, -1.0*delta_e / (energy.Kb()*self.temp)))
+      bf = math.exp(min(1.0, -delta_e / (constants.KB * self.temp)))
       if bf >= numpy.random.random():
         self._CheckPrint(1)
         self.conf += 1
         self.n_accept += 1
         penergy = self.mol.e_total
       else:
-        self._DispCoords(-1.0*self.rand_disp)
+        self._DispCoords(-self.rand_disp)
         self.n_reject += 1
       self._CheckDisp()
     self._CheckPrint(0)

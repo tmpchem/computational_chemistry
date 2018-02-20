@@ -14,31 +14,6 @@ import sys
 from mmlib import fileio
 from mmlib import simulate
 
-def _PointsPerInch():
-  """Unit conversion between points and inches."""
-  return 72
-
-def _PercentImagePlot():
-  """Fraction of image width which is covered by the plot field."""
-  return 0.75
-
-def _PropertyDict():
-  """Obtain legend labels, line colors, and priority for properties."""
-  pdict = {
-      'e_total'   : ['Total',      12, '#000000',  1, ],
-      'e_kin'     : ['Kinetic',    11, '#007D34',  2, ],
-      'e_pot'     : ['Potential',   1, '#C10020',  3, ],
-      'e_nonbond' : ['Non-bonded',  7, '#0000FF',  4, ],
-      'e_bonded'  : ['Bonded',      2, '#FF6800',  5, ],
-      'e_boundary': ['Boundary',   10, '#551A8B',  6, ],
-      'e_vdw'     : ['Vdw',         9, '#00BFFF',  7, ],
-      'e_elst'    : ['Elst',        8, '#EEC900',  8, ],
-      'e_bond'    : ['Bonds',       3, '#F08080',  9, ],
-      'e_angle'   : ['Angles',      4, '#90EE90', 10, ],
-      'e_tors'    : ['Torsions',    6, '#FF83FA', 11, ],
-      'e_oop'     : ['Outofplanes', 5, '#A9A9A9', 12, ]}
-  return pdict
-
 class Plot:
   """Plot class for plotting simulation data.
   
@@ -88,8 +63,8 @@ class Plot:
     self.figsize = (self.figwidth, self.figheight)
     self.img_format = 'pdf'
 
-    ppi = _PointsPerInch()
-    p_im = _PercentImagePlot()
+    ppi = constants.POINTSPERINCH
+    p_im = constants.PERCENTIMAGEPLOT
     self.n_maxpoints = int(math.floor(2.0 * ppi * self.figwidth * p_im))
     self.n_terms = len(self.data.keys()) - 1
 
@@ -423,7 +398,7 @@ class Analysis:
   def __init__(self, infile_name):
     self.infile = os.path.realpath(infile_name)
     self.indir = os.path.dirname(self.infile)
-    self.pdict = _PropertyDict()
+    self.pdict = constants.PROPERTYDICTIONARY
 
     self.simtype = ''
     self.simfile = ''

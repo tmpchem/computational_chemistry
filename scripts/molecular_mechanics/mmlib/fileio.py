@@ -10,6 +10,7 @@ import os
 import sys
 
 from mmlib import analyze
+from mmlib import constants
 from mmlib import energy
 from mmlib import geomcalc
 from mmlib import molecule
@@ -386,7 +387,7 @@ def GetProperties(prop_file):
   """
   prop_array = _GetFileStringArray(prop_file)
   n_lines = len(prop_array)
-  prop_keys = simulate.PropertyKeys()
+  prop_keys = constants.PROPERTYKEYS
   key1 = prop_keys[2]
   key_line = 0
   for i in range(n_lines):
@@ -860,7 +861,7 @@ def PrintAverages(ana):
   spaces = [3, 11, 9, 9, 9]
   _PrintHeader(header, n_banner, params, spaces)
   
-  pdict = ana.pdict
+  pdict = constants.PROPERTYDICTIONARY
   vals = sorted(list(pdict.keys()), key = lambda x: pdict[x][3])
   vals = [val for val in vals if val in ana.prop]
   labels = [pdict[key][0] for key in vals]
