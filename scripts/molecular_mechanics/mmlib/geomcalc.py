@@ -19,10 +19,10 @@ def GetR2ij(coords_i, coords_j):
   Returns:
     r2_ij (float): Square distance [Angstrom] between points i and j.
   """
-  r2_ij  = (coords_i[0] - coords_j[0])**2
-  r2_ij += (coords_i[1] - coords_j[1])**2
-  r2_ij += (coords_i[2] - coords_j[2])**2
-  return r2_ij
+  return (
+      (coords_i[0] - coords_j[0])**2 + 
+      (coords_i[1] - coords_j[1])**2 +
+      (coords_i[2] - coords_j[2])**2)
 
 def GetRij(coords_i, coords_j):
   """Calculate distance between two 3d cartesian points.
@@ -37,8 +37,7 @@ def GetRij(coords_i, coords_j):
   r2_ij  = (coords_i[0] - coords_j[0])**2
   r2_ij += (coords_i[1] - coords_j[1])**2
   r2_ij += (coords_i[2] - coords_j[2])**2
-  r_ij = math.sqrt(r2_ij)
-  return r_ij
+  return math.sqrt(r2_ij)
 
 def GetUij(coords_i, coords_j, r_ij=None):
   """Calculate 3d unit vector from cartesian points i to j.
@@ -75,11 +74,7 @@ def GetUdp(uvec_i, uvec_j):
   udp  = uvec_i[0] * uvec_j[0]
   udp += uvec_i[1] * uvec_j[1]
   udp += uvec_i[2] * uvec_j[2]
-  if udp > 1.0:
-    udp = min(udp, 1.0)
-  elif udp < -1.0:
-    udp = max(udp, -1.0)
-  return udp
+  return max(-1.0, min(1.0, udp))
 
 def GetUcp(uvec_i, uvec_j):
   """Calculate unit cross product between two 3d cartesian unit vectors.
@@ -135,8 +130,7 @@ def GetAijk(coords_i, coords_j, coords_k, r_ij=None, r_jk=None):
   u_ji = GetUij(coords_j, coords_i, r_ij)
   u_jk = GetUij(coords_j, coords_k, r_jk)
   dp_jijk = GetUdp(u_ji, u_jk)
-  a_ijk = constants.RAD2DEG * math.acos(dp_jijk)
-  return a_ijk
+  return constants.RAD2DEG * math.acos(dp_jijk)
 
 def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
              r_kl=None):
@@ -160,8 +154,7 @@ def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
   u_kjkl = -GetUcp(u_jk, u_kl)
   dp_jijk_kjkl = GetUdp(u_jijk, u_kjkl)
   sign = 2.0*float(GetUdp(u_jijk, u_kl) <= 0.0) - 1.0
-  t_ijkl = constants.RAD2DEG * sign * math.acos(dp_jijk_kjkl)
-  return t_ijkl
+  return constants.RAD2DEG * sign * math.acos(dp_jijk_kjkl)
 
 def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
              r_kl=None):
@@ -184,8 +177,7 @@ def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
   u_kl = GetUij(coords_k, coords_l, r_kl)
   u_kikj = GetUcp(u_ki, u_kj)
   dp_kikj_kl = GetUdp(u_kikj, u_kl)
-  o_ijkl = constants.RAD2DEG * math.asin(dp_kikj_kl)
-  return o_ijkl
+  return constants.RAD2DEG * math.asin(dp_kikj_kl)
 
 def GetVolume(mol):
   """Calculate volume of molecular system based on boundary type

@@ -39,8 +39,9 @@ class Trajectory:
     self.coords = []
     self.grad = []
     self.AppendStep(mol)
-  """Append current molecule data to Trajectory object."""
+
   def AppendStep(self, mol):
+    """Append current molecule data to Trajectory object."""
     self.n_steps += 1
     self.coords.append(numpy.zeros((self.n_atoms, 3)))
     self.grad.append(numpy.zeros((self.n_atoms, 3)))

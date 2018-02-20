@@ -21,8 +21,7 @@ def GetEBond(r_ij, r_eq, k_b):
   Returns:
     e_bond (float): Energy [kcal/mol] of bond ij.
   """
-  e_bond = k_b * (r_ij - r_eq)**2
-  return e_bond
+  return k_b * (r_ij - r_eq)**2
 
 def GetEAngle(a_ijk, a_eq, k_a):
   """Calculate angle bend energy between 3 bonded atoms.
@@ -35,8 +34,7 @@ def GetEAngle(a_ijk, a_eq, k_a):
   Returns:
     e_angle (float): Energy [kcal/mol] of angle ijk.
   """
-  e_angle = k_a * (constants.DEG2RAD * (a_ijk - a_eq) )**2
-  return e_angle
+  return k_a * (constants.DEG2RAD * (a_ijk - a_eq) )**2
 
 def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
   """Calculate torsion strain energy between 4 bonded atoms.
@@ -51,9 +49,8 @@ def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
   Returns:
     e_torsion (float): Energy [kcal/mol] of torsion ijkl.
   """
-  e_torsion = v_n * (
+  return v_n * (
       1.0 + math.cos(constants.DEG2RAD * (nfold * t_ijkl - gamma))) / paths
-  return e_torsion
 
 def GetEOutofplane(o_ijkl, v_n):
   """Calculate outofplane bend energy between 4 bonded atoms.
@@ -65,9 +62,7 @@ def GetEOutofplane(o_ijkl, v_n):
   Returns:
     e_outofplane (float): Energy [kcal/mol] of outofplane ijkl.
   """
-  e_outofplane = (
-      v_n * (1.0 + math.cos(constants.DEG2RAD * (2.0 * o_ijkl - 180.0))))
-  return e_outofplane
+  return v_n * (1.0 + math.cos(constants.DEG2RAD * (2.0 * o_ijkl - 180.0)))
 
 def GetEVdwIJ(r_ij, eps_ij, ro_ij):
   """Calculate van der waals interaction energy between atom pair.
@@ -81,8 +76,7 @@ def GetEVdwIJ(r_ij, eps_ij, ro_ij):
     e_vdw_ij (float): Van der waals energy [kcal/mol] between pair ij.
   """
   r6_ij = (ro_ij / r_ij) ** 6
-  e_vdw_ij = eps_ij * ( r6_ij**2 - 2.0 * r6_ij )
-  return e_vdw_ij
+  return eps_ij * ( r6_ij**2 - 2.0 * r6_ij )
 
 def GetEElstIJ(r_ij, q_i, q_j, epsilon):
   """Calculate electrostatic interaction energy between atom pair.
@@ -96,8 +90,7 @@ def GetEElstIJ(r_ij, q_i, q_j, epsilon):
   Returns:
     e_elst_ij (float): Electrostatic energy [kcal/mol] between pair ij.
   """
-  e_elst_ij = constants.CEU2KCAL * ( q_i * q_j ) / ( epsilon * r_ij )
-  return e_elst_ij
+  return constants.CEU2KCAL * ( q_i * q_j ) / ( epsilon * r_ij )
 
 def GetEBoundI(k_box, bound, coords, origin, boundtype):
   """Calculate simulation boundary energy of an atom.

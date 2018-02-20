@@ -25,8 +25,7 @@ def GetGBond(r_ij, r_eq, k_b):
   Returns:
       g_bond (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_bond = 2.0 * k_b * (r_ij - r_eq)
-  return g_bond
+  return 2.0 * k_b * (r_ij - r_eq)
 
 def GetGAngle(a_ijk, a_eq, k_a):
   """Calculate energy gradient magnitude of angle bend.
@@ -39,8 +38,7 @@ def GetGAngle(a_ijk, a_eq, k_a):
   Returns:
     g_angle (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_angle = 2.0 * k_a * (constants.DEG2RAD * (a_ijk - a_eq) )
-  return g_angle
+  return 2.0 * k_a * (constants.DEG2RAD * (a_ijk - a_eq) )
 
 def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
   """Calculate energy gradient magnitude of torsion strain.
@@ -55,9 +53,8 @@ def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
   Returns:
     g_torsion (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_torsion = -v_n * n_fold * math.sin(
+  return -v_n * n_fold * math.sin(
       constants.DEG2RAD * (n_fold * t_ijkl - gamma)) / paths
-  return g_torsion
 
 def GetGOutofplane(o_ijkl, v_n):
   """Calculate energy gradient magnitude of outofplane bend.
@@ -69,9 +66,7 @@ def GetGOutofplane(o_ijkl, v_n):
   Returns:
     g_outofplane (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_outofplane = (
-      -2.0 * v_n * math.sin(constants.DEG2RAD * (2.0 * o_ijkl - 180.0)))
-  return g_outofplane
+  return -2.0 * v_n * math.sin(constants.DEG2RAD * (2.0 * o_ijkl - 180.0))
 
 def GetGVdwIJ(r_ij, eps_ij, ro_ij):
   """Calculate energy gradient magnitude of van der waals pair energy.
@@ -85,8 +80,7 @@ def GetGVdwIJ(r_ij, eps_ij, ro_ij):
     g_vdw_ij (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   rrel_ij = ro_ij / r_ij
-  g_vdw_ij = -12.0 * (eps_ij / ro_ij) * (rrel_ij**13 - rrel_ij**7)
-  return g_vdw_ij
+  return -12.0 * (eps_ij / ro_ij) * (rrel_ij**13 - rrel_ij**7)
 
 def GetGElstIJ(r_ij, q_i, q_j, epsilon):
   """Calculate energy gradient magnitude of electrostatic pair energy.
@@ -100,8 +94,7 @@ def GetGElstIJ(r_ij, q_i, q_j, epsilon):
   Returns:
     e_elst_ij (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_elst_ij = -constants.CEU2KCAL * q_i * q_j / (epsilon * r_ij**2)
-  return g_elst_ij
+  return -constants.CEU2KCAL * q_i * q_j / (epsilon * r_ij**2)
 
 def GetGBoundI(k_box, bound, coord, origin, boundtype):
   """Calculate energy gradient magnitude of boundary energy.

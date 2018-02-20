@@ -38,6 +38,7 @@ def _GetFileStringArray(infile_name):
   infile = open(infile_name, 'r')
   infile_data = infile.readlines()
   infile.close()
+
   infile_array = []
   for line in infile_data:
     infile_array.append(line.split())
@@ -876,6 +877,9 @@ def GetInput():
   Check that the command line input contains two strings or throw an error and
   print usage guidance. If correct, return the name of the input file given as
   the second command line input string.
+
+  Returns:
+    infile_name (str): Name of input file given from command line.
   """
   program_name = sys.argv[0].split('/')[-1]
   if (len(sys.argv) < 2):

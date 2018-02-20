@@ -291,11 +291,10 @@ def GetVdwParam(at_type):
     vdw (float, float): van der waals parameters for atom type: ro/2 and eps.
   """
   if at_type in vdw_params:
-    vdw = vdw_params[at_type]
+    return vdw_params[at_type]
   else:
     print('Error: atom type (%s) not found!' % (at_type))
     sys.exit()
-  return vdw
 
 def GetAtMass(element):
   """Find the mass of an atom of a given element (periodic table avg).
@@ -307,11 +306,10 @@ def GetAtMass(element):
     at_mass (float): average periodic table mass of element.
   """
   if element in at_masses:
-    at_mass = at_masses[element]
+    return at_masses[element]
   else:
     print('Error: atomic mass for element (%s) not found!' % (element))
     sys.exit()
-  return at_mass
 
 def GetCovRad(element):
   """Find the covalent radius of an atom of a given element.
@@ -323,11 +321,10 @@ def GetCovRad(element):
     cov_rad (float): covalent radius [Angstrom] of atom.
   """
   if element in cov_radii:
-    cov_rad = cov_radii[element]
+    return cov_radii[element]
   else:
     print('Error: covalent radius for element (%s) not found!' % (element))
     sys.exit()
-  return cov_rad
 
 def GetBondParam(at1_type, at2_type):
   """Find bond parameters for 2 AMBER94 mm atom types.
@@ -344,13 +341,12 @@ def GetBondParam(at1_type, at2_type):
   b12_types = (at1_type, at2_type)
   b21_types = (at2_type, at1_type)
   if b12_types in bond_params:
-    bond = bond_params[b12_types]
+    return bond_params[b12_types]
   elif b21_types in bond_params:
-    bond = bond_params[b21_types]
+    return bond_params[b21_types]
   else:
     print('Error: bond type (%s, %s) not recognized!' % (at1_type, at2_type))
     sys.exit()
-  return bond
 
 def GetAngleParam(at1_type, at2_type, at3_type):
   """Find angle parameters for 3 AMBER94 mm atom types.
@@ -368,14 +364,13 @@ def GetAngleParam(at1_type, at2_type, at3_type):
   a123_types = (at1_type, at2_type, at3_type)
   a321_types = (at3_type, at2_type, at1_type)
   if a123_types in angle_params:
-    angle = angle_params[a123_types]
+    return angle_params[a123_types]
   elif a321_types in angle_params:
-    angle = angle_params[a321_types]
+    return angle_params[a321_types]
   else:
     print('Error: angle type (%s, %s, %s) not recognized!' % (
         at1_type, at2_type, at3_type))
     sys.exit()
-  return angle
 
 def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
   """Find torsion parameters for 4 AMBER94 mm atom types:
@@ -392,7 +387,7 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
   """
   torsion = []
 
-  # two-atom torsion potentials
+  # two-atom torsion potentials if found
   t23_types = (at2_type, at3_type)
   t32_types = (at3_type, at2_type)
   if t23_types in torsion23_params:
@@ -405,7 +400,7 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
     print('Error: torsion (X-%s-%s-X) not recognized!' % (at2_type, at3_type))
     sys.exit()
 
-  # four-atom torsion potentials
+  # four-atom torsion potentials if found
   t1234_types = (at1_type, at2_type, at3_type, at4_type)
   t4321_types = (at4_type, at3_type, at2_type, at1_type)
   t1234 = []
@@ -416,6 +411,7 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
   for i in range(len(t1234)):
     torsion.append(t1234[i])
 
+  # return array of all found torsion parameters
   return torsion
 
 def GetOutofplaneParam(at1_type, at2_type, at3_type, at4_type):

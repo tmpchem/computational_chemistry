@@ -48,17 +48,17 @@ class Atom:
     self.element = type[0].capitalize()
     if len(type) > 1 and type[-1].islower():
       self.element += type[-1]
-    self.coords = coords
-    self.charge = charge
-    self.ro = ro
-    self.eps = eps
-    self.sreps = math.sqrt(self.eps)
-    self.mass = mass
-    self.covrad = param.GetCovRad(self.element)
-    self.vels = numpy.zeros(3)
-    self.accs = numpy.zeros(3)
-    self.pvels = numpy.zeros(3)
-    self.paccs = numpy.zeros(3)
+
+    self.SetCoords(coords)
+    self.SetCharge(charge)
+    self.SetRo(ro)
+    self.SetEps(eps)
+    self.SetMass(mass)
+    self.SetCovRad(param.GetCovRad(self.element))
+    self.SetVels(numpy.zeros(3))
+    self.SetAccs(numpy.zeros(3))
+    self.SetPVels(numpy.zeros(3))
+    self.SetPAccs(numpy.zeros(3))
 
   def SetType(self, type):
     """Set new (str) atom type."""
@@ -87,6 +87,7 @@ class Atom:
   def SetEps(self, eps):
     """Set new (float) vdw epsilon [kcal/mol]."""
     self.eps = eps
+    self.sreps = math.sqrt(eps)
 
   def SetElement(self, element):
     """Set new (str) atomic element."""
@@ -104,6 +105,13 @@ class Atom:
     """Set new (float*) accelerations [Angstrom/(ps^2)]."""
     self.accs = accs
 
+  def SetPVels(self, pvels):
+    """Set new (float*) velocities [Angstrom/ps]."""
+    self.pvels = pvels
+
+  def SetPAccs(self, paccs):
+    """Set new (float*) accelerations [Angstrom/(ps^2)]."""
+    self.paccs = paccs
 
 class Bond:
   """Bond class for bond geometry and parameter data.
@@ -122,14 +130,14 @@ class Bond:
     grad (float): Energy gradient magnitude of bond [kcal/(mol*A)].
   """
   def __init__(self, at1, at2, r_ij, r_eq, k_b):
-    self.at1 = at1
-    self.at2 = at2
-    self.r_ij = r_ij
-    self.r_eq = r_eq
-    self.k_b = k_b
+    self.SetAt1(at1)
+    self.SetAt2(at2)
+    self.SetRij(r_ij)
+    self.SetReq(r_eq)
+    self.SetKb(k_b)
 
-    self.energy = energy.GetEBond(r_ij, r_eq, k_b)
-    self.grad = gradient.GetGBond(r_ij, r_eq, k_b)
+    self.GetEnergy()
+    self.GetGradient()
 
   def SetAt1(self, at1):
     """Set new (int) at1."""
@@ -151,6 +159,13 @@ class Bond:
     """Set new (float)  [kcal/(mol*A^2)]."""
     self.k_b = k_b
 
+  def GetEnergy(self):
+    """Calculate bond energy (float) [kcal/mol]."""
+    self.energy = energy.GetEBond(self.r_ij, self.r_eq, self.k_b)
+
+  def GetGradient(self):
+    """Calculate bond gradient (float) [kcal/(mol*A)]."""
+    self.grad = gradient.GetGBond(self.r_ij, self.r_eq, self.k_b)
 
 class Angle:
   """Angle class for angle geometry and parameter data.
@@ -170,15 +185,15 @@ class Angle:
     grad (float): Energy gradient magnitude of angle [kcal/(mol*A)].
   """
   def __init__(self, at1, at2, at3, a_ijk, a_eq, k_a):
-    self.at1 = at1
-    self.at2 = at2
-    self.at3 = at3
-    self.a_ijk = a_ijk
-    self.a_eq = a_eq
-    self.k_a = k_a
+    self.SetAt1(at1)
+    self.SetAt2(at2)
+    self.SetAt3(at3)
+    self.SetAijk(a_ijk)
+    self.SetAeq(a_eq)
+    self.SetKa(k_a)
 
-    self.energy = energy.GetEAngle(a_ijk, a_eq, k_a)
-    self.grad = gradient.GetGAngle(a_ijk, a_eq, k_a)
+    self.GetEnergy()
+    self.GetGradient()
 
   def SetAt1(self, at1):
     """Set new (int) at1."""
@@ -204,6 +219,13 @@ class Angle:
     """Set new (float) k_a [kcal/(mol*rad^2)]."""
     self.k_a = k_a
 
+  def GetEnergy(self):
+    """Get energy (float) [kcal/mol]."""
+    self.energy = energy.GetEAngle(self.a_ijk, self.a_eq, self.k_a)
+
+  def GetGradient(self):
+    """Get gradient (float) [kcal/(mol*A)]."""
+    self.gradient = gradient.GetGAngle(self.a_ijk, self.a_eq, self.k_a)
 
 class Torsion:
   """Torsion class for torsion geometry and parameter data.
@@ -226,18 +248,18 @@ class Torsion:
     grad (float): Energy gradient magnitude of torsion [kcal/(mol*A)].
   """
   def __init__(self, at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths):
-    self.at1 = at1
-    self.at2 = at2
-    self.at3 = at3
-    self.at4 = at4
-    self.t_ijkl = t_ijkl
-    self.v_n = v_n
-    self.gam = gamma
-    self.n = nfold
-    self.paths = paths
+    self.SetAt1(at1)
+    self.SetAt2(at2)
+    self.SetAt3(at3)
+    self.SetAt4(at4)
+    self.SetTijkl(t_ijkl)
+    self.SetVn(v_n)
+    self.SetGamma(gamma)
+    self.SetNfold(nfold)
+    self.SetPaths(paths)
 
-    self.energy = energy.GetETorsion(t_ijkl, v_n, gamma, nfold, paths)
-    self.grad = gradient.GetGTorsion(t_ijkl, v_n, gamma, nfold, paths)
+    self.GetEnergy()
+    self.GetGradient()
 
   def SetAt1(self, at1):
     """Set new (int) at1."""
@@ -269,12 +291,21 @@ class Torsion:
 
   def SetNfold(self, nfold):
     """Set new (int) nfold."""
-    self.nfold = nfold
+    self.n = nfold
 
   def SetPaths(self, paths):
     """Set new (int) paths."""
     self.paths = paths
 
+  def GetEnergy(self):
+    """Get energy (float) [kcal/mol]."""
+    self.energy = energy.GetETorsion(self.t_ijkl, self.v_n, self.gam, self.n,
+                                     self.paths)
+
+  def GetGradient(self):
+    """Get gradient (float) [kcal/(mol*A)]."""
+    self.gradient = gradient.GetGTorsion(self.t_ijkl, self.v_n, self.gam,
+                                         self.n, self.paths)
 
 class Outofplane:
   """Outofplane class for outofplane geometry and parameter data.
@@ -294,15 +325,15 @@ class Outofplane:
     grad (float): Energy gradient magnitude of outofplane [kcal/(mol*A)].
   """
   def __init__(self, at1, at2, at3, at4, o_ijkl, v_n):
-    self.at1 = at1
-    self.at2 = at2
-    self.at3 = at3
-    self.at4 = at4
-    self.o_ijkl = o_ijkl
-    self.v_n = v_n
-      
-    self.energy = energy.GetEOutofplane(o_ijkl, v_n)
-    self.grad = gradient.GetGOutofplane(o_ijkl, v_n)
+    self.SetAt1(at1)
+    self.SetAt2(at2)
+    self.SetAt3(at3)
+    self.SetAt4(at4)
+    self.SetOijkl(o_ijkl)
+    self.SetVn(v_n)
+
+    self.GetEnergy()
+    self.GetGradient()
 
   def SetAt1(self, at1):
     """Set new (int) at1."""
@@ -328,6 +359,13 @@ class Outofplane:
     """Set new (float) v_n [kcal/mol]."""
     self.v_n = v_n
 
+  def GetEnergy(self):
+    """Get energy (float) [kcal/mol]."""
+    self.energy = energy.GetEOutofplane(self.o_ijkl, self.v_n)
+
+  def GetGradient(self):
+    """Get gradient (float) [kcal/(mol*A)]."""
+    self.gradient = gradient.GetGOutofplane(self.o_ijkl, self.v_n)
 
 class Molecule:
   """
