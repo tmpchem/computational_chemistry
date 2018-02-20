@@ -187,7 +187,7 @@ class MolecularDynamics(Simulation):
 
     self.tottime = 1.0
     self.timestep = 0.001
-    self.time = 1.0 * 10**-10
+    self.time = 1.0E-10
     self.eqtime = 0.0
     self.eqrate = 2.0
     self.energytime = 0.01
@@ -237,14 +237,14 @@ class MolecularDynamics(Simulation):
     if self.temp > 0.0:
       self.etemp = self.temp
       numpy.random.seed(self.random_seed)
-      sigma_base = math.sqrt(2.0 * constants.RGAS * self.temp / 3.0)
+      sigma_base = math.sqrt(2.0 * constants.RGAS * self.temp / const.NUMDIM)
       for i in range(self.mol.n_atoms):
         sigma = sigma_base * self.mol.atoms[i].mass**(-0.5)
-        self.mol.atoms[i].vels = numpy.random.normal(0.0, sigma, 3)
+        self.mol.atoms[i].vels = numpy.random.normal(0.0, sigma, const.NUMDIM)
       self.mol.GetEnergy('standard')
       vscale = math.sqrt(self.temp / self.mol.temp)
       for i in range(self.mol.n_atoms):
-        for j in range(3):
+        for j in range(const.NUMDIM):
           self.mol.atoms[i].vels[j] *= vscale
 
   def _EquilibrateTemp(self):
@@ -259,7 +259,7 @@ class MolecularDynamics(Simulation):
     self.etemp = (self.etemp + tweight * self.mol.temp)/(1.0 + tweight)
     velscale = 1.0 + tscale * (math.sqrt(self.temp / self.etemp) - 1.0)
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].vels[j] *= velscale
 
   def _UpdateAccs(self):
@@ -270,7 +270,7 @@ class MolecularDynamics(Simulation):
     """
     for i in range(self.mol.n_atoms):
       mass = self.mol.atoms[i].mass
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].paccs[j] = self.mol.atoms[i].accs[j]
         self.mol.atoms[i].accs[j] = (
             -constants.ACCCONV * self.mol.g_total[i][j] / mass)
@@ -285,7 +285,7 @@ class MolecularDynamics(Simulation):
       dt (float): time propogation increment [ps].
     """
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].pvels[j] = self.mol.atoms[i].vels[j]
         self.mol.atoms[i].vels[j] += self.mol.atoms[i].accs[j] * dt
 
@@ -299,7 +299,7 @@ class MolecularDynamics(Simulation):
       dt (float): time propogation increment [ps].
     """
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].coords[j] += self.mol.atoms[i].vels[j] * dt
     self.mol.UpdateInternals()
 
@@ -312,11 +312,11 @@ class MolecularDynamics(Simulation):
     """
     if print_all or self.etime >= self.energytime:
       self._PrintEnergy()
-      self.etime = 10**-10
+      self.etime = 1.0E-10
     if print_all or self.gtime >= self.geomtime:
       self._PrintGeom()
-      self.gtime = 10**-10
-    if print_all or time.time() - self.stime > self.statustime:
+      self.gtime = 1.0E-10
+    if print_all or (time.time() - self.stime) > self.statustime:
       self._PrintStatus()
       self.stime = time.time()
     self.etime += timestep
@@ -386,7 +386,7 @@ class MonteCarlo(Simulation):
     self.energyconf = 100
     self.geomconf = 100
     Simulation.__init__(self, infile_name)
-    self.rand_disp = numpy.zeros((self.mol.n_atoms, 3))
+    self.rand_disp = numpy.zeros((self.mol.n_atoms, const.NUMDIM))
     self.cprintchar = 7
 
   def Run(self):
@@ -430,14 +430,14 @@ class MonteCarlo(Simulation):
     """
     self.rand_disp.fill(0.0)
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         randval = numpy.random.normal(0.0, self.dispmag)
         self.rand_disp[i][j] = numpy.random.normal(0.0, self.dispmag)
 
   def _ZeroVels(self):
     """Set all 3N atomic velocity components to zero."""
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].vels[j] = 0.0
 
   def _DispCoords(self, disp_vector):
@@ -447,7 +447,7 @@ class MonteCarlo(Simulation):
       disp_vector (float**): Nx3 atomic displacement array [Angstrom].
     """
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].coords[j] += disp_vector[i][j]
     self.mol.UpdateInternals()
 

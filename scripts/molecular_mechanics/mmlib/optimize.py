@@ -9,6 +9,7 @@ import math
 import numpy
 import os
 
+from mmlib import constants as const
 from mmlib import fileio
 
 class Trajectory:
@@ -40,11 +41,11 @@ class Trajectory:
   def AppendStep(self, mol):
     """Append current molecule data to Trajectory object."""
     self.n_steps += 1
-    self.coords.append(numpy.zeros((self.n_atoms, 3)))
-    self.grad.append(numpy.zeros((self.n_atoms, 3)))
+    self.coords.append(numpy.zeros((self.n_atoms, const.NUMDIM)))
+    self.grad.append(numpy.zeros((self.n_atoms, const.NUMDIM)))
     self.energy.append(mol.e_total)
     for i in range(self.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.coords[-1][i][j] = mol.atoms[i].coords[j]
         self.grad[-1][i][j] = mol.g_total[i][j]
 
@@ -76,7 +77,7 @@ class Optimization:
         be explicitly enumerated array (float):
           [delta_e, grad_max, grad_rms, disp_max, disp_rms]
         or standard reference values from dictionary (str):
-          (see ref_opt_criteria method).
+          (see ).
     geomout (str): Geometry printing output file path.
     energyout (str): Energy printing output file path.
 
@@ -116,7 +117,7 @@ class Optimization:
     self.indir = os.path.dirname(self.infile)
     self.name = '.'.join(self.infile.split('/')[-1].split('.')[:-1])
     self.opt_type = 'sd'
-    self.opt_str = ''
+    self.opt_str = 'default'
     self.mol = []
     self.geomout = 'geom.xyz'
     self.energyout = 'energy.dat'
@@ -127,11 +128,11 @@ class Optimization:
     self.disp_rms = float('inf')
     self.disp_max = float('inf')
 
-    self.conv_delta_e  = 1.0E-6
-    self.conv_grad_rms = 1.0E-4
-    self.conv_grad_max = 2.0E-4
-    self.conv_disp_rms = 1.0E-3
-    self.conv_disp_max = 2.0E-3
+    self.conv_delta_e  = const.OPTCRITERIAREFS['default'][0]
+    self.conv_grad_rms = const.OPTCRITERIAREFS['default'][1] 
+    self.conv_grad_max = const.OPTCRITERIAREFS['default'][2] 
+    self.conv_disp_rms = const.OPTCRITERIAREFS['default'][3] 
+    self.conv_disp_max = const.OPTCRITERIAREFS['default'][4] 
 
     self.must_converge = [True for i in range(5)]
     self.are_converged = [False for i in range(5)]
@@ -195,8 +196,8 @@ class Optimization:
       gamma = 0.0
     else:
       v1 = self.traj.grad[-1] - self.traj.grad[-2]
-      v1 = v1.reshape((1, 3*self.mol.n_atoms))
-      v2 = self.traj.grad[-1].reshape((3*self.mol.n_atoms, 1))
+      v1 = v1.reshape((1, const.NUMDIM * self.mol.n_atoms))
+      v2 = self.traj.grad[-1].reshape((const.NUMDIM, self.mol.n_atoms, 1))
       gamma  = numpy.linalg.norm(numpy.dot(v1, v2))
       gamma *= 1.0 / numpy.linalg.norm(self.traj.grad[-1])**2
       self.hvec = self.mol.g_total + gamma * self.hvec
@@ -263,7 +264,7 @@ class Optimization:
     numer = 1.0
     denom = 2.0
     # binary search to find value of displacement within bounds
-    for i in range(7):
+    for i in range(const.NUMLINESEARCHSTEPS):
       self.n_subiter += 1
       test_disp = disp_mag * numer / denom
       self.DisplaceCoords(+1.0 * test_disp, disp_vector)
@@ -282,18 +283,17 @@ class Optimization:
     The opt_str member is set to null string by default, and doesn't execute the
     conditional. If overridden from input file to value in dictionary, reset all
     5 convergence criteria to specified value."""
-    opt_criteria_refs = {
-      'loose':     [1.0E-4,  1.0E-3, 2.0E-3, 1.0E-2, 2.0E-2],
-      'default':   [1.0E-6,  1.0E-4, 2.0E-4, 1.0E-3, 2.0E-3],
-      'tight':     [1.0E-8,  1.0E-5, 2.0E-5, 1.0E-4, 2.0E-4],
-      'verytight': [1.0E-10, 1.0E-6, 2.0E-6, 1.0E-5, 2.0E-5]}
-    if self.opt_str in opt_criteria_refs:
-      opt_vals = opt_criteria_refs[self.opt_str]
+    if self.opt_str in const.OPTCRITERIAREFS:
+      opt_vals = const.OPTCRITERIAREFS[self.opt_str]
       self.conv_delta_e  = opt_vals[0]
       self.conv_grad_rms = opt_vals[1] 
       self.conv_grad_max = opt_vals[2] 
       self.conv_disp_rms = opt_vals[3] 
       self.conv_disp_max = opt_vals[4] 
+    else:
+      raise ValueError('Optimization criteria string not recognized: %s\n'
+                       "Use 'loose', 'default', 'tight', or 'verytight'" % (
+                        self.opt_str))
 
   def _DisplaceCoords(self, disp_mag, disp_vector):
     """Dispace coordinates by disp_mag in disp_vector direction.
@@ -303,15 +303,15 @@ class Optimization:
       disp_vector (float**): Displacement direction vector.
     """
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].coords[j] += disp_mag * disp_vector[i][j]
     self.mol.UpdateInternals()
 
   def _CopyCoords(self):
     """Create a copy of current molecular coordinates."""
-    self.ccoords = numpy.zeros((self.mol.n_atoms, 3))
+    self.ccoords = numpy.zeros((self.mol.n_atoms, const.NUMDIM))
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.ccoords[i][j] = self.mol.atoms[i].coords[j]
   
   def GetDispDeriv(self, disp_mag, disp_vector):
@@ -333,9 +333,9 @@ class Optimization:
           the sign of the line derivative.
     """
     if n_subiter == 1:
-        self.disp_mag *= 0.7
+        self.disp_mag *= 1.0 / const.OPTSTEPADJUSTOR
     else:
-        self.disp_mag *= 1.4
+        self.disp_mag *= const.OPTSTEPADJUSTOR
 
   def _UpdateEnergy(self):
     """Update energy at current molecular coordinates."""
@@ -348,7 +348,7 @@ class Optimization:
   def _UpdateCoords(self, new_coords):
     """Update atomic coordinates to values in a given vector."""
     for i in range(self.mol.n_atoms):
-      for j in range(3):
+      for j in range(const.NUMDIM):
         self.mol.atoms[i].coords[j] = new_coords[i][j]
 
   def PrintEnergyHeader(self):

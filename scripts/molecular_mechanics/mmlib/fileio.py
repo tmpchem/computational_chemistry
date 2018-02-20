@@ -9,7 +9,7 @@ import numpy
 import os
 import sys
 
-from mmlib import constants
+from mmlib import constants as const
 from mmlib import geomcalc
 from mmlib import molecule
 from mmlib import param
@@ -31,7 +31,6 @@ def _GetFileStringArray(infile_name):
   if not os.path.exists(infile_name):
     raise ValueError(
         'attempted to read from file which does not exist: %s' % (infile_name))
-  
   infile = open(infile_name, 'r')
   infile_data = infile.readlines()
   infile.close()
@@ -40,6 +39,12 @@ def _GetFileStringArray(infile_name):
   for line in infile_data:
     infile_array.append(line.split())
   return infile_array
+
+def _GetElement(at_type):
+  if len(at_type) == 1 or at_type[1].isupper():
+    return at_type[0].upper()
+  else:
+    return at_type[0:2].capitalize()
 
 def GetGeom(mol):
   """Read in molecular geometry data from molecule xyzq file.
@@ -54,21 +59,18 @@ def GetGeom(mol):
   """
   infile_array = _GetFileStringArray(mol.infile)
   mol.n_atoms = int(infile_array[0][0])
-  mol.bond_lenths = [{} for i in range(mol.n_atoms)]
   for i in range(mol.n_atoms):
     at_type = infile_array[i+2][0]
-    at_coords = numpy.zeros(3)
-    for j in range(3):
-      at_coords[j] = float(infile_array[i+2][j+1])
+    at_coords = numpy.array(
+        list(map(float, infile_array[i+2][1:1+const.NUMDIM])))
     at_charge = float(infile_array[i+2][4])
-    at_element = (at_type[0:2].capitalize() if at_type[-1].islower()
-      else at_type[0])
+
+    at_element = _GetElement(at_type)
     at_mass = param.GetAtMass(at_element)
     at_ro, at_eps = param.GetVdwParam(at_type)
-    new_atom = molecule.Atom(
-        at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
-    new_atom.SetCovRad(param.GetCovRad(at_element))
-    mol.atoms.append(new_atom)
+    atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
+    atom.SetCovRad(param.GetCovRad(at_element))
+    mol.atoms.append(atom)
     mol.mass += at_mass
 
 def _GetAtom(mol, record):
@@ -85,13 +87,10 @@ def _GetAtom(mol, record):
     record (str*): Array of strings from line of prm file.
   """
   at_type = record[2]
-  at_coords = numpy.zeros(3)
-  for j in range(3):
-    at_coords[j] = float(record[j+3])
-  at_charge, at_ro, at_eps = (
-      float(record[6]), float(record[7]), float(record[8]))
-  at_element = (
-      at_type[0:2].capitalize() if at_type[-1].islower() else at_type[0])
+  at_coords = numpy.array(list(map(float, record[3:3+const.NUMDIM])))
+  at_charge, at_ro, at_eps = list(map(float, record[6:9]))
+
+  at_element = _GetElement(at_type)
   at_mass = param.GetAtMass(at_element)
   atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
   atom.SetCovRad(param.GetCovRad(at_element))
@@ -110,9 +109,10 @@ def _GetBond(mol, record):
     mol (mmlib.molecule.Molecule): Molecule to append bond.
     record (str*): Array of strings from line of prm file.
   """
-  at1, at2 = int(record[1])-1, int(record[2])-1
-  k_b, r_eq = float(record[3]), float(record[4])
-  c1, c2 = mol.atoms[at1].coords, mol.atoms[at2].coords
+  at1, at2 = [x-1 for x in list(map(int, record[1:3]))]
+  k_b, r_eq = list(map(float, record[3:5]))
+  c1, c2 = [mol.atoms[i].coords for i in [at1, at2]]
+
   r_ij = geomcalc.GetRij(c1, c2)
   bond = molecule.Bond(at1, at2, r_ij, r_eq, k_b)
   mol.bonds.append(bond)
@@ -131,10 +131,10 @@ def _GetAngle(mol, record):
     mol (mmlib.molecule.Molecule): Molecule to append angle.
     record (str*): Array of strings from line of prm file.
   """
-  at1, at2, at3 = int(record[1])-1, int(record[2])-1, int(record[3])-1
-  k_a, a_eq = float(record[4]), float(record[5])
-  c1, c2, c3 = (
-      mol.atoms[at1].coords, mol.atoms[at2].coords, mol.atoms[at3].coords)
+  at1, at2, at3 = [x-1 for x in list(map(int, record[1:4]))]
+  k_a, a_eq = list(map(float, record[4:6]))
+  c1, c2, c3 = [mol.atoms[i].coords for i in [at1, at2, at3]]
+
   a_ijk = geomcalc.GetAijk(c1, c2, c3)
   angle = molecule.Angle(at1, at2, at3, a_ijk, a_eq, k_a)
   mol.angles.append(angle)
@@ -151,16 +151,14 @@ def _GetTorsion(mol, record):
     mol (mmlib.molecule.Molecule): Molecule to append torsion.
     record (str*): Array of strings from line of prm file.
   """
-  at1, at2, at3, at4 = (int(record[1])-1, int(record[2])-1,
-                        int(record[3])-1, int(record[4])-1)
-  v_n, gamma, nfold, paths = (float(record[5]), float(record[6]),
-                              int(record[7]), int(record[8]))
-  c1, c2, c3, c4 = (mol.atoms[at1].coords, mol.atoms[at2].coords,
-                    mol.atoms[at3].coords, mol.atoms[at4].coords)
+  at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
+  v_n, gamma = list(map(float, record[5:7]))
+  nfold, paths = list(map(int, record[7:9]))
+  c1, c2, c3, c4 = [mol.atoms[i].coords for i in [at1, at2, at3, at4]]
+
   t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4)
-  torsion = molecule.Torsion(
-      at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths)
-  mol.torsions.append(torsion)
+  tors = molecule.Torsion(at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths)
+  mol.torsions.append(tors)
 
 def _GetOutofplane(mol, record):
   """Parse outofplane record into object and append to molecule.
@@ -173,11 +171,10 @@ def _GetOutofplane(mol, record):
     mol (mmlib.molecule.Molecule): Molecule to append outofplane.
     record (str*): Array of string from line of prm file.
   """
-  at1, at2, at3, at4 = (int(record[1])-1, int(record[2])-1,
-                        int(record[3])-1, int(record[4])-1)
+  at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
   v_n = float(record[5])
-  c1, c2, c3, c4 = (mol.atoms[at1].coords, mol.atoms[at2].coords,
-                    mol.atoms[at3].coords, mol.atoms[at4].coords)
+  c1, c2, c3, c4 = [mol.atoms[i].coords for i in [at1, at2, at3, at4]]
+
   o_ijkl = geomcalc.GetOijkl(c1, c2, c3, c4) 
   outofplane = molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n)
   mol.outofplanes.append(outofplane)
@@ -200,6 +197,7 @@ def GetPrm(mol):
     if rec_type == 'atom':
       _GetAtom(mol, record)
   mol.n_atoms = len(mol.atoms)
+
   mol.bond_graph = [{} for i in range(mol.n_atoms)]
   for i in range(len(infile_array)):
     record = infile_array[i]
@@ -212,6 +210,7 @@ def GetPrm(mol):
       _GetTorsion(mol, record)
     elif rec_type == 'outofplane':
       _GetOutofplane(mol, record)
+
   mol.n_bonds = len(mol.bonds)
   mol.n_angles = len(mol.angles)
   mol.n_torsions = len(mol.torsions)
@@ -255,7 +254,7 @@ def GetSimData(sim):
       sim.mol.boundtype = kwargval.lower()
       sim.mol.GetVolume()
     elif kwarg == 'origin':
-      sim.mol.origin = [float(kwargarr[i]) for i in range(3)]
+      sim.mol.origin = list(map(float, kwargarr[:const.NUMDIM]))
     elif kwarg == 'totaltime':
       sim.tottime = float(kwargval)
     elif kwarg == 'totalconf':
@@ -281,7 +280,7 @@ def GetSimData(sim):
     elif kwarg == 'eqrate':
       sim.eqrate = float(kwargval)
     elif kwarg == 'randomseed':
-      sim.random_seed = int(kwargval) % (2**32)
+      sim.random_seed = int(kwargval) % 2**32
   os.chdir(cwd)
 
 def GetOptData(opt):
@@ -385,7 +384,7 @@ def GetProperties(prop_file):
   """
   prop_array = _GetFileStringArray(prop_file)
   n_lines = len(prop_array)
-  prop_keys = constants.PROPERTYKEYS
+  prop_keys = const.PROPERTYKEYS
   key1 = prop_keys[2]
   key_line = 0
   for i in range(n_lines):
@@ -430,12 +429,12 @@ def GetTrajectory(traj_file):
   n_lines = len(traj_array)
   n_atoms = int(traj_array[0][0])
   n_confs = int(math.floor(n_lines / (n_atoms+2)))
-  traj = numpy.zeros((n_confs, n_atoms, 3))
+  traj = numpy.zeros((n_confs, n_atoms, const.NUMDIM))
   for p in range(n_confs):
     geom_start = p * (n_atoms+2)
     for i in range(n_atoms):
       atom_start = geom_start + i + 2
-      for j in range(3):
+      for j in range(const.NUMDIM):
         traj[p][i][j] = float(traj_array[atom_start][j+1])
   return traj
 
@@ -453,7 +452,7 @@ def PrintCoords(mol, comment):
   print('%i\n%s\n' % (mol.n_atoms, comment), end='')
   for i in range(mol.n_atoms):
     print('%-2s' % (mol.atoms[i].type), end='')
-    for j in range(3):
+    for j in range(const.NUMDIM):
       print(' %12.6f' % (mol.atoms[i].coords[j]), end='')
     print('\n', end='')
   print('\n', end='')
@@ -475,11 +474,11 @@ def PrintCoordsFile(ofile, mol, comment, totchar, decchar):
   ofile.write('%i\n%s\n' % (mol.n_atoms, comment))
   for i in range(mol.n_atoms):
     ofile.write('%-2s' % (mol.atoms[i].element))
-    for j in range(3):
+    for j in range(const.NUMDIM):
       ofile.write(' %*.*f' % (totchar, decchar, mol.atoms[i].coords[j]))
     ofile.write('\n')
 
-def PrintGradient(mol, grad_type):
+def PrintGradient(grad, comment):
   """Print specified atomic gradient type for a set of atoms.
   
   Print to screen all (float) 3N atomic cartesian gradient components
@@ -488,36 +487,14 @@ def PrintGradient(mol, grad_type):
   cartesian coordinate [Angstrom].
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with (float) 3N atomic
-        gradient components [kcal/(mol*Angstrom)].
-    grad_type (str): Gradient component values to be printed to screen.
+    grad (numpy.float**): Molecular energy gradient (or component)
+        [kcal/(mol*A)].
+    comment (str): Comment on gradient type / source / etc. to print to screen.
   """
-  if grad_type == 'total':
-    grad = mol.g_total
-  elif grad_type == 'nonbonded':
-    grad = mol.g_nonbonded
-  elif grad_type == 'bonded':
-    grad = mol.g_bonded
-  elif grad_type == 'boundary':
-    grad = mol.g_bound
-  elif grad_type == 'vdw':
-    grad = mol.g_vdw
-  elif grad_type == 'elst':
-    grad = mol.g_elst
-  elif grad_type == 'bonds':
-    grad = mol.g_bonds
-  elif grad_type == 'angles':
-    grad = mol.g_angles
-  elif grad_type == 'torsions':
-    grad = mol.g_torsions
-  elif grad_type == 'outofplanes':
-    grad = mol.g_outofplanes
-  else:
-    print('Error: grad type (%s) not recognized!' % (grad_type))
-  print('\n %s\n\n' % ('%s %s gradient' % (mol.grad_type, grad_type)), end='')
+  print('\n %s\n' % (comment))
   for i in range(mol.n_atoms):
     print('%-2s' % (mol.atoms[i].type), end='')
-    for j in range(3):
+    for j in range(const.NUMDIM):
       print(' %12.6f' % (grad[i][j]), end='')
     print('\n', end='')
   print('\n', end='')
@@ -601,7 +578,7 @@ def PrintGeom(mol):
   
   for i in range(mol.n_atoms):
     print('%4i | %-2s' % (i+1, mol.atoms[i].type), end='')
-    for j in range(3):
+    for j in range(const.NUMDIM):
       print('%10.4f' % (mol.atoms[i].coords[j]), end='')
     print(' %7.4f %7.4f %7.4f' % (mol.atoms[i].charge,
       mol.atoms[i].ro, mol.atoms[i].eps))
@@ -697,9 +674,8 @@ def PrintAngles(mol):
   for p in range(mol.n_angles):
     a = mol.angles[p]
     t1, t2, t3 = (at[a.at1].type, at[a.at2].type, at[a.at3].type)
-    pstr = '%4i | %6.2f %7.3f %7.3f (%2s-%2s-%2s) %7.4f (%i-%i-%i)' % (
-        p+1, a.k_a, a.a_eq, a.a_ijk, t1, t2, t3, a.energy, a.at1+1, a.at2+1,
-        a.at3+1)
+    pstr = '%4i | %6.2f %7.3f %7.3f (%2s-%2s-%2s) %7.4f (%i-%i-%i)' % (p+1,
+        a.k_a, a.a_eq, a.a_ijk, t1, t2, t3, a.energy, a.at1+1, a.at2+1, a.at3+1)
     print(pstr)
 
 def PrintAnglesFile(outfile, mol):
@@ -764,8 +740,8 @@ def PrintTorsionsFile(outfile, mol):
     mol (mmlib.molecule.Molecule): Molecule with torsion data and parameters for
         printing.
   """
-  outfile.write('# %i Torsions (At1, At2, At3, At4,' % (mol.n_torsions))
-  outfile.write('V_n, Gamma, N_f, paths)\n')
+  outfile.write('# %i Torsions (At1, At2, At3, At4, '
+                'V_n, Gamma, N_f, paths)\n' % (mol.n_torsions))
   for p in range(mol.n_torsions):
     t = mol.torsions[p]
     outfile.write('TORSION %4i %4i %4i %4i %6.2f %6.1f %i %i\n' % (
@@ -859,7 +835,7 @@ def PrintAverages(ana):
   spaces = [3, 11, 9, 9, 9]
   _PrintHeader(header, n_banner, params, spaces)
   
-  pdict = constants.PROPERTYDICTIONARY
+  pdict = const.PROPERTYDICTIONARY
   vals = sorted(list(pdict.keys()), key = lambda x: pdict[x][3])
   vals = [val for val in vals if val in ana.prop]
   labels = [pdict[key][0] for key in vals]

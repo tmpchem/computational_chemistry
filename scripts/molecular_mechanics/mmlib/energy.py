@@ -246,7 +246,7 @@ def GetTemperature(mol):
     mol (mmlib.molecule.Molecule): Molecule object with current (float) kinetic
         energy [kcal/mol].
   """
-  mol.temp = (2.0/3.0) * mol.e_kinetic / (constants.KB * mol.n_atoms)
+  mol.temp = 2.0/3.0 * mol.e_kinetic / (constants.KB * mol.n_atoms)
 
 def GetEKinetic(mol, kintype):
   """Compute kinetic energy of all atoms in molecule.
@@ -286,8 +286,7 @@ def GetETotals(mol):
     mol (mmlib.molecule.Molecule): Molecule object with energy component data
         [kcal/mol].
   """
-  mol.e_bonded  = mol.e_bonds + mol.e_angles
-  mol.e_bonded += mol.e_torsions + mol.e_outofplanes
+  mol.e_bonded = mol.e_bonds + mol.e_angles + mol.e_torsions + mol.e_outofplanes
   mol.e_nonbonded = mol.e_vdw + mol.e_elst
   mol.e_potential = mol.e_bonded + mol.e_nonbonded + mol.e_bound
   mol.e_total = mol.e_kinetic + mol.e_potential

@@ -317,17 +317,7 @@ class TrajectoryPlot(Plot):
         self.yvals[key][i] = val
 
   def _GetTicks(self, lower_bound, upper_bound, axis):
-    plot_range = upper_bound - lower_bound
-    range_power = int(math.floor(math.log10(plot_range)))
-    lead_digit = plot_range * 10**(-range_power)
-
-    base_digit = 10.0
-    if lead_digit <= 2.0:
-      base_digit = 2.0
-    elif lead_digit <= 5.0:
-      base_digit = 5.0
-
-    tick_res = base_digit * 10**(range_power)
+    tick_res = self._GetTickResolution(lower_bound, upper_bound)
     tick_delta = 0.1 * tick_res
     tick_min = tick_delta * (int(lower_bound / tick_delta) - 1)
     tick_max = tick_delta * (int(upper_bound / tick_delta) + 1)
@@ -353,11 +343,24 @@ class TrajectoryPlot(Plot):
 
   def _GetXTicks(self):
     """Determine array of X-axis tick mark values."""
-    self.get_ticks(self.xlow, self.xhigh, 'x')
+    self._GetTicks(self.xlow, self.xhigh, 'x')
 
   def _GetYTicks(self):
     """Determine array of Y-axis tick mark values."""
-    self.get_ticks(self.ylow, self.yhigh, 'y')
+    self._GetTicks(self.ylow, self.yhigh, 'y')
+
+  def _GetTickResolution(self, lower_bound, upper_bound):
+    """Determine spacing between tick marks given axis range."""
+    axis_range = upper_bound - lower_bound
+    range_power = int(math.floor(math.log10(axis_range)))
+    lead_digit = axis_range * 10**(-range_power)
+    if lead_digit <= 2.0:
+      base_digit = 2.0
+    elif lead_digit <= 5.0:
+      base_digit = 5.0
+    else:
+      base_digit = 10.0
+    return base_digit * 10**range_power
 
 
 class Analysis:

@@ -19,10 +19,9 @@ def GetR2ij(coords_i, coords_j):
   Returns:
     r2_ij (float): Square distance [Angstrom] between points i and j.
   """
-  return (
-      (coords_i[0] - coords_j[0])**2 + 
-      (coords_i[1] - coords_j[1])**2 +
-      (coords_i[2] - coords_j[2])**2)
+  return ((coords_j[0] - coords_i[0])**2 + 
+          (coords_j[1] - coords_i[1])**2 +
+          (coords_j[2] - coords_i[2])**2)
 
 def GetRij(coords_i, coords_j):
   """Calculate distance between two 3d cartesian points.
@@ -34,10 +33,9 @@ def GetRij(coords_i, coords_j):
   Returns:
     r_ij (float): Distance [Angstrom] between points i and j.
   """
-  r2_ij  = (coords_i[0] - coords_j[0])**2
-  r2_ij += (coords_i[1] - coords_j[1])**2
-  r2_ij += (coords_i[2] - coords_j[2])**2
-  return math.sqrt(r2_ij)
+  return math.sqrt((coords_j[0] - coords_i[0])**2 +
+                   (coords_j[1] - coords_i[1])**2 +
+                   (coords_j[2] - coords_i[2])**2)
 
 def GetUij(coords_i, coords_j, r_ij=None):
   """Calculate 3d unit vector from cartesian points i to j.
@@ -153,7 +151,7 @@ def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
   u_jijk =  GetUcp(u_ji, u_jk)
   u_kjkl = -GetUcp(u_jk, u_kl)
   dp_jijk_kjkl = GetUdp(u_jijk, u_kjkl)
-  sign = 2.0*float(GetUdp(u_jijk, u_kl) <= 0.0) - 1.0
+  sign = 2.0*(GetUdp(u_jijk, u_kl) <= 0.0) - 1.0
   return constants.RAD2DEG * sign * math.acos(dp_jijk_kjkl)
 
 def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
@@ -191,6 +189,6 @@ def GetVolume(mol):
   if mol.boundtype == 'cube':
     mol.vol = 8.0 * mol.bound**3
   elif mol.boundtype == 'sphere':
-    mol.vol = (4.0/3.0) * math.pi * mol.bound**3
+    mol.vol = 4.0/3.0 * math.pi * mol.bound**3
   else:
     mol.vol = float('inf')

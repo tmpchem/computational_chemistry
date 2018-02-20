@@ -8,6 +8,7 @@ import math
 import numpy
 import os
 
+from mmlib import constants as const
 from mmlib import energy
 from mmlib import fileio
 from mmlib import geomcalc
@@ -54,10 +55,10 @@ class Atom:
     self.SetEps(eps)
     self.SetMass(mass)
     self.SetCovRad(param.GetCovRad(self.element))
-    self.SetVels(numpy.zeros(3))
-    self.SetAccs(numpy.zeros(3))
-    self.SetPVels(numpy.zeros(3))
-    self.SetPAccs(numpy.zeros(3))
+    self.SetVels(numpy.zeros(const.NUMDIM))
+    self.SetAccs(numpy.zeros(const.NUMDIM))
+    self.SetPVels(numpy.zeros(const.NUMDIM))
+    self.SetPAccs(numpy.zeros(const.NUMDIM))
 
   def SetType(self, type):
     """Set new (str) atom type."""
@@ -488,16 +489,16 @@ class Molecule:
     elif (self.filetype == 'prm'):
       self.ReadInPrm()
         
-    self.g_bonds = numpy.zeros((self.n_atoms, 3))
-    self.g_angles = numpy.zeros((self.n_atoms, 3))
-    self.g_torsions = numpy.zeros((self.n_atoms, 3))
-    self.g_outofplanes = numpy.zeros((self.n_atoms, 3))
-    self.g_vdw = numpy.zeros((self.n_atoms, 3))
-    self.g_elst = numpy.zeros((self.n_atoms, 3))
-    self.g_bound = numpy.zeros((self.n_atoms, 3))
-    self.g_bonded = numpy.zeros((self.n_atoms, 3))
-    self.g_nonbonded = numpy.zeros((self.n_atoms, 3))
-    self.g_total = numpy.zeros((self.n_atoms, 3))
+    self.g_bonds = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_angles = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_torsions = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_outofplanes = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_vdw = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_elst = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_bound = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_bonded = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_nonbonded = numpy.zeros((self.n_atoms, const.NUMDIM))
+    self.g_total = numpy.zeros((self.n_atoms, const.NUMDIM))
 
   def ReadInXYZQ(self):
     """Read in xyzq data from .xyzq input file."""
@@ -613,4 +614,4 @@ class Molecule:
 
   def PrintGradient(self):
     """Print gradient data to screen."""
-    fileio.PrintGradient(self, 'total')
+    fileio.PrintGradient(self.g_total, mol.grad_type + ' total gradient')

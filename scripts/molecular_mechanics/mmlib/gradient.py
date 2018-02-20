@@ -9,7 +9,7 @@ mmlib.molecule.Molecule objects.
 import numpy
 import math
 
-from mmlib import constants
+from mmlib import constants as const
 from mmlib import geomcalc
 from mmlib import molecule
 
@@ -37,7 +37,7 @@ def GetGAngle(a_ijk, a_eq, k_a):
   Returns:
     g_angle (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  return 2.0 * k_a * (constants.DEG2RAD * (a_ijk - a_eq) )
+  return 2.0 * k_a * (const.DEG2RAD * (a_ijk - a_eq) )
 
 def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
   """Calculate energy gradient magnitude of torsion strain.
@@ -53,7 +53,7 @@ def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
     g_torsion (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   return -v_n * n_fold * math.sin(
-      constants.DEG2RAD * (n_fold * t_ijkl - gamma)) / paths
+      const.DEG2RAD * (n_fold * t_ijkl - gamma)) / paths
 
 def GetGOutofplane(o_ijkl, v_n):
   """Calculate energy gradient magnitude of outofplane bend.
@@ -65,7 +65,7 @@ def GetGOutofplane(o_ijkl, v_n):
   Returns:
     g_outofplane (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  return -2.0 * v_n * math.sin(constants.DEG2RAD * (2.0 * o_ijkl - 180.0))
+  return -2.0 * v_n * math.sin(const.DEG2RAD * (2.0 * o_ijkl - 180.0))
 
 def GetGVdwIJ(r_ij, eps_ij, ro_ij):
   """Calculate energy gradient magnitude of van der waals pair energy.
@@ -93,7 +93,7 @@ def GetGElstIJ(r_ij, q_i, q_j, epsilon):
   Returns:
     e_elst_ij (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  return -constants.CEU2KCAL * q_i * q_j / (epsilon * r_ij**2)
+  return -const.CEU2KCAL * q_i * q_j / (epsilon * r_ij**2)
 
 def GetGBoundI(k_box, bound, coord, origin, boundtype):
   """Calculate energy gradient magnitude of boundary energy.
@@ -109,9 +109,9 @@ def GetGBoundI(k_box, bound, coord, origin, boundtype):
   Returns:
     g_bound_i (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
-  g_bound_i = numpy.zeros(3)
+  g_bound_i = numpy.zeros(const.NUMDIM)
   if boundtype == 'cube':
-    for j in range(3):
+    for j in range(const.NUMDIM):
       sign = 1.0 if ((coord[j] - origin[j]) <= 0.0) else -1.0
       scale = 1.0 if (abs(coord[j] - origin[j]) >= bound) else 0.0
       g_bound_i[j] = (-2.0 * sign * scale * k_box * (abs(coord[j]) - bound))
@@ -387,7 +387,7 @@ def GetGTotals(mol):
         component data [kcal/(mol*A)].
   """
   for i in range(mol.n_atoms):
-    for j in range(3):
+    for j in range(const.NUMDIM):
       mol.g_bonded[i][j] = (mol.g_bonds[i][j] + mol.g_outofplanes[i][j]
            + mol.g_torsions[i][j] + mol.g_angles[i][j])
       mol.g_nonbonded[i][j] = mol.g_vdw[i][j] + mol.g_elst[i][j]
@@ -404,7 +404,7 @@ def _GetVirial(mol):
   """
   mol.virial = 0.0
   for i in range(mol.n_atoms):
-    for j in range(3):
+    for j in range(const.NUMDIM):
       mol.virial += -mol.atoms[i].coords[j] * mol.g_total[i][j]
 
 def GetPressure(mol):
@@ -435,7 +435,7 @@ def GetGNumerical(mol):
   mol.g_bound.fill(0.0)
   disp = constants.NUMDISP
   for i in range(mol.n_atoms):
-    for j in range(3):
+    for j in range(const.NUMDIM):
       q = mol.atoms[i].coords[j]
       qp = q + 0.5*disp
       qm = q - 0.5*disp

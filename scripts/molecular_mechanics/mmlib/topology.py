@@ -7,7 +7,7 @@ threshold of the sum of interatomic covalent radii.
 
 import math
 
-from mmlib import constants
+from mmlib import constants as const
 from mmlib import geomcalc
 from mmlib import molecule
 from mmlib import param
@@ -27,7 +27,7 @@ def GetBondGraph(mol):
         geometry and mm parameter data.
   """
   mol.bond_graph = [{} for i in range(mol.n_atoms)]
-  bond_thresh = constants.BONDTHRESHOLD
+  bond_thresh = const.BONDTHRESHOLD
   for i in range(mol.n_atoms):
     at1 = mol.atoms[i]
     for j in range(i+1, mol.n_atoms):
