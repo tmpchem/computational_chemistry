@@ -4,8 +4,6 @@ Includes parameters for atomic mass, atomic covalent radii, atomic van der
 waals, mm bonds, mm angles, mm torsions, and mm outofplanes.
 """
 
-import sys
-
 # relative atomic masses of elements (in atomic mass units [g/mol]) from
 # "CRC Handbook" 84th ed, ed Lide, pgs 1-12 - 1-14
 at_masses = {

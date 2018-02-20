@@ -7,7 +7,6 @@ bond angles, torsion angles, outofplane angles, and entire molecular systems.
 import math
 import numpy
 import os
-import sys
 
 from mmlib import energy
 from mmlib import fileio

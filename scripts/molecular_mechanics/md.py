@@ -11,7 +11,7 @@ import mmlib
 # This program takes in a set of molecular xyz coordinates and charges,     #
 # determines bonded topology and parameters, calculates amber94 molecular   #
 # mechanics energy components, gradients, and molecular dynamics            #
-# trajectories                                                              #
+# trajectories.                                                             #
 #                                                                           #
 # No guarantees are made that the results of this program are correct       #
 # and the author assumes no liability for their reliability.                #

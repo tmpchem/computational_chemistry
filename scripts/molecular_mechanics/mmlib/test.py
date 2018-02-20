@@ -8,7 +8,6 @@ import ast
 import math
 import numpy
 import os
-import sys
 
 from mmlib import energy
 from mmlib import fileio

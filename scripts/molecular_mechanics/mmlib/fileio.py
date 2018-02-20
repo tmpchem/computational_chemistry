@@ -9,14 +9,10 @@ import numpy
 import os
 import sys
 
-from mmlib import analyze
 from mmlib import constants
-from mmlib import energy
 from mmlib import geomcalc
 from mmlib import molecule
-from mmlib import optimize
 from mmlib import param
-from mmlib import simulate
 from mmlib import topology
 
 def _GetFileStringArray(infile_name):

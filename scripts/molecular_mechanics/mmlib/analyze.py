@@ -9,8 +9,8 @@ import math
 import matplotlib.pyplot as plt
 import numpy
 import os
-import sys
 
+from mmlib import constants
 from mmlib import fileio
 from mmlib import simulate
 

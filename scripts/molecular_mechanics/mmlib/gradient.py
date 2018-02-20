@@ -10,7 +10,6 @@ import numpy
 import math
 
 from mmlib import constants
-from mmlib import energy
 from mmlib import geomcalc
 from mmlib import molecule
 

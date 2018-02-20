@@ -8,11 +8,8 @@ minimum.
 import math
 import numpy
 import os
-import sys
 
-from mmlib import energy
 from mmlib import fileio
-from mmlib import gradient
 
 class Trajectory:
   """Trajectory class for optimization step history.
@@ -342,11 +339,11 @@ class Optimization:
 
   def _UpdateEnergy(self):
     """Update energy at current molecular coordinates."""
-    self.mol.get_energy('nokinetic')
+    self.mol.GetEnergy('nokinetic')
 
   def _UpdateGradient(self):
     """Update energy gradient at current molecular coordinates."""
-    self.mol.get_gradient('analytic')
+    self.mol.GetGradient('analytic')
 
   def _UpdateCoords(self, new_coords):
     """Update atomic coordinates to values in a given vector."""

@@ -11,7 +11,6 @@ import sys
 import time
 
 from mmlib import constants
-from mmlib import energy
 from mmlib import fileio
 
 class Simulation:
