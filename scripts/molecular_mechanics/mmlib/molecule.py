@@ -22,32 +22,25 @@ class Atom:
   Initialize attributes to corresponding specified argument values, look up in
   parameter tables, or set to zero.
   
-  Args:
-    at_type (str): AMBER94 mm atom type.
-    at_coords (float*): 3 cartesian coordinates [Angstrom].
-    at_charge (float): atomic partial charge [e].
-    at_ro (float): atomic van der waals radius [Angstrom].
-    at_eps (float): atomic van der waals epsilon [kcal/mol].
-    at_mass (float): atomic mass [g/mol].
-  
-  Attributes:
-    type (str): AMBER94 mm atom type.
+  Args / Attributes:
+    type_ (str): AMBER94 mm atom type.
     coords (float*): 3 cartesian coordinates [Angstrom].
+    charge (float): atomic partial charge [e].
     ro (float): vdw radius [Angstrom].
     eps (float): vdw epsilon [kcal/mol].
-    sreps (float): square root of vdw epsilon [(kcal/mol)^0.5].
     mass (float): atomic mass [g/mol].
-    covard (float): covalent radius [Angstrom].
+
+  Attributes:
+    covrad (float): covalent radius [Angstrom].
+    sreps (float): square root of vdw epsilon [(kcal/mol)^0.5].
     vels (float*): 3 cartesian velocity components [Angstrom/ps].
     accs (float*): 3 cartesian acceleration components [A/(ps^2)].
     pvels (float*): 3 previous 'vels' [Angstrom/ps].
     paccs (float*): 3 previous 'accs' [Angstrom/(ps^2)].
   """
-  def __init__(self, type, coords, charge, ro, eps, mass):
-    self.type = type
-    self.element = type[0].capitalize()
-    if len(type) > 1 and type[-1].islower():
-      self.element += type[-1]
+  def __init__(self, type_, coords, charge, ro, eps, mass):
+    self.type_ = type_
+    self.element = fileio.GetElement(type_)
 
     self.SetCoords(coords)
     self.SetCharge(charge)
@@ -60,9 +53,9 @@ class Atom:
     self.SetPVels(numpy.zeros(const.NUMDIM))
     self.SetPAccs(numpy.zeros(const.NUMDIM))
 
-  def SetType(self, type):
+  def SetType(self, type_):
     """Set new (str) atom type."""
-    self.type = type
+    self.type_ = type_
 
   def SetCoords(self, coords):
     """Set new (float*) coodinates [Angstrom]."""
@@ -113,18 +106,20 @@ class Atom:
     """Set new (float*) accelerations [Angstrom/(ps^2)]."""
     self.paccs = paccs
 
+
 class Bond:
   """Bond class for bond geometry and parameter data.
   
   Initialize attributes to specified argument values. Change by calling
-  appropriate 'set_[param]' function.
+  appropriate 'Set[Param]' function.
   
   Args / Attributes:
-    at1 (str): Atom1 atomic index in Molecule.
-    at2 (str): Atom2 atomic index in Molecule.
+    at1 (int): Atom1 atomic index in Molecule.
+    at2 (int): Atom2 atomic index in Molecule.
     r_ij (float): Distance [Angstrom] between at1 and at2.
     r_eq (float): Equlibrium at1-at2 bond length [Angstrom].
     k_b (float): Bond spring constant [kcal/(mol*A^2)].
+
   Attributes:
     energy (float): Energy of bond [kcal/mol].
     grad (float): Energy gradient magnitude of bond [kcal/(mol*A)].
@@ -167,19 +162,21 @@ class Bond:
     """Calculate bond gradient (float) [kcal/(mol*A)]."""
     self.grad = gradient.GetGBond(self.r_ij, self.r_eq, self.k_b)
 
+
 class Angle:
   """Angle class for angle geometry and parameter data.
   
   Initialize attributes to specified argument values. Change by calling
-  appropriate 'set_[param]' function.
+  appropriate 'Set[Param]' function.
   
   Args / Attributes:
-    at1 (str): Atom1 atomic index in Molecule.
-    at2 (str): Atom2 atomic index in Molecule.
-    at3 (str): Atom3 atomic index in Molecule.
+    at1 (int): Atom1 atomic index in Molecule.
+    at2 (int): Atom2 atomic index in Molecule.
+    at3 (int): Atom3 atomic index in Molecule.
     a_ijk (float): Current at1-at2-at3 bond angle [degrees].
     a_eq (float): Equlibrium at1-at2-at3 bond angle [degrees].
     k_a (float): Angle spring constant [kcal/(mol*rad^2)].
+
   Attributes:
     energy (float): Energy of angle [kcal/mol].
     grad (float): Energy gradient magnitude of angle [kcal/(mol*A)].
@@ -227,6 +224,7 @@ class Angle:
     """Get gradient (float) [kcal/(mol*A)]."""
     self.gradient = gradient.GetGAngle(self.a_ijk, self.a_eq, self.k_a)
 
+
 class Torsion:
   """Torsion class for torsion geometry and parameter data.
   
@@ -234,15 +232,16 @@ class Torsion:
   by calling appropriate 'set_[param]' function.
   
   Args / Attributes:
-    at1 (str): Atom1 atomic index in Molecule.
-    at2 (str): Atom2 atomic index in Molecule.
-    at3 (str): Atom3 atomic index in Molecule.
-    at4 (str): Atom4 atomic index in Molecule.
+    at1 (int): Atom1 atomic index in Molecule.
+    at2 (int): Atom2 atomic index in Molecule.
+    at3 (int): Atom3 atomic index in Molecule.
+    at4 (int): Atom4 atomic index in Molecule.
     t_ijkl (float): Current at1-at2-at3-at4 torsion angle [degrees].
     v_n (float): Rotation half-barrier height [kcal/mol].
     gamma (float): Barrier offset [degrees].
     nfold (int): Frequency of barrier.
     paths (int): Unique paths through torsion.
+
   Attributes:
     energy (float): Energy of torsion [kcal/mol].
     grad (float): Energy gradient magnitude of torsion [kcal/(mol*A)].
@@ -307,6 +306,7 @@ class Torsion:
     self.gradient = gradient.GetGTorsion(self.t_ijkl, self.v_n, self.gam,
                                          self.n, self.paths)
 
+
 class Outofplane:
   """Outofplane class for outofplane geometry and parameter data.
   
@@ -314,12 +314,13 @@ class Outofplane:
   appropriate 'set_[param]' function.
   
   Args / Attributes:
-    at1 (str): Atom1 atomic index in Molecule.
-    at2 (str): Atom2 atomic index in Molecule.
-    at3 (str): Atom3 atomic index in Molecule.
-    at4 (str): Atom4 atomic index in Molecule.
+    at1 (int): Atom1 atomic index in Molecule.
+    at2 (int): Atom2 atomic index in Molecule.
+    at3 (int): Atom3 atomic index in Molecule.
+    at4 (int): Atom4 atomic index in Molecule.
     o_ijkl (float): Current at1-at2-at3-at4 outofplane angle [degrees].
     v_n (float): Half-barrier height [kcal/mol].
+
   Attributes:
     energy (float): Energy of outofplane [kcal/mol].
     grad (float): Energy gradient magnitude of outofplane [kcal/(mol*A)].
@@ -462,7 +463,7 @@ class Molecule:
     self.dielectric = 1.0
     self.mass = 0.0
     self.k_box = 250.0
-    self.bound = 1.0 * 10**100
+    self.bound = 1.0E10
     self.boundtype = 'sphere'
     self.origin = numpy.zeros(3)
     self.vol = float('inf')

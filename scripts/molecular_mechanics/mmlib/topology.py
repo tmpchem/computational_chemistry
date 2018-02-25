@@ -55,7 +55,7 @@ def GetBonds(mol):
       at2 = mol.atoms[j]
       if i >= j:
         r_ij = mol.bond_graph[i][j]
-        k_b, r_eq = param.GetBondParam(at1.type, at2.type)
+        k_b, r_eq = param.GetBondParam(at1.type_, at2.type_)
         if k_b > 0.0:
           mol.bonds.append(molecule.Bond(i, j, r_ij, r_eq, k_b))
   mol.bonds = sorted(mol.bonds, key=lambda b:b.at2)
@@ -84,7 +84,7 @@ def GetAngles(mol):
         at3 = mol.atoms[k]
         r_jk = mol.bond_graph[j][k]
         a_ijk = geomcalc.GetAijk(at1.coords, at2.coords, at3.coords, r_ij, r_jk)
-        k_a, a_eq = param.GetAngleParam(at1.type, at2.type, at3.type)
+        k_a, a_eq = param.GetAngleParam(at1.type_, at2.type_, at3.type_)
         if k_a > 0.0:
             mol.angles.append(molecule.Angle(i, j, k, a_ijk, a_eq, k_a))
   mol.angles = sorted(mol.angles, key=lambda a:a.at3)
@@ -122,7 +122,8 @@ def GetTorsions(mol):
           r_kl = mol.bond_graph[k][l]
           t_ijkl = geomcalc.GetTijkl(at1.coords, at2.coords, at3.coords,
                                      at4.coords, r_ij, r_jk, r_kl)
-          params = param.GetTorsionParam(at1.type, at2.type, at3.type, at4.type)
+          params = param.GetTorsionParam(
+              at1.type_, at2.type_, at3.type_, at4.type_)
           for p in range(len(params)):
               v_n, gamma, nfold, paths = params[p]
               if v_n > 0.0:
@@ -164,7 +165,8 @@ def GetOutofplanes(mol):
           r32 = mol.bond_graph[k][j]
           o_ijkl = geomcalc.GetOijkl(at1.coords, at2.coords, at3.coords,
                                      at4.coords, r31, r32, r34)
-          v_n = param.GetOutofplaneParam(at1.type, at2.type, at3.type, at4.type)
+          v_n = param.GetOutofplaneParam(
+              at1.type_, at2.type_, at3.type_, at4.type_)
           if v_n > 0.0:
             mol.outofplanes.append(molecule.Outofplane(i, j, k, l, o_ijkl, v_n))
   mol.outofplanes = sorted(mol.outofplanes, key=lambda o:o.at4)

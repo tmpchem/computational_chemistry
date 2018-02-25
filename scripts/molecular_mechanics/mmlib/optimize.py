@@ -91,11 +91,12 @@ class Optimization:
         previous to current configuration [Angstrom].
     disp_max (float): Maximum total coordinate displacement matrix element
         [Angstrom].
-    conv_delta_e (float): 'delta_e' needed for convergence.
-    conv_grad_rms (float): 'grad_rms' needed for convergence.
-    conv_grad_max (float): 'grad_max' needed for convergence.
-    conv_disp_rms (float): 'disp_rms' needed for convergence.
-    conv_disp_max (float): 'disp_max' needed for convergence.
+    conv_delta_e (float): Max absolute energy change needed for convergence.
+    conv_grad_rms (float): Root mean squared gradient needed for convergence.
+    conv_grad_max (float): Maximum gradient needed for convergence.
+    conv_disp_rms (float): Root mean squared displacement needed for
+        convergence.
+    conv_disp_max (float): Maximum diplacement needed for convergence.
 
     must_converge (bool*): Array denoting which of the 5 convergence criteria
         must be met for success.
@@ -245,8 +246,9 @@ class Optimization:
     disp_mag *= disp_sign
     disp_sign_same = True
     ref_energy = self.mol.e_total
-    self.n_subiter = 0
+
     # binary search to find upper bound on displacement magnitude
+    self.n_subiter = 0
     while (disp_sign_same):
       self.n_subiter += 1
       self.DisplaceCoords(+1.0 * disp_mag, disp_vector)
@@ -261,9 +263,10 @@ class Optimization:
       disp_mag *= 2.0
     self.GetDispDeriv(disp_mag, disp_vector)
     self.AdjustDispMag(self.n_subiter)
+
+    # binary search to find value of displacement within bounds
     numer = 1.0
     denom = 2.0
-    # binary search to find value of displacement within bounds
     for i in range(const.NUMLINESEARCHSTEPS):
       self.n_subiter += 1
       test_disp = disp_mag * numer / denom
@@ -274,6 +277,7 @@ class Optimization:
       numer = 2*numer + direc
       denom = 2*denom
     disp_mag *= numer / denom
+
     # final line search energy minimized molecular coordinates
     self.DisplaceCoords(+1.0 * disp_mag, disp_vector)
 

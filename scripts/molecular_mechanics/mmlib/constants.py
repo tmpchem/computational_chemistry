@@ -12,11 +12,11 @@ ACCCONV = 418.400000
 # Threshold beyond covalent radii sum to determine bond cutoff.
 BONDTHRESHOLD = 1.2
 
-# Conversion from degrees to radians
-DEG2RAD = math.pi / 180.0
-
 # Conversion of electrostatic energy from [ceu] to [kcal/mol].
 CEU2KCAL = 332.06375
+
+# Conversion from degrees to radians
+DEG2RAD = math.pi / 180.0
 
 # Boltzmann constant [kcal/(mol*K)].
 KB = 0.001987204
@@ -27,14 +27,22 @@ KCALAMOL2PA = 69476.95
 # Conversion of kinetic energy from [amu*A^2/ps^2] to [kcal/mol].
 KIN2KCAL = 0.00239005736
 
-# Number of step iterations to take in optimization binary line search.
-NUMLINESEARCHSTEPS = 7
+# Number of Cartesian dimensions
+NUMDIM = 3
 
 # Displacement distance [Angstrom] for numerical gradient.
 NUMDISP = 1.0E-6
 
-# Number of Cartesian dimensions
-NUMDIM = 3
+# Number of step iterations to take in optimization binary line search.
+NUMLINESEARCHSTEPS = 7
+
+# Default optimization criteria keyword dictionary.
+# [delta_e, grad_rms, grad_max, disp_rms, disp_max]
+OPTCRITERIAREFS = {
+    'loose':     [1.0E-4,  1.0E-3, 2.0E-3, 1.0E-2, 2.0E-2],
+    'default':   [1.0E-6,  1.0E-4, 2.0E-4, 1.0E-3, 2.0E-3],
+    'tight':     [1.0E-8,  1.0E-5, 2.0E-5, 1.0E-4, 2.0E-4],
+    'verytight': [1.0E-10, 1.0E-6, 2.0E-6, 1.0E-5, 2.0E-5]}
 
 # Factor by which to adjust the initial line search step size between steps.
 OPTSTEPADJUSTOR = math.sqrt(2)
@@ -44,14 +52,6 @@ PERCENTIMAGEPLOT = 0.75
 
 # Unit conversion between points and inches
 POINTSPERINCH = 72
-
-# Default optimization criteria keyword dictionary.
-# [delta_e, grad_rms, grad_max, disp_rms, disp_max]
-OPTCRITERIAREFS = {
-    'loose':     [1.0E-4,  1.0E-3, 2.0E-3, 1.0E-2, 2.0E-2],
-    'default':   [1.0E-6,  1.0E-4, 2.0E-4, 1.0E-3, 2.0E-3],
-    'tight':     [1.0E-8,  1.0E-5, 2.0E-5, 1.0E-4, 2.0E-4],
-    'verytight': [1.0E-10, 1.0E-6, 2.0E-6, 1.0E-5, 2.0E-5]}
 
 # Legend labels, line colors, and plotting priority for properties.
 # [energy_term, print_priority, line_color, index]
@@ -79,3 +79,6 @@ RAD2DEG = 180.0 / math.pi
 
 # Gas constant in units of [amu*A^2/(ps^2*K)].
 RGAS = 0.83144598
+
+# Dictionary of order-of-magnitude axis tick labels.
+TICCHARS = {0: '', 1: 'k', 2: 'M', 3: 'B', 4: 'T', 5: 'P'}

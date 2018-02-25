@@ -7,7 +7,7 @@ distances, bond angles, torsion angles, outofplane angles, and system volume.
 import numpy
 import math
 
-from mmlib import constants
+from mmlib import constants as const
 
 def GetR2ij(coords_i, coords_j):
   """Calculate square of distance between two 3d cartesian points.
@@ -128,7 +128,7 @@ def GetAijk(coords_i, coords_j, coords_k, r_ij=None, r_jk=None):
   u_ji = GetUij(coords_j, coords_i, r_ij)
   u_jk = GetUij(coords_j, coords_k, r_jk)
   dp_jijk = GetUdp(u_ji, u_jk)
-  return constants.RAD2DEG * math.acos(dp_jijk)
+  return const.RAD2DEG * math.acos(dp_jijk)
 
 def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
              r_kl=None):
@@ -151,8 +151,8 @@ def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
   u_jijk =  GetUcp(u_ji, u_jk)
   u_kjkl = -GetUcp(u_jk, u_kl)
   dp_jijk_kjkl = GetUdp(u_jijk, u_kjkl)
-  sign = 2.0*(GetUdp(u_jijk, u_kl) <= 0.0) - 1.0
-  return constants.RAD2DEG * sign * math.acos(dp_jijk_kjkl)
+  sign = 1.0 if GetUdp(u_jijk, u_kl) <= 0.0 else -1.0
+  return const.RAD2DEG * sign * math.acos(dp_jijk_kjkl)
 
 def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
              r_kl=None):
@@ -175,7 +175,7 @@ def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
   u_kl = GetUij(coords_k, coords_l, r_kl)
   u_kikj = GetUcp(u_ki, u_kj)
   dp_kikj_kl = GetUdp(u_kikj, u_kl)
-  return constants.RAD2DEG * math.asin(dp_kikj_kl)
+  return const.RAD2DEG * math.asin(dp_kikj_kl)
 
 def GetVolume(mol):
   """Calculate volume of molecular system based on boundary type

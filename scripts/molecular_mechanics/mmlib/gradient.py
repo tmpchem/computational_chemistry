@@ -112,13 +112,13 @@ def GetGBoundI(k_box, bound, coord, origin, boundtype):
   g_bound_i = numpy.zeros(const.NUMDIM)
   if boundtype == 'cube':
     for j in range(const.NUMDIM):
-      sign = 1.0 if ((coord[j] - origin[j]) <= 0.0) else -1.0
-      scale = 1.0 if (abs(coord[j] - origin[j]) >= bound) else 0.0
+      sign = 1.0 if (coord[j] - origin[j]) <= 0.0 else -1.0
+      scale = 1.0 if abs(coord[j] - origin[j]) >= bound else 0.0
       g_bound_i[j] = (-2.0 * sign * scale * k_box * (abs(coord[j]) - bound))
   elif boundtype == 'sphere':
     r_io = geomcalc.GetRij(origin, coord)
     u_io = geomcalc.GetUij(origin, coord)
-    scale = 1.0 if (r_io >= bound) else 0.0
+    scale = 1.0 if r_io >= bound else 0.0
     g_bound_i = 2.0 * scale * k_box * (r_io - bound) * u_io
   return g_bound_i
 
@@ -152,9 +152,9 @@ def GetGdirAngle(coords1, coords2, coords3, r_21=None, r_23=None):
     gdir1 (float*), gdir2 (float*), gdir3 (float*): vectors in the direction of
         max increasing bond angle.
   """
-  if not r_21:
+  if r_21 is not None:
     r_21 = geomcalc.GetRij(coords2, coords1)
-  if not r_23:
+  if r_23 is not None:
     r_23 = geomcalc.GetRij(coords2, coords3)
   u_21 = geomcalc.GetUij(coords2, coords1, r_21)
   u_23 = geomcalc.GetUij(coords2, coords3, r_23)
@@ -181,11 +181,11 @@ def GetGdirTorsion(coords1, coords2, coords3, coords4, r_12=None,
     gdir1 (float*), gdir2 (float*), gdir3 (float*), gdir4 (float*): Vectors in
         the direction of max increasing torsion angle.
   """
-  if not r_12:
+  if r_12 is not None:
     r_12 = geomcalc.GetRij(coords1, coords2)
-  if not r_23:
+  if r_23 is not None:
     r_23 = geomcalc.GetRij(coords2, coords3)
-  if not r_34:
+  if r_34 is not None:
     r_34 = geomcalc.GetRij(coords3, coords4)
   u_21 = geomcalc.GetUij(coords2, coords1, r_12)
   u_34 = geomcalc.GetUij(coords3, coords4, r_34)
@@ -193,10 +193,10 @@ def GetGdirTorsion(coords1, coords2, coords3, coords4, r_12=None,
   u_32 = -1.0 * u_23
   a_123 = geomcalc.GetAijk(coords1, coords2, coords3, r_12, r_23)
   a_432 = geomcalc.GetAijk(coords4, coords3, coords2, r_34, r_23)
-  s_123 = math.sin(constants.DEG2RAD * a_123)
-  s_432 = math.sin(constants.DEG2RAD * a_432)
-  c_123 = math.cos(constants.DEG2RAD * a_123)
-  c_432 = math.cos(constants.DEG2RAD * a_432)
+  s_123 = math.sin(const.DEG2RAD * a_123)
+  s_432 = math.sin(const.DEG2RAD * a_432)
+  c_123 = math.cos(const.DEG2RAD * a_123)
+  c_432 = math.cos(const.DEG2RAD * a_432)
   gdir1 = geomcalc.GetUcp(u_21, u_23) / (r_12*s_123)
   gdir4 = geomcalc.GetUcp(u_34, u_32) / (r_34*s_432)
   gdir2 = (r_12/r_23*c_123 - 1.0)*gdir1 - (r_34/r_23*c_432)*gdir4
@@ -204,7 +204,7 @@ def GetGdirTorsion(coords1, coords2, coords3, coords4, r_12=None,
   return gdir1, gdir2, gdir3, gdir4
 
 def GetGdirOutofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
-                        r_32=None, r_34=None):
+                      r_32=None, r_34=None):
   """Calculate direction of energy gradients between outofplane atoms.
   
   Args:
@@ -221,11 +221,11 @@ def GetGdirOutofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
     gdir1 (float*), gdir2 (float*), gdir3 (float*), gdir4 (float*): Vectors in
         the direction of max increasing outofplane angle.
   """
-  if not r_31:
+  if r_31 is not None:
     r_31 = geomcalc.GetRij(coords3, coords1)
-  if not r_32:
+  if r_32 is not None:
     r_32 = geomcalc.GetRij(coords3, coords2)
-  if not r_34:
+  if r_34 is not None:
     r_34 = geomcalc.GetRij(coords3, coords4)
   u_31 = geomcalc.GetUij(coords3, coords1, r_31)
   u_32 = geomcalc.GetUij(coords3, coords2, r_32)
@@ -234,10 +234,10 @@ def GetGdirOutofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
   cp_3431 = geomcalc.GetCp(u_34, u_31)
   cp_3132 = geomcalc.GetCp(u_31, u_32)
   a_132 = geomcalc.GetAijk(coords1, coords3, coords2)
-  s_132 = math.sin(constants.DEG2RAD * a_132)
-  c_132 = math.cos(constants.DEG2RAD * a_132)
-  c_oop = math.cos(constants.DEG2RAD * oop)
-  t_oop = math.tan(constants.DEG2RAD * oop)
+  s_132 = math.sin(const.DEG2RAD * a_132)
+  c_132 = math.cos(const.DEG2RAD * a_132)
+  c_oop = math.cos(const.DEG2RAD * oop)
+  t_oop = math.tan(const.DEG2RAD * oop)
   gdir1 = ((1.0/r_31)*(cp_3234/(c_oop*s_132)
       - (t_oop/s_132**2)*(u_31 - c_132*u_32)))
   gdir2 = ((1.0/r_32)*(cp_3431/(c_oop*s_132)
@@ -415,9 +415,9 @@ def GetPressure(mol):
         virial data.
   """
   _GetVirial(mol)
-  pv = mol.n_atoms * constants.KB * mol.temp
+  pv = mol.n_atoms * const.KB * mol.temp
   pv += mol.virial / 3.0
-  mol.press = constants.KCALAMOL2PA * pv / mol.vol
+  mol.press = const.KCALAMOL2PA * pv / mol.vol
 
 def GetGNumerical(mol):
   """Update total numerical energy gradient [kcal/(mol*A)] of all atoms.
@@ -433,13 +433,14 @@ def GetGNumerical(mol):
   mol.g_vdw.fill(0.0)
   mol.g_elst.fill(0.0)
   mol.g_bound.fill(0.0)
-  disp = constants.NUMDISP
+  disp = const.NUMDISP
   for i in range(mol.n_atoms):
     for j in range(const.NUMDIM):
       q = mol.atoms[i].coords[j]
       qp = q + 0.5*disp
       qm = q - 0.5*disp
-      
+
+      # Displace in positive direction and compute energy.
       mol.atoms[i].coords[j] = qp
       mol.UpdateInternals()
       mol.GetEnergy('standard')
@@ -447,7 +448,8 @@ def GetGNumerical(mol):
       ep_tor, ep_oop = mol.e_torsions, mol.e_outofplanes
       ep_vdw, ep_elst = mol.e_vdw, mol.e_elst
       ep_bound = mol.e_bound
-      
+
+      # Displace in negative direction and compute energy.
       mol.atoms[i].coords[j] = qm
       mol.UpdateInternals()
       mol.GetEnergy('standard')
@@ -455,7 +457,8 @@ def GetGNumerical(mol):
       em_tor, em_oop = mol.e_torsions, mol.e_outofplanes
       em_vdw, em_elst = mol.e_vdw, mol.e_elst
       em_bound = mol.e_bound
-      
+
+      # Compute all component numerical derivatives.
       mol.atoms[i].coords[j] = q
       mol.g_bonds[i][j] = (ep_bond - em_bond) / disp
       mol.g_angles[i][j] = (ep_ang - em_ang) / disp

@@ -7,7 +7,8 @@ objects.
 """
 
 import math
-from mmlib import constants
+
+from mmlib import constants as const
 from mmlib import geomcalc
 
 def GetEBond(r_ij, r_eq, k_b):
@@ -34,7 +35,7 @@ def GetEAngle(a_ijk, a_eq, k_a):
   Returns:
     e_angle (float): Energy [kcal/mol] of angle ijk.
   """
-  return k_a * (constants.DEG2RAD * (a_ijk - a_eq) )**2
+  return k_a * (const.DEG2RAD * (a_ijk - a_eq) )**2
 
 def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
   """Calculate torsion strain energy between 4 bonded atoms.
@@ -49,8 +50,7 @@ def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
   Returns:
     e_torsion (float): Energy [kcal/mol] of torsion ijkl.
   """
-  return v_n * (
-      1.0 + math.cos(constants.DEG2RAD * (nfold * t_ijkl - gamma))) / paths
+  return v_n * (1.0 + math.cos(const.DEG2RAD * (nfold*t_ijkl - gamma))) / paths
 
 def GetEOutofplane(o_ijkl, v_n):
   """Calculate outofplane bend energy between 4 bonded atoms.
@@ -62,7 +62,7 @@ def GetEOutofplane(o_ijkl, v_n):
   Returns:
     e_outofplane (float): Energy [kcal/mol] of outofplane ijkl.
   """
-  return v_n * (1.0 + math.cos(constants.DEG2RAD * (2.0 * o_ijkl - 180.0)))
+  return v_n * (1.0 + math.cos(const.DEG2RAD * (2.0 * o_ijkl - 180.0)))
 
 def GetEVdwIJ(r_ij, eps_ij, ro_ij):
   """Calculate van der waals interaction energy between atom pair.
@@ -75,7 +75,7 @@ def GetEVdwIJ(r_ij, eps_ij, ro_ij):
   Returns:
     e_vdw_ij (float): Van der waals energy [kcal/mol] between pair ij.
   """
-  r6_ij = (ro_ij / r_ij) ** 6
+  r6_ij = (ro_ij / r_ij)**6
   return eps_ij * ( r6_ij**2 - 2.0 * r6_ij )
 
 def GetEElstIJ(r_ij, q_i, q_j, epsilon):
@@ -90,7 +90,7 @@ def GetEElstIJ(r_ij, q_i, q_j, epsilon):
   Returns:
     e_elst_ij (float): Electrostatic energy [kcal/mol] between pair ij.
   """
-  return constants.CEU2KCAL * ( q_i * q_j ) / ( epsilon * r_ij )
+  return const.CEU2KCAL * q_i * q_j / (epsilon * r_ij)
 
 def GetEBoundI(k_box, bound, coords, origin, boundtype):
   """Calculate simulation boundary energy of an atom.
@@ -108,7 +108,7 @@ def GetEBoundI(k_box, bound, coords, origin, boundtype):
   """
   e_bound_i = 0.0
   if (boundtype == 'cube'):
-    for j in range(3):
+    for j in range(const.NUMDIM):
       scale = 1.0 if (abs(coords[j] - origin[j]) >= bound) else 0.0
       e_bound_i += (scale * k_box * (abs(coords[j] - origin[j]) - bound)**2)
   elif (boundtype == 'sphere'):
@@ -129,8 +129,8 @@ def GetEKineticI(mass, vels):
     e_kin_i (float): Kinetic energy [kcal/mol] of atom.
   """
   e_kin_i = 0.0
-  for i in range(3):
-    e_kin_i += 0.5 * constants.KIN2KCAL * mass * vels[i]**2
+  for i in range(const.NUMDIM):
+    e_kin_i += 0.5 * const.KIN2KCAL * mass * vels[i]**2
   return e_kin_i
 
 def GetENonbonded(mol):
@@ -246,7 +246,7 @@ def GetTemperature(mol):
     mol (mmlib.molecule.Molecule): Molecule object with current (float) kinetic
         energy [kcal/mol].
   """
-  mol.temp = 2.0/3.0 * mol.e_kinetic / (constants.KB * mol.n_atoms)
+  mol.temp = (2.0 / const.NUMDIM) * mol.e_kinetic / (const.KB * mol.n_atoms)
 
 def GetEKinetic(mol, kintype):
   """Compute kinetic energy of all atoms in molecule.

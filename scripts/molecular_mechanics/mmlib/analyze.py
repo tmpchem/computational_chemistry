@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy
 import os
 
-from mmlib import constants
+from mmlib import constants as const
 from mmlib import fileio
 from mmlib import simulate
 
@@ -48,7 +48,6 @@ class Plot:
     leg_labels (str*): Array of energy component legend labels.
     leg_priors (int*): Array of energy component legend priorities.
     ekeys (str*): Dictionary of energy component string labels.
-    xticchars (int*): Dictionary of order-of-magnitude xtic labels.
   """
   def __init__(self, ana):
     self.simtype = ana.simtype
@@ -63,8 +62,8 @@ class Plot:
     self.figsize = (self.figwidth, self.figheight)
     self.img_format = 'pdf'
 
-    ppi = constants.POINTSPERINCH
-    p_im = constants.PERCENTIMAGEPLOT
+    ppi = const.POINTSPERINCH
+    p_im = const.PERCENTIMAGEPLOT
     self.n_maxpoints = int(math.floor(2.0 * ppi * self.figwidth * p_im))
     self.n_terms = len(self.data.keys()) - 1
 
@@ -83,8 +82,6 @@ class Plot:
         self.ekeys.append(key)
     self.ekeys = sorted(list(self.ekeys), key=lambda x:self.pdict[x][1])
     
-    self.ticchars = {0: '', 1: 'k', 2: 'M', 3: 'B', 4: 'T', 5: 'P'}
-
 
 class TrajectoryPlot(Plot):
   """Plot class for plotting simulation trajectory data.
@@ -183,67 +180,6 @@ class TrajectoryPlot(Plot):
     self._GetLegend()
     self._OutputPlot()
 
-  def _OutputPlot(self):
-    """Finalize image and save to specified output file."""
-    plt.savefig(self.plotout, format=self.img_format)
-    plt.close()
-
-  def _GetAxes(self):
-    """Set the boundaries of the axes based on data values."""
-    self._GetAxisBounds()
-    plt.axis([self.xlow, self.xhigh, self.ylow, self.yhigh])
-
-  def _GetLabels(self):
-    """Set labels to x-axis, y-axis, and title."""
-    plt.title(self.title, fontsize = self.title_fontsize)
-    plt.ylabel(self.ylabel, fontsize = self.yaxis_fontsize)
-    plt.xlabel(self.xlabel, fontsize = self.xaxis_fontsize)
-
-  def _GetGrid(self):
-    """Set grid parameters (transparent gray lines by default)."""
-    plt.grid(
-        color = self.grid_color,
-        alpha = self.grid_alpha,
-        linestyle = self.grid_linestyle)
-
-  def _GetLegend(self):
-    """Set top-center legend for each energy component."""
-    self.ekeys = sorted(list(self.ekeys), key=lambda x:self.pdict[x][3])
-    for key in self.ekeys:
-      plt.plot(0, 0,
-          linewidth = self.leg_linewidth,
-          color = self.line_colors[key],
-          alpha = self.leg_alpha,
-          label = self.leg_labels[key])
-    legend = plt.legend(
-        ncol = self.leg_col,
-        fontsize = self.leg_fontsize,
-        bbox_to_anchor = self.leg_pos,
-        framealpha = self.leg_alpha)
-    frame = legend.get_frame()
-    frame.set_edgecolor(self.leg_framecolor)
-
-  def _GetAxisBounds(self):
-    """Determine the extrema of x and y axes from data values."""
-    self.xmindat = self.data[self.xvar][0]
-    self.xmaxdat = self.data[self.xvar][len(self.data[self.xvar])-1]
-    self.xrandat = self.xmaxdat - self.xmindat
-    self.xmin = self.xmindat + (self.pstart*self.xrandat)/100.0
-    self.xmax = self.xmindat + (self.pstop*self.xrandat)/100.0
-    self.xran = self.xmax - self.xmin
-    self.xlow  = self.xmin - self.xminpad * self.xran
-    self.xhigh = self.xmax + self.xmaxpad * self.xran
-    self.xplotran = self.xhigh - self.xlow
-    self.ymin = float('inf')
-    self.ymax = float('-inf')
-    for key in self.ekeys:
-      self.ymin = min(self.ymin, numpy.amin(self.data[key]))
-      self.ymax = max(self.ymax, numpy.amax(self.data[key]))
-    self.yran = self.ymax - self.ymin
-    self.ylow  = self.ymin - self.yminpad * self.yran
-    self.yhigh = self.ymax + self.ymaxpad * self.yran
-    self.yplotran = self.yhigh - self.ylow
-
   def _GetLines(self):
     """Plot lines for each energy component during simulation."""
     self._GetPoint_indices()
@@ -258,17 +194,10 @@ class TrajectoryPlot(Plot):
           alpha=self.line_alpha,
           label=self.line_label)
 
-  def _GetPointIndices(self):
-    """Compute values needed for data down-sampling algorithm."""
-    self.n_confs = len(self.data[self.xvar])
-    self.n_start = int(math.floor(self.pstart * self.n_confs)/100.0)
-    self.n_stop = int(math.ceil(self.pstop * self.n_confs)/100.0)
-    self.n_points = self.n_stop - self.n_start
-    self.n_points = min(self.n_points, self.n_maxpoints)
-    self.pranges = numpy.linspace(self.n_start, self.n_stop, self.n_points + 1)
-    for i in range(len(self.pranges)):
-      self.pranges[i] = round(self.pranges[i])
-    self.pranges = self.pranges.astype(int)
+  def _GetAxes(self):
+    """Set the boundaries of the axes based on data values."""
+    self._GetAxisBounds()
+    plt.axis([self.xlow, self.xhigh, self.ylow, self.yhigh])
 
   def _GetXVals(self):
     """Compute down-sampled x-axis data points.
@@ -316,7 +245,76 @@ class TrajectoryPlot(Plot):
           val = numpy.amin(val_array)
         self.yvals[key][i] = val
 
+  def _GetLabels(self):
+    """Set labels to x-axis, y-axis, and title."""
+    plt.title(self.title, fontsize = self.title_fontsize)
+    plt.ylabel(self.ylabel, fontsize = self.yaxis_fontsize)
+    plt.xlabel(self.xlabel, fontsize = self.xaxis_fontsize)
+
+  def _GetGrid(self):
+    """Set grid parameters (transparent gray lines by default)."""
+    plt.grid(
+        color = self.grid_color,
+        alpha = self.grid_alpha,
+        linestyle = self.grid_linestyle)
+
+  def _GetLegend(self):
+    """Set top-center legend for each energy component."""
+    self.ekeys = sorted(list(self.ekeys), key=lambda x:self.pdict[x][3])
+    for key in self.ekeys:
+      plt.plot(0, 0,
+          linewidth = self.leg_linewidth,
+          color = self.line_colors[key],
+          alpha = self.leg_alpha,
+          label = self.leg_labels[key])
+    legend = plt.legend(
+        ncol = self.leg_col,
+        fontsize = self.leg_fontsize,
+        bbox_to_anchor = self.leg_pos,
+        framealpha = self.leg_alpha)
+    frame = legend.get_frame()
+    frame.set_edgecolor(self.leg_framecolor)
+
+  def _OutputPlot(self):
+    """Finalize image and save to specified output file."""
+    plt.savefig(self.plotout, format=self.img_format)
+    plt.close()
+
+  def _GetAxisBounds(self):
+    """Determine the extrema of x and y axes from data values."""
+    self.xmindat = self.data[self.xvar][0]
+    self.xmaxdat = self.data[self.xvar][len(self.data[self.xvar])-1]
+    self.xrandat = self.xmaxdat - self.xmindat
+    self.xmin = self.xmindat + (self.pstart*self.xrandat)/100.0
+    self.xmax = self.xmindat + (self.pstop*self.xrandat)/100.0
+    self.xran = self.xmax - self.xmin
+    self.xlow  = self.xmin - self.xminpad * self.xran
+    self.xhigh = self.xmax + self.xmaxpad * self.xran
+    self.xplotran = self.xhigh - self.xlow
+    self.ymin = float('inf')
+    self.ymax = float('-inf')
+    for key in self.ekeys:
+      self.ymin = min(self.ymin, numpy.amin(self.data[key]))
+      self.ymax = max(self.ymax, numpy.amax(self.data[key]))
+    self.yran = self.ymax - self.ymin
+    self.ylow  = self.ymin - self.yminpad * self.yran
+    self.yhigh = self.ymax + self.ymaxpad * self.yran
+    self.yplotran = self.yhigh - self.ylow
+
+  def _GetPointIndices(self):
+    """Compute values needed for data down-sampling algorithm."""
+    self.n_confs = len(self.data[self.xvar])
+    self.n_start = int(math.floor(self.pstart * self.n_confs)/100.0)
+    self.n_stop = int(math.ceil(self.pstop * self.n_confs)/100.0)
+    self.n_points = self.n_stop - self.n_start
+    self.n_points = min(self.n_points, self.n_maxpoints)
+    self.pranges = numpy.linspace(self.n_start, self.n_stop, self.n_points + 1)
+    for i in range(len(self.pranges)):
+      self.pranges[i] = round(self.pranges[i])
+    self.pranges = self.pranges.astype(int)
+
   def _GetTicks(self, lower_bound, upper_bound, axis):
+    """Compute ticks and tick labels from axis extrema."""
     tick_res = self._GetTickResolution(lower_bound, upper_bound)
     tick_delta = 0.1 * tick_res
     tick_min = tick_delta * (int(lower_bound / tick_delta) - 1)
@@ -334,7 +332,7 @@ class TrajectoryPlot(Plot):
       val = tick_delta * round(ticks[i] / tick_delta) / 10**(3*exp)
       if int(val) == val:
         val = int(val)
-      tick_labels[i] = '%s%s' % (val, self.ticchars[exp])
+      tick_labels[i] = '%s%s' % (val, const.TICCHARS[exp])
     
     if axis == 'x':
       plt.xticks(ticks, tick_labels)
@@ -401,7 +399,7 @@ class Analysis:
   def __init__(self, infile_name):
     self.infile = os.path.realpath(infile_name)
     self.indir = os.path.dirname(self.infile)
-    self.pdict = constants.PROPERTYDICTIONARY
+    self.pdict = const.PROPERTYDICTIONARY
 
     self.simtype = ''
     self.simfile = ''
@@ -420,6 +418,13 @@ class Analysis:
     self._ReadInFiles()
     self._ReadInProp()
 
+  def RunAnalysis(self):
+    """Plot dynamic energy data and print expectation values."""
+    self.tplt = TrajectoryPlot(self)
+    self.tplt.MakePlot()
+    self._GetEnergyStats()
+    fileio.PrintAverages(self)
+
   def _ReadInFiles(self):
     """Read in property and trajectory file names from input file."""
     cwd = os.getcwd()
@@ -434,17 +439,6 @@ class Analysis:
     """Read in molecular properties from simulation energy file."""
     self.prop = fileio.GetProperties(self.energyin)
   
-  def _ReadInGeom(self):
-    """Read in molecular trajectory from simulation geometry file."""
-    self.traj = fileio.GetTrajectory(self.geomin)
-
-  def RunAnalysis(self):
-    """Plot dynamic energy data and print expectation values."""
-    self.tplt = TrajectoryPlot(self)
-    self.tplt.MakePlot()
-    self._GetEnergyStats()
-    fileio.PrintAverages(self)
-
   def _GetEnergyStats(self):
     """Compute average, stdev, min, and max of each energy term."""
     self.eavg = {}

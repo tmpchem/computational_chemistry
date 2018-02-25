@@ -10,7 +10,7 @@ import os
 import sys
 import time
 
-from mmlib import constants
+from mmlib import constants as const
 from mmlib import fileio
 
 class Simulation:
@@ -78,8 +78,8 @@ class Simulation:
     self._PrintEnergyHeader()
     self.stime = time.time()
     if self.simtype == 'md':
-      self.gtime = 10**-10
-      self.etime = 10**-10
+      self.gtime = 10E-10
+      self.etime = 10E-10
     elif self.simtype == 'mc':
       self.gconf = 0
       self.econf = 0
@@ -186,12 +186,12 @@ class MolecularDynamics(Simulation):
     self.simtype = 'md'
 
     self.tottime = 1.0
-    self.timestep = 0.001
+    self.timestep = 1.0E-3
     self.time = 1.0E-10
     self.eqtime = 0.0
     self.eqrate = 2.0
-    self.energytime = 0.01
-    self.geomtime = 0.01
+    self.energytime = 1.0E-2
+    self.geomtime = 1.0E-2
 
     Simulation.__init__(self, infile_name)
 
@@ -237,7 +237,7 @@ class MolecularDynamics(Simulation):
     if self.temp > 0.0:
       self.etemp = self.temp
       numpy.random.seed(self.random_seed)
-      sigma_base = math.sqrt(2.0 * constants.RGAS * self.temp / const.NUMDIM)
+      sigma_base = math.sqrt(2.0 * const.RGAS * self.temp / const.NUMDIM)
       for i in range(self.mol.n_atoms):
         sigma = sigma_base * self.mol.atoms[i].mass**(-0.5)
         self.mol.atoms[i].vels = numpy.random.normal(0.0, sigma, const.NUMDIM)
@@ -273,7 +273,7 @@ class MolecularDynamics(Simulation):
       for j in range(const.NUMDIM):
         self.mol.atoms[i].paccs[j] = self.mol.atoms[i].accs[j]
         self.mol.atoms[i].accs[j] = (
-            -constants.ACCCONV * self.mol.g_total[i][j] / mass)
+            -const.ACCCONV * self.mol.g_total[i][j] / mass)
 
   def _UpdateVels(self, dt):
     """Update velocities of atoms [Angstrom/ps].
@@ -409,7 +409,7 @@ class MonteCarlo(Simulation):
       self._DispCoords(self.rand_disp)
       self.mol.GetEnergy('standard')
       delta_e = self.mol.e_total - penergy
-      bf = math.exp(min(1.0, -delta_e / (constants.KB * self.temp)))
+      bf = math.exp(min(1.0, -delta_e / (const.KB * self.temp)))
       if bf >= numpy.random.random():
         self._CheckPrint(1)
         self.conf += 1
@@ -475,7 +475,7 @@ class MonteCarlo(Simulation):
     if print_all or self.gconf >= self.geomconf:
       self._PrintGeom()
       self.gconf = 0
-    if print_all or time.time() - self.stime > self.statustime:
+    if print_all or (time.time() - self.stime) > self.statustime:
       self._PrintStatus()
       self.stime = time.time()
     self.econf += n_conf

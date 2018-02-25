@@ -286,7 +286,9 @@ def GetVdwParam(at_type):
     at_type (str): AMBER mm atom type.
   
   Returns:
-    vdw (float, float): van der waals parameters for atom type: ro/2 and eps.
+    van der waals parameters for atom type:
+      * ro/2 [Angstrom] 0.0 --> ?
+      * eps [kcal/mol] 0.0 --> ?
   """
   if at_type in vdw_params:
     return vdw_params[at_type]
@@ -305,7 +307,7 @@ def GetAtMass(element):
   if element in at_masses:
     return at_masses[element]
   else:
-    raise ValueError('No atomic mass found for element: %s' % (elemnt))
+    raise ValueError('No atomic mass found for element: %s' % (element))
 
 def GetCovRad(element):
   """Find the covalent radius of an atom of a given element.
@@ -330,8 +332,8 @@ def GetBondParam(at1_type, at2_type):
   
   Returns:
     bond (float, float): AMBER94 mm bond parameters for atom types:
-        * k_b [kcal/(mol*A^2)]
-        * r_eq [Angstrom].
+        * k_b [kcal/(mol*A^2)] 0.0 --> ?
+        * r_eq [Angstrom] 0.0 --> ?
   """
   b12_types = (at1_type, at2_type)
   b21_types = (at2_type, at1_type)
@@ -353,8 +355,8 @@ def GetAngleParam(at1_type, at2_type, at3_type):
 
   Returns:
     angle (float, float): AMBER94 mm angle parameters for atom types:
-        * k_a [kcal/(mol*rad^2)]
-        * a_eq [degrees].
+        * k_a [kcal/(mol*rad^2)] 0.0 --> ?
+        * a_eq [degrees] 0.0 --> 180.0
   """
   a123_types = (at1_type, at2_type, at3_type)
   a321_types = (at3_type, at2_type, at1_type)
@@ -376,8 +378,11 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
     at4_type (str): atom 4 AMBER94 mm atom type.
 
   Returns:
-    torsion (float, float, int, int): AMBER94 mm torsion parameters for atom
-        types: vn/2 [kcal/mol], gamma [degrees], n [], and paths [].
+    torsion AMBER94 mm torsion parameters for atom types:
+      * vn/2 [kcal/mol] 0.0 --> ?
+      * gamma [degrees] -180.0 --> 180.0
+      * n [] 1 --> 6
+      * paths [] 1 --> 9
   """
   torsion = []
 
@@ -419,7 +424,7 @@ def GetOutofplaneParam(at1_type, at2_type, at3_type, at4_type):
 
   Returns:
     torsion (float): AMBER94 mm outofplane parameters for atom types:
-        * vn/2 [kcal/mol].
+        * vn/2 [kcal/mol] 0.0 --> ?
   """
 
   # return four-atom out-of-plane potential if found

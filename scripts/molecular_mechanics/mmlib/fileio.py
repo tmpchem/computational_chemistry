@@ -40,8 +40,20 @@ def _GetFileStringArray(infile_name):
     infile_array.append(line.split())
   return infile_array
 
-def _GetElement(at_type):
-  if len(at_type) == 1 or at_type[1].isupper():
+def GetElement(at_type):
+  """Infer atomic element from atom type.
+
+  If atom type is a single character, or second character is uppercase,
+  return uppercase first letter. Otherwise, return capitalized first two
+  characters.
+
+  Args:
+    at_type (str): Atom type.
+
+  Returns:
+    at_element (str): Atomic element.
+  """
+  if len(at_type) == 1 or not at_type[1].islower():
     return at_type[0].upper()
   else:
     return at_type[0:2].capitalize()
@@ -65,7 +77,7 @@ def GetGeom(mol):
         list(map(float, infile_array[i+2][1:1+const.NUMDIM])))
     at_charge = float(infile_array[i+2][4])
 
-    at_element = _GetElement(at_type)
+    at_element = GetElement(at_type)
     at_mass = param.GetAtMass(at_element)
     at_ro, at_eps = param.GetVdwParam(at_type)
     atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
@@ -90,7 +102,7 @@ def _GetAtom(mol, record):
   at_coords = numpy.array(list(map(float, record[3:3+const.NUMDIM])))
   at_charge, at_ro, at_eps = list(map(float, record[6:9]))
 
-  at_element = _GetElement(at_type)
+  at_element = GetElement(at_type)
   at_mass = param.GetAtMass(at_element)
   atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
   atom.SetCovRad(param.GetCovRad(at_element))
@@ -225,7 +237,7 @@ def GetSimData(sim):
   below can be set through the given keyword arguments.
   
   Mandatory values include (str) molecule [file path], (float) temperature
-  [kelvin], and (float / int) total time/confs [ps / none] (md / mc).
+  [Kelvin], and (float / int) total time/confs [ps / none] (md / mc).
   
   Args:
     sim (mmlib.simulate.Simulation): Simulation object to append data.
@@ -438,7 +450,7 @@ def GetTrajectory(traj_file):
         traj[p][i][j] = float(traj_array[atom_start][j+1])
   return traj
 
-def PrintCoords(mol, comment):
+def PrintCoords(mol, comment, ofile=None):
   """Print atomic coordinates for a set of atoms.
   
   Print to screen all (float) 3N atomic cartesian coordinates [Angstrom] from
@@ -451,7 +463,7 @@ def PrintCoords(mol, comment):
   """
   print('%i\n%s\n' % (mol.n_atoms, comment), end='')
   for i in range(mol.n_atoms):
-    print('%-2s' % (mol.atoms[i].type), end='')
+    print('%-2s' % (mol.atoms[i].type_), end='')
     for j in range(const.NUMDIM):
       print(' %12.6f' % (mol.atoms[i].coords[j]), end='')
     print('\n', end='')
@@ -493,7 +505,7 @@ def PrintGradient(grad, comment):
   """
   print('\n %s\n' % (comment))
   for i in range(mol.n_atoms):
-    print('%-2s' % (mol.atoms[i].type), end='')
+    print('%-2s' % (mol.atoms[i].type_), end='')
     for j in range(const.NUMDIM):
       print(' %12.6f' % (grad[i][j]), end='')
     print('\n', end='')
@@ -577,7 +589,7 @@ def PrintGeom(mol):
   _PrintHeader(header, n_banner, params, spaces)
   
   for i in range(mol.n_atoms):
-    print('%4i | %-2s' % (i+1, mol.atoms[i].type), end='')
+    print('%4i | %-2s' % (i+1, mol.atoms[i].type_), end='')
     for j in range(const.NUMDIM):
       print('%10.4f' % (mol.atoms[i].coords[j]), end='')
     print(' %7.4f %7.4f %7.4f' % (mol.atoms[i].charge,
@@ -598,7 +610,7 @@ def PrintGeomFile(outfile, mol):
   """
   outfile.write('# %s Atoms (at, type, x, y, z, q, ro, eps)\n' % (mol.n_atoms))
   for i in range(mol.n_atoms):
-    outfile.write('ATOM %4i %-2s' % (i+1, mol.atoms[i].type))
+    outfile.write('ATOM %4i %-2s' % (i+1, mol.atoms[i].type_))
     for j in range(3):
       outfile.write(' %11.6f' % (mol.atoms[i].coords[j]))
     outfile.write(' %8.5f %7.4f %7.4f\n' % (
@@ -627,7 +639,7 @@ def PrintBonds(mol):
   a = mol.atoms
   for p in range(mol.n_bonds):
     b = mol.bonds[p]
-    t1, t2 = a[b.at1].type, a[b.at2].type
+    t1, t2 = a[b.at1].type_, a[b.at2].type_
     pstr = '%4i | %7.2f %8.4f %8.4f (%2s-%2s) %8.4f (%i-%i)' % (
         p+1, b.k_b, b.r_eq, b.r_ij, t1, t2, b.energy, b.at1+1, b.at2+1)
     print(pstr)
@@ -673,7 +685,7 @@ def PrintAngles(mol):
   at = mol.atoms
   for p in range(mol.n_angles):
     a = mol.angles[p]
-    t1, t2, t3 = (at[a.at1].type, at[a.at2].type, at[a.at3].type)
+    t1, t2, t3 = at[a.at1].type_, at[a.at2].type_, at[a.at3].type_
     pstr = '%4i | %6.2f %7.3f %7.3f (%2s-%2s-%2s) %7.4f (%i-%i-%i)' % (p+1,
         a.k_a, a.a_eq, a.a_ijk, t1, t2, t3, a.energy, a.at1+1, a.at2+1, a.at3+1)
     print(pstr)
@@ -719,8 +731,8 @@ def PrintTorsions(mol):
   a = mol.atoms
   for p in range(mol.n_torsions):
     t = mol.torsions[p]
-    t1, t2 = a[t.at1].type, a[t.at2].type
-    t3, t4 = a[t.at3].type, a[t.at4].type
+    t1, t2 = a[t.at1].type_, a[t.at2].type_
+    t3, t4 = a[t.at3].type_, a[t.at4].type_
     pstr = '%4i | %6.2f %6.1f %8.3f %i %i (%2s-%2s-%2s-%2s)' % (
         p+1, t.v_n, t.gam, t.t_ijkl, t.n, t.paths, t1, t2, t3, t4)
     pstr += ' %7.4f (%i-%i-%i-%i)' % (
@@ -770,7 +782,8 @@ def PrintOutofplanes(mol):
   a = mol.atoms
   for p in range(mol.n_outofplanes):
     o = mol.outofplanes[p]
-    t1, t2, t3, t4 = a[o.at1].type, a[o.at2].type, a[o.at3].type, a[o.at4].type
+    t1, t2 = a[o.at1].type_, a[o.at2].type_
+    t3, t4 = a[o.at3].type_, a[o.at4].type_
     pstr = '%4i | %6.2f %7.3f (%2s-%2s-%2s-%2s) %7.4f (%i-%i-%i-%i)' % (
         p+1, o.v_n, o.o_ijkl, t1, t2, t3, t4, o.energy, o.at1+1, o.at2+1,
         o.at3+1, o.at4+1)
