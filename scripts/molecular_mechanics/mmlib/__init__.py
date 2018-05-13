@@ -7,6 +7,7 @@ propogating, and outputting molecular mechanics data.
 from mmlib import analyze
 from mmlib import constants
 from mmlib import energy
+from mmlib import energy_test
 from mmlib import fileio
 from mmlib import geomcalc
 from mmlib import gradient

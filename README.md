@@ -45,18 +45,22 @@ No additional installation necessary after cloning the repository.
 
 <h2 id="running-tests">Running the tests</h2>
 
+WARNING: Test suite is incomplete and subject to change without notice.
+
 To run tests for a project, go to the script directory for that project,
 `[top_level_path]/scripts/[project]`. If present, execute `run_tests.py` 
 for the project.
 
     python run_tests.py
 
-Depending on print level setting in `run_tests`, each subtest may print
-success or failure message (with or without values and reference). If
-all tests pass for a function, function receives a test pass. If all
-functions pass, the overall unit test receives a pass, and the scripts
-are ready to execute. If failed, search recursively for failure source.
-Tests are a work in progress, and may not be present or complete.
+This command executes a test suite of unit tests from each test module present
+in the mmlib directory. Each test module contains a set of unit tests of methods
+within the module, confirming proper behavior and protecting against regression
+errors and system misconfigurations.
+
+Once executed, standard output will indicate success with an 'OK' message and
+the number of executed unit tests as well as total run time. Any other message
+indicates failure and will include the nature of the failing tests.
 
 Open an issue to give feedback or report bugs.
 
