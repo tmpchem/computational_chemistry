@@ -173,8 +173,8 @@ class TrajectoryPlot(Plot):
     plt.figure(figsize=self.figsize)
     self._GetLines()
     self._GetAxes()
-    self._GetXticks()
-    self._GetYticks()
+    self._GetXTicks()
+    self._GetYTicks()
     self._GetLabels()
     self._GetGrid()
     self._GetLegend()
@@ -182,7 +182,7 @@ class TrajectoryPlot(Plot):
 
   def _GetLines(self):
     """Plot lines for each energy component during simulation."""
-    self._GetPoint_indices()
+    self._GetPointIndices()
     self._GetXVals()
     self._GetYVals()
     for key in self.ekeys:
