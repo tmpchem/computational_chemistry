@@ -6,7 +6,7 @@ waals, mm bonds, mm angles, mm torsions, and mm outofplanes.
 
 # relative atomic masses of elements (in atomic mass units [g/mol]) from
 # "CRC Handbook" 84th ed, ed Lide, pgs 1-12 - 1-14
-at_masses = {
+_ATOMIC_MASSES = {
     'H' : 1.00794, 'C' : 12.0107, 'O' : 15.9994, 'N' : 14.0067, 'F' : 18.9984,
     'P' : 30.9738, 'S' : 32.0650, 'Cl': 35.4530, 'Br': 79.9040, 'I' : 126.904,
     'He': 4.00260, 'Ne': 20.1797, 'Ar': 39.9480, 'Li': 6.94100, 'Be': 9.01218,
@@ -18,7 +18,7 @@ at_masses = {
 
 # covalent (or ionic) radii by atomic element [Angstroms] from
 # "Inorganic Chemistry" 3rd ed, Housecroft, Appendix 6, pgs 1013-1014
-cov_radii = {
+_COVALENT_RADII = {
     'H' : 0.37, 'C' : 0.77, 'O' : 0.73, 'N' : 0.75, 'F' : 0.71, 'P' : 1.10,
     'S' : 1.03, 'Cl': 0.99, 'Br': 1.14, 'I' : 1.33, 'He': 0.30, 'Ne': 0.84,
     'Ar': 1.00, 'Li': 1.02, 'Be': 0.27, 'B' : 0.88, 'Na': 1.02, 'Mg': 0.72,
@@ -30,7 +30,7 @@ cov_radii = {
 # AMBER94 molecular mechanics van der waals parameters for atom types:
 # 1 -> (float) ro/2 [Angstrom], van der waals radius (divided by 2)
 # 2 -> (float) eps [kcal/mol], van der waals attraction magnitude
-vdw_params = {
+_VAN_DER_WAALS_PARAMETERS = {
     'C' : [1.9080, 0.0860], 'CA': [1.9080, 0.0860], 'CM': [1.9080, 0.0860],
     'CC': [1.9080, 0.0860], 'CV': [1.9080, 0.0860], 'CW': [1.9080, 0.0860],
     'CR': [1.9080, 0.0860], 'CB': [1.9080, 0.0860], 'C*': [1.9080, 0.0860],
@@ -52,7 +52,7 @@ vdw_params = {
 # AMBER94 molecular mechanics bond parameters for atom type pairs:
 # 1 -> (float) k_b [kcal/(mol*A^2)], bond spring constant
 # 2 -> (float) r_eq [Angstrom], equilibrium bond length
-bond_params = {
+_BOND_LENGTH_PARAMETERS = {
     ('C' ,'CA'): [469.0, 1.409], ('C' ,'CB'): [447.0, 1.419],
     ('C' ,'CM'): [410.0, 1.444], ('C' ,'CT'): [317.0, 1.522],
     ('C' , 'N'): [490.0, 1.335], ('C' ,'N*'): [424.0, 1.383],
@@ -99,7 +99,7 @@ bond_params = {
 # AMBER94 molecular mechanics angle parameters for atom type triplets:
 # 1 -> (float) k_a [kcal/(mol*rad^2)], angle spring constant
 # 2 -> (float) a_eq [degrees], equilibrium bond angle
-angle_params = {
+_BOND_ANGLE_PARAMETERS= {
     ('C' ,'CA','CA'): [ 63.0, 120.00], ('C' ,'CA','HA'): [ 35.0, 120.00],
     ('C' ,'CB','CB'): [ 63.0, 119.20], ('C' ,'CB','NB'): [ 70.0, 130.00],
     ('C' ,'CM','CM'): [ 63.0, 120.70], ('C' ,'CM','CT'): [ 70.0, 119.70],
@@ -201,7 +201,7 @@ angle_params = {
 # 2 -> (float) gamma [degrees], barrier minimum offset angle
 # 3 -> (int) n [unitless], frequency of barrier
 # 4 -> (int) paths [unitless], number of unique torsion paths
-torsion23_params = {
+_TORSION_23_PARAMETERS = {
     ('C' ,'CA'): [14.50, 180.0, 2, 4], ('C' ,'CB'): [12.00, 180.0, 2, 4],
     ('C' ,'CM'): [ 8.70, 180.0, 2, 4], ('C' ,'CT'): [ 0.00,   0.0, 2, 4],
     ('C' ,'N' ): [10.00, 180.0, 2, 4], ('C' ,'N*'): [ 5.80, 180.0, 2, 4],
@@ -231,7 +231,7 @@ torsion23_params = {
 
 # AMBER94 molecular mechanics torsion parameters for atom type quartets
 # where all 4 atom types are known (see above for parameter descriptions).
-torsion1234_params = {
+_TORSION_1234_PARAMETERS = {
     ('C' ,'N' ,'CT','C' ): [[ 0.00,   0.0, -4, 1], [ 0.00, 180.0, -3, 1],
                             [ 0.20, 180.0, -2, 1], [ 0.00, 180.0,  1, 1]],
     ('CT','CT','C' ,'N' ): [[ 0.10,   0.0, -4, 1], [ 0.00,   0.0, -3, 1],
@@ -255,7 +255,7 @@ torsion1234_params = {
 # AMBER94 molecular mechanics outofplane parameters for atom type
 # quartets where only final 2 atom types are known:
 # 1 -> (float) vn/2 [kcal/mol], rotation barrier height
-oop34_params = {
+_OUTOFPLANE_34_PARAMETERS = {
     ('C' ,'O' ): 10.5, ('CA','H4'):  1.1, ('CA','H5'):  1.1, ('CA','HA'):  1.1,
     ('CK','H5'):  1.1, ('CM','H4'):  1.1, ('CM','HA'):  1.1, ('CQ','H5'):  1.1,
     ('CR','H5'):  1.1, ('CV','H4'):  1.1, ('CW','H4'):  1.1, ('N' ,'H' ):  1.0,
@@ -264,13 +264,13 @@ oop34_params = {
 # AMBER94 molecular mechanics outofplane parameters for atom type
 # quartets where only final 3 atom types are known (see above for
 # parameter descriptions).
-oop234_params = {
+_OUTOFPLANE_234_PARAMETERS= {
     ('CT','N' ,'CT'):  1.0, ('N2','CA','N2'): 10.5, ('O2','C' ,'O2'): 10.5}
 
 # AMBER94 molecular mechanics outofplane parameters for atom type
 # quartets where al 4 atom types are known (see above for parameter
 # descriptions).
-oop1234_params = {
+_OUTOFPLANE_1234_PARAMETERS = {
     ('CA','CA','C' ,'OH'): 1.1, ('CA','CA','CA','CT'): 1.1,
     ('CB','NC','CA','N2'): 1.1, ('CK','CB','N*','CT'): 1.0,
     ('CM','C' ,'CM','CT'): 1.1, ('CM','C' ,'N*','CT'): 1.0,
@@ -286,12 +286,15 @@ def GetVdwParam(at_type):
     at_type (str): AMBER mm atom type.
   
   Returns:
-    van der waals parameters for atom type:
+    van der waals parameters (float, float) for atom type:
       * ro/2 [Angstrom] 0.0 --> ?
       * eps [kcal/mol] 0.0 --> ?
+
+  Raises:
+    ValueError: If parameters not found for atom type.
   """
-  if at_type in vdw_params:
-    return vdw_params[at_type]
+  if at_type in _VAN_DER_WAALS_PARAMETERS:
+    return _VAN_DER_WAALS_PARAMETERS[at_type]
   else:
     raise ValueError('No vdw param found for atom type: %s' % (at_type))
 
@@ -303,9 +306,12 @@ def GetAtMass(element):
   
   Returns:
     at_mass (float): average periodic table mass of element.
+
+  Raises:
+    ValueError: If parameter not found for element.
   """
-  if element in at_masses:
-    return at_masses[element]
+  if element in _ATOMIC_MASSES:
+    return _ATOMIC_MASSES[element]
   else:
     raise ValueError('No atomic mass found for element: %s' % (element))
 
@@ -317,9 +323,12 @@ def GetCovRad(element):
   
   Returns:
     cov_rad (float): covalent radius [Angstrom] of atom.
+
+  Raises:
+    ValueError: If parameter not found for element.
   """
-  if element in cov_radii:
-    return cov_radii[element]
+  if element in _COVALENT_RADII:
+    return _COVALENT_RADII[element]
   else:
     raise ValueError('No covalent radius found for element: %s' % (element))
 
@@ -331,16 +340,19 @@ def GetBondParam(at1_type, at2_type):
     at2_type (str): atom 2 AMBER94 mm atom type.
   
   Returns:
-    bond (float, float): AMBER94 mm bond parameters for atom types:
+    bond (float, float) AMBER94 mm bond parameters for atom types:
         * k_b [kcal/(mol*A^2)] 0.0 --> ?
         * r_eq [Angstrom] 0.0 --> ?
+
+  Raises:
+    ValueError: If parameters not found for atom types.
   """
-  b12_types = (at1_type, at2_type)
-  b21_types = (at2_type, at1_type)
-  if b12_types in bond_params:
-    return bond_params[b12_types]
-  elif b21_types in bond_params:
-    return bond_params[b21_types]
+  b12_types = at1_type, at2_type
+  b21_types = at2_type, at1_type
+  if b12_types in _BOND_LENGTH_PARAMETERS:
+    return _BOND_LENGTH_PARAMETERS[b12_types]
+  elif b21_types in _BOND_LENGTH_PARAMETERS:
+    return _BOND_LENGTH_PARAMETERS[b21_types]
   else:
     raise ValueError('No bond parameters found for atom type pair: '
                      '%s, %s' % (at1_type, at2_type))
@@ -354,16 +366,19 @@ def GetAngleParam(at1_type, at2_type, at3_type):
     at3_type (str): atom 3 AMBER94 mm atom type.
 
   Returns:
-    angle (float, float): AMBER94 mm angle parameters for atom types:
+    angle (float, float) AMBER94 mm angle parameters for atom types:
         * k_a [kcal/(mol*rad^2)] 0.0 --> ?
         * a_eq [degrees] 0.0 --> 180.0
+
+  Raises:
+    ValueError: If parameters not found for atom types.
   """
-  a123_types = (at1_type, at2_type, at3_type)
-  a321_types = (at3_type, at2_type, at1_type)
-  if a123_types in angle_params:
-    return angle_params[a123_types]
-  elif a321_types in angle_params:
-    return angle_params[a321_types]
+  a123_types = at1_type, at2_type, at3_type
+  a321_types = at3_type, at2_type, at1_type
+  if a123_types in _BOND_ANGLE_PARAMETERS:
+    return _BOND_ANGLE_PARAMETERS[a123_types]
+  elif a321_types in _BOND_ANGLE_PARAMETERS:
+    return _BOND_ANGLE_PARAMETERS[a321_types]
   else:
     raise ValueError('No angle parameters found for atom type triplet: '
                      '%s, %s, %s' % (at1_type, at2_type, at3_type))
@@ -378,35 +393,39 @@ def GetTorsionParam(at1_type, at2_type, at3_type, at4_type):
     at4_type (str): atom 4 AMBER94 mm atom type.
 
   Returns:
-    torsion AMBER94 mm torsion parameters for atom types:
+    torsion (float, float, int, int)* AMBER94 mm torsion parameter array for
+        atom types:
       * vn/2 [kcal/mol] 0.0 --> ?
       * gamma [degrees] -180.0 --> 180.0
       * n [] 1 --> 6
       * paths [] 1 --> 9
+
+  Raises:
+    ValueError: If parameters not found for atom types.
   """
   torsion = []
 
   # two-atom torsion potentials if found
-  t23_types = (at2_type, at3_type)
-  t32_types = (at3_type, at2_type)
-  if t23_types in torsion23_params:
-    t23 = torsion23_params[t23_types]
+  t23_types = at2_type, at3_type
+  t32_types = at3_type, at2_type
+  if t23_types in _TORSION_23_PARAMETERS:
+    t23 = _TORSION_23_PARAMETERS[t23_types]
     torsion.append(t23)
-  elif t32_types in torsion23_params:
-    t23 = torsion23_params[t32_types]
+  elif t32_types in _TORSION_23_PARAMETERS:
+    t23 = _TORSION_23_PARAMETERS[t32_types]
     torsion.append(t23)
   else:
     raise ValueError('No torsion parameters found for central atom pair: '
                      '%s, %s' % (at2_type, at3_type))
 
   # four-atom torsion potentials if found
-  t1234_types = (at1_type, at2_type, at3_type, at4_type)
-  t4321_types = (at4_type, at3_type, at2_type, at1_type)
+  t1234_types = at1_type, at2_type, at3_type, at4_type
+  t4321_types = at4_type, at3_type, at2_type, at1_type
   t1234 = []
-  if t1234_types in torsion1234_params:
-    t1234 = torsion1234_params[t1234_types]
-  elif t4321_types in torsion1234_params:
-    t1234 = torsion1234_params[t4321_types]
+  if t1234_types in _TORSION_1234_PARAMETERS:
+    t1234 = _TORSION_1234_PARAMETERS[t1234_types]
+  elif t4321_types in _TORSION_1234_PARAMETERS:
+    t1234 = _TORSION_1234_PARAMETERS[t4321_types]
   for i in range(len(t1234)):
     torsion.append(t1234[i])
 
@@ -428,28 +447,19 @@ def GetOutofplaneParam(at1_type, at2_type, at3_type, at4_type):
   """
 
   # return four-atom out-of-plane potential if found
-  oop1234 = 0.0
-  oop1234_types = (at1_type, at2_type, at3_type, at4_type)
-  if oop1234_types in oop1234_params:
-    oop1234 = oop1234_params[oop1234_types]
-  if oop1234 > 0.0:
-    return oop1234
+  oop1234_types = at1_type, at2_type, at3_type, at4_type
+  if oop1234_types in _OUTOFPLANE_1234_PARAMETERS:
+    return _OUTOFPLANE_1234_PARAMETERS[oop1234_types]
 
   # return three-atom out-of-plane potential if found
-  oop234 = 0.0
-  oop234_types = (at2_type, at3_type, at4_type)
-  if oop234_types in oop234_params:
-    oop234 = oop234_params[oop234_types]
-  if oop234 > 0.0:
-    return oop234
+  oop234_types = at2_type, at3_type, at4_type
+  if oop234_types in _OUTOFPLANE_234_PARAMETERS:
+    return _OUTOFPLANE_234_PARAMETERS[oop234_types]
 
   # return two-atom out-of-plane potential if found
-  oop34 = 0.0
-  oop34_types = (at3_type, at4_type)
-  if oop34_types in oop34_params:
-    oop34 = oop34_params[oop34_types]
-  if oop34 > 0.0:
-    return oop34
+  oop34_types = at3_type, at4_type
+  if oop34_types in _OUTOFPLANE_34_PARAMETERS:
+    return _OUTOFPLANE_34_PARAMETERS[oop34_types]
 
   # return zero if out-of-plane potential not found
   return 0.0
