@@ -18,7 +18,7 @@ __date__ = '2017-02-16'
 
 if __name__ == '__main__':
   # check input syntax
-  infile_name = mmlib.fileio.GetInput()
+  infile_name = mmlib.fileio.ValidateInput(__file__)
 
   # read in molecular and optimization data
   opt = mmlib.optimize.Optimization(infile_name)

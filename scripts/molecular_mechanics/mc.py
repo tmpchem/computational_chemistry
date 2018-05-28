@@ -18,7 +18,7 @@ __date__ = '2017-02-08'
 
 if __name__ == '__main__':
   # check input syntax
-  infile_name = mmlib.fileio.GetInput()
+  infile_name = mmlib.fileio.ValidateInput(__file__)
 
   # read in molecular and simulation data
   sim = mmlib.simulate.MonteCarlo(infile_name)

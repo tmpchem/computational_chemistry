@@ -15,6 +15,62 @@ from mmlib import molecule
 from mmlib import param
 from mmlib import topology
 
+_GEOM_PRINT_HEADER = ' Molecular Geometry and Non-bonded Parameters '
+_GEOM_PRINT_BANNER_CHARS = 65
+_GEOM_PRINT_PARAMS = ['type', 'x', 'y', 'z', 'q', 'ro/2', 'eps']
+_GEOM_PRINT_SPACES = [6, 5, 9, 9, 7, 6, 4]
+
+_BOND_PRINT_HEADER = ' Bond Length Data '
+_BOND_PRINT_BANNER_CHARS = 57
+_BOND_PRINT_PARAMS = ['k_b', 'r_eq', 'r_ij', 'types', 'energy', 'atoms']
+_BOND_PRINT_SPACES = [10, 5, 5, 3, 4, 1]
+_BOND_PRINT_ABSENT = '\n No Bonds Detected'
+
+_ANGLE_PRINT_HEADER = ' Bond Angle Data '
+_ANGLE_PRINT_BANNER_CHARS = 58
+_ANGLE_PRINT_PARAMS = ['k_a', 'a_eq', 'a_ijk', 'types', 'energy', 'atoms']
+_ANGLE_PRINT_SPACES = [9, 3, 4, 4, 5, 2]
+_ANGLE_PRINT_ABSENT = '\n No Bond Angles Detected'
+
+_TORSION_PRINT_HEADER = ' Torsion Angle Data '
+_TORSION_PRINT_BANNER_CHARS = 67
+_TORSION_PRINT_PARAMS = ['vn/2', 'gamma', 't_ijkl n p', 'types', 'energy',
+                         'atoms']
+_TORSION_PRINT_SPACES = [9, 2, 3, 5, 6, 3]
+_TORSION_PRINT_ABSENT = '\n No Torsion Angles Detected'
+
+_OUTOFPLANE_PRINT_HEADER = ' Out-of-plane Angle Data '
+_OUTOFPLANE_PRINT_BANNER_CHARS = 55
+_OUTOFPLANE_PRINT_PARAMS = ['vn/2', 'o_ijkl', 'types', 'energy', 'atoms']
+_OUTOFPLANE_PRINT_SPACES = [9, 2, 5, 6, 3]
+_OUTOFPLANE_PRINT_ABSENT = '\n No Out-of-plane Angles Detected'
+
+_ENERGY_PRINT_HEADER = ' Energy Values '
+_ENERGY_PRINT_BANNER_CHARS = 33
+_ENERGY_PRINT_PARAMS = ['component', '[kcal/mol]']
+_ENERGY_PRINT_SPACES = [3, 9]
+
+_ENERGY_PRINT_LABELS = [
+    'Total', 'Kinetic', 'Potential', 'Non-bonded', 'Bonded', 'Boundary',
+    'van der Waals', 'Electrostatic', 'Bonds', 'Angles', 'Torsions',
+    'Out-of-planes']
+_ENERGY_PRINT_ATTRIBUTES = [
+    'e_total', 'e_kinetic', 'e_potential', 'e_nonbonded', 'e_bonded',
+    'e_bound', 'e_vdw', 'e_elst', 'e_bonds', 'e_angles', 'e_torsions',
+    'e_outofplanes']
+
+_AVERAGE_PRINT_HEADER = ' Energy Component Properties [kcal/mol] '
+_AVERAGE_PRINT_BANNER_CHARS = 68
+_AVERAGE_PRINT_PARAMS = ['component', 'avg', 'std', 'min', 'max']
+_AVERAGE_PRINT_SPACES = [3, 11, 9, 9, 9]
+
+_PROGRAM_MESSAGES = {
+  'mm.py': 'xyzq or prm file for molecular mechanics\n',
+  'md.py': 'simluation file for molecular dynamics\n',
+  'mc.py': 'simulation file for Metropolis Monte Carlo\n',
+  'opt.py': 'optimization file for energy minimization\n',
+  'ana.py': 'plot file for data analysis\n'}
+
 def _GetFileStringArray(infile_name):
   """Create a 2-d array of strings from input file name.
 
@@ -218,18 +274,19 @@ def GetPrm(mol):
       _GetAtom(mol, record)
   mol.n_atoms = len(mol.atoms)
 
+  parse_functions = {
+    'bond': _GetBond,
+    'angle': _GetAngle,
+    'torsion': _GetTorsion,
+    'outofplane': _GetOutofplane}
+
   mol.bond_graph = [{} for i in range(mol.n_atoms)]
   for i in range(len(infile_array)):
     record = infile_array[i]
-    rec_type = record[0].lower()
-    if rec_type == 'bond':
-      _GetBond(mol, record)
-    elif rec_type == 'angle':
-      _GetAngle(mol, record)
-    elif rec_type == 'torsion':
-      _GetTorsion(mol, record)
-    elif rec_type == 'outofplane':
-      _GetOutofplane(mol, record)
+    record_type = record[0].lower()
+    if record_type in parse_functions:
+      parse_function = parse_functions[record_type]
+      parse_function(mol, record)
 
   mol.n_bonds = len(mol.bonds)
   mol.n_angles = len(mol.angles)
@@ -528,48 +585,38 @@ def PrintGradient(grad, comment):
   print('\n', end='')
 
 
-def _PrintBanner(string, length, newline1, newline2):
+def _PrintBanner(title, length, lines1, lines2):
   """Print a string in the center of a banner with dashes on each side
   
   Print leading newlines, one space, dashes to center string, header string,
   dashes to end of line, and trailing newlines to screen.
   
   Args:
-    string (str): Banner header title.
+    title (str): Banner header title.
     length (int): Total number of characters in banner.
-    newline1 (int): Number of leading newlines.
-    newline2 (int): Number of trailing newlines.
+    lines1 (int): Number of leading newlines.
+    lines2 (int): Number of trailing newlines.
   """
-  n_dash1 = math.floor((length - len(string))/2) - 1
-  n_dash2 = math.ceil((length - len(string))/2) - 1
-  for i in range(newline1):
-    print('')
-  print_string = ' '
-  for i in range(n_dash1):
-    print_string += '-'
-  print_string += string
-  for i in range(n_dash2):
-    print_string += '-'
-  print(print_string, end='')
-  for i in range(newline2):
-    print('')
+  dashes1 = (length - len(title))//2 - 1
+  dashes2 = length - len(title) - dashes1 - 2
+  return lines1*'\n' + dashes1*'-' + title + dashes2*'-' + lines2*'\n'
 
 
-def _PrintPadded(strings, spacings):
+def _PrintPadded(fields, spacings):
   """Print an array of strings padded by spaces.
   
   Print leading number of spaces prior to each string, each elements of the
   arrays 'strings' and 'spacings', respectively.
   
   Args:
-    strings (str*): Array of strings to be printed.
+    fields (str*): Array of string fields to be printed.
     spacings (int*): Array of number of spaces to be printed prior to each
         'strings' element.
   """
-  print_string = ''
-  for i in range(len(strings)):
-    print_string += '%*s%s' % (spacings[i], '', strings[i])
-  print(print_string)
+  string = []
+  for spacing, field in zip(spacings, fields):
+    string.append(spacing*' ' + field)
+  return ''.join(string) + '\n'
 
 
 def _PrintHeader(header, n_banner, params, spacings):
@@ -585,9 +632,11 @@ def _PrintHeader(header, n_banner, params, spacings):
     spacings (int*): Array of number of spaces to be printed prior to each
         'params' element.
   """
-  _PrintBanner(header, n_banner, 1, 1)
-  _PrintPadded(params, spacings)
-  _PrintBanner('', n_banner, 0, 1)
+  string = ''.join([
+    _PrintBanner(header, n_banner, 1, 1),
+    _PrintPadded(params, spacings),
+    _PrintBanner('', n_banner, 0, 0)])
+  print(string)
 
 
 def PrintGeom(mol):
@@ -602,11 +651,8 @@ def PrintGeom(mol):
     mol (mmlib.molecule.Molecule): Molecule with Atom objects with data for
         printing.
   """
-  header = ' Molecular Geometry and Non-bonded Parameters '
-  params = ['type', 'x', 'y', 'z', 'q', 'ro/2', 'eps']
-  spaces = [6, 5, 9, 9, 7, 6, 4]
-  n_banner = 65
-  _PrintHeader(header, n_banner, params, spaces)
+  _PrintHeader(_GEOM_PRINT_HEADER, _GEOM_PRINT_BANNER_CHARS, _GEOM_PRINT_PARAMS,
+               _GEOM_PRINT_SPACES)
   
   for i in range(mol.n_atoms):
     print('%4i | %-2s' % (i+1, mol.atoms[i].type_), end='')
@@ -632,7 +678,7 @@ def PrintGeomFile(outfile, mol):
   outfile.write('# %s Atoms (at, type, x, y, z, q, ro, eps)\n' % (mol.n_atoms))
   for i in range(mol.n_atoms):
     outfile.write('ATOM %4i %-2s' % (i+1, mol.atoms[i].type_))
-    for j in range(3):
+    for j in range(const.NUMDIM):
       outfile.write(' %11.6f' % (mol.atoms[i].coords[j]))
     outfile.write(' %8.5f %7.4f %7.4f\n' % (
         mol.atoms[i].charge, mol.atoms[i].ro, mol.atoms[i].eps))
@@ -650,13 +696,11 @@ def PrintBonds(mol):
     mol (mmlib.molecule.Molecule): Molecule with Bond objects with data for
         printing.
   """
-  if mol.n_bonds > 0:
-    header, n_banner = ' Bond Length Data ', 57
-    params = ['k_b', 'r_eq', 'r_ij', 'types', 'energy', 'atoms']
-    spaces = [10, 5, 5, 3, 4, 1]
-    _PrintHeader(header, n_banner, params, spaces)
+  if mol.n_bonds:
+    _PrintHeader(_BOND_PRINT_HEADER, _BOND_PRINT_BANNER_CHARS,
+                 _BOND_PRINT_PARAMS, _BOND_PRINT_SPACES)
   else:
-    print('\n No Bonds Detected')
+    print(_BOND_PRINT_ABSENT)
   
   a = mol.atoms
   for p in range(mol.n_bonds):
@@ -698,13 +742,11 @@ def PrintAngles(mol):
     mol (mmlib.molecule.Molecule): Molecule with Angle objects with data for
         printing.
   """
-  if mol.n_angles > 0:
-    header, n_banner = ' Bond Angle Data ', 58
-    params = ['k_a', 'a_eq', 'a_ijk', 'types', 'energy', 'atoms']
-    spaces = [9, 3, 4, 4, 5, 2]
-    _PrintHeader(header, n_banner, params, spaces)
+  if mol.n_angles:
+    _PrintHeader(_ANGLE_PRINT_HEADER, _ANGLE_PRINT_BANNER_CHARS,
+                 _ANGLE_PRINT_PARAMS, _ANGLE_PRINT_SPACES)
   else:
-    print('\n No Bond Angles Detected')
+    print(_ANGLE_PRINT_ABSENT)
   
   at = mol.atoms
   for p in range(mol.n_angles):
@@ -746,24 +788,20 @@ def PrintTorsions(mol):
     mol (mmlib.molecule.Molecule): Molecule with Torsion objects with data for
         printing.
   """
-  if mol.n_torsions > 0:
-    header, n_banner = ' Torsion Angle Data ', 67
-    params = ['vn/2', 'gamma', 't_ijkl n p', 'types', 'energy', 'atoms']
-    spaces = [9, 2, 3, 5, 6, 3]
-    _PrintHeader(header, n_banner, params, spaces)
+  if mol.n_torsions:
+    _PrintHeader(_TORSION_PRINT_HEADER, _TORSION_PRINT_BANNER_CHARS,
+                 _TORSION_PRINT_PARAMS, _TORSION_PRINT_SPACES)
   else:
-    print('\n No Torsion Angles Detected')
+    print(_TORSION_PRINT_ABSENT)
   
   a = mol.atoms
   for p in range(mol.n_torsions):
     t = mol.torsions[p]
     t1, t2 = a[t.at1].type_, a[t.at2].type_
     t3, t4 = a[t.at3].type_, a[t.at4].type_
-    pstr = '%4i | %6.2f %6.1f %8.3f %i %i (%2s-%2s-%2s-%2s)' % (
-        p+1, t.v_n, t.gam, t.t_ijkl, t.n, t.paths, t1, t2, t3, t4)
-    pstr += ' %7.4f (%i-%i-%i-%i)' % (
-        t.energy, t.at1+1, t.at2+1, t.at3+1, t.at4+1)
-    print(pstr)
+    print('%4i | %6.2f %6.1f %8.3f %i %i (%2s-%2s-%2s-%2s) %7.4f (%i-%i-%i-%i)'
+          % (p+1, t.v_n, t.gam, t.t_ijkl, t.n, t.paths, t1, t2, t3, t4,
+             t.energy, t.at1+1, t.at2+1, t.at3+1, t.at4+1))
 
 
 def PrintTorsionsFile(outfile, mol):
@@ -799,23 +837,20 @@ def PrintOutofplanes(mol):
     mol (mmlib.molecule.Molecule): Molecule with Outofplane objects with data
         for printing.
   """
-  if mol.n_outofplanes > 0:
-    header, n_banner = ' Out-of-plane Angle Data ', 55
-    params = ['vn/2', 'o_ijkl', 'types', 'energy', 'atoms']
-    spaces = [9, 2, 5, 6, 3]
-    _PrintHeader(header, n_banner, params, spaces)
+  if mol.n_outofplanes:
+    _PrintHeader(_OUTOFPLANE_PRINT_HEADER, _OUTOFPLANE_PRINT_BANNER_CHARS,
+                 _OUTOFPLANE_PRINT_PARAMS, _OUTOFPLANE_PRINT_SPACES)
   else:
-    print('\n No Out-of-plane Angles Detected')
+    print(_OUTOFPLANE_PRINT_ABSENT)
   
   a = mol.atoms
   for p in range(mol.n_outofplanes):
     o = mol.outofplanes[p]
     t1, t2 = a[o.at1].type_, a[o.at2].type_
     t3, t4 = a[o.at3].type_, a[o.at4].type_
-    pstr = '%4i | %6.2f %7.3f (%2s-%2s-%2s-%2s) %7.4f (%i-%i-%i-%i)' % (
-        p+1, o.v_n, o.o_ijkl, t1, t2, t3, t4, o.energy, o.at1+1, o.at2+1,
-        o.at3+1, o.at4+1)
-    print(pstr)
+    print('%4i | %6.2f %7.3f (%2s-%2s-%2s-%2s) %7.4f (%i-%i-%i-%i)'
+          % (p+1, o.v_n, o.o_ijkl, t1, t2, t3, t4, o.energy, o.at1+1, o.at2+1,
+             o.at3+1, o.at4+1))
 
 
 def PrintOutofplanesFile(outfile, mol):
@@ -830,12 +865,12 @@ def PrintOutofplanesFile(outfile, mol):
     mol (mmlib.molecule.Molecule): Molecule with outofplane data and parameters
         for printing.
   """
-  outfile.write('# %i Outofplanes (At1, At2, At3, At4,' % (mol.n_outofplanes))
-  outfile.write(' V_n, Gamma, N_f)\n')
+  outfile.write('# %i Outofplanes (At1, At2, At3, At4, V_n, Gamma, N_f)\n'
+                % mol.n_outofplanes)
   for p in range(mol.n_outofplanes):
     o = mol.outofplanes[p]
-    outfile.write('OUTOFPLANE %4i %4i %4i %4i %6.2f\n' % (
-        o.at1+1, o.at2+1, o.at3+1, o.at4+1, o.v_n))
+    outfile.write('OUTOFPLANE %4i %4i %4i %4i %6.2f\n'
+                  % (o.at1+1, o.at2+1, o.at3+1, o.at4+1, o.v_n))
 
 
 def PrintEnergy(mol):
@@ -847,21 +882,11 @@ def PrintEnergy(mol):
   Args:
     mol (mmlib.molecule.Molecule): Molecule object with energy component data.
   """
-  header, n_banner = ' Energy Values ', 33
-  params = ['component', '[kcal/mol]']
-  spaces = [3, 9]
-  _PrintHeader(header, n_banner, params, spaces)
+  _PrintHeader(_ENERGY_PRINT_HEADER, _ENERGY_PRINT_BANNER_CHARS,
+               _ENERGY_PRINT_PARAMS, _ENERGY_PRINT_SPACES)
   
-  labels = [
-      'Total', 'Kinetic', 'Potential', 'Non-bonded', 'Bonded', 'Boundary',
-      'van der Waals', 'Electrostatic', 'Bonds', 'Angles', 'Torsions',
-      'Out-of-planes']
-  vals = [
-      'e_total', 'e_kinetic', 'e_potential', 'e_nonbonded', 'e_bonded',
-      'e_bound', 'e_vdw', 'e_elst', 'e_bonds', 'e_angles', 'e_torsions',
-      'e_outofplanes']
-  for i in range(len(vals)):
-      print('   %-13s | %10.4f' % (labels[i], getattr(mol, vals[i])))
+  for label, attribute in zip(_ENERGY_PRINT_LABELS, _ENERGY_PRINT_ATTRIBUTES):
+    print('   %-13s | %10.4f' % (label, getattr(mol, attribute)))
 
 
 def PrintAverages(ana):
@@ -874,46 +899,44 @@ def PrintAverages(ana):
     ana (mmlib.analyze.Analyze): Analyze object with energy component
         expectation values.
   """
-  header, n_banner = ' Energy Component Properties [kcal/mol] ', 68
-  params = ['component', 'avg', 'std', 'min', 'max']
-  spaces = [3, 11, 9, 9, 9]
-  _PrintHeader(header, n_banner, params, spaces)
+  _PrintHeader(_AVERAGE_PRINT_HEADER, _AVERAGE_PRINT_BANNER_CHARS,
+               _AVERAGE_PRINT_PARAMS, _AVERAGE_PRINT_SPACES)
   
   pdict = const.PROPERTYDICTIONARY
-  vals = sorted(list(pdict.keys()), key = lambda x: pdict[x][3])
-  vals = [val for val in vals if val in ana.prop]
-  labels = [pdict[key][0] for key in vals]
-  for i in range(len(vals)):
-    key = vals[i]
+  keys = sorted(list(pdict.keys()), key = lambda x: pdict[x][3])
+  keys = [key for key in keys if key in ana.prop]
+  labels = [pdict[key][0] for key in keys]
+  for key, label in zip(keys, labels):
     print('   %-13s | %11.4e %11.4e %11.4e %11.4e' % (
-        labels[i], ana.eavg[key], ana.estd[key], ana.emin[key], ana.emax[key]))
+        label, ana.eavg[key], ana.estd[key], ana.emin[key], ana.emax[key]))
 
 
-def GetInput():
-  """Check for proper input argument syntax and return parsed result.
+def ValidateInput(program_name):
+  """Checks for proper input argument syntax and return parsed result.
   
   Check that the command line input contains two strings or throw an error and
   print usage guidance. If correct, return the name of the input file given as
   the second command line input string.
 
+  Args:
+    program_name (str): Name of main file calling this function.
+
   Returns:
     infile_name (str): Name of input file given from command line.
+
+  Raises:
+    ValueError: If program_name not recognized.
   """
-  program_name = sys.argv[0].split('/')[-1]
   if (len(sys.argv) < 2):
-    print('\nUsage: python %s INPUT_FILE\n' % (program_name))
-    print('  INPUT_FILE: ', end='')
-    if program_name == 'mm.py':
-      print('xyzq or prm file for molecular mechanics\n')
-    elif program_name == 'md.py':
-      print('simulation file for molecular dynamics\n')
-    elif program_name == 'mc.py':
-      print('simulation file for metropolis monte carlo\n')
-    elif program_name == 'opt.py':
-      print('optimization file for energy minimization\n')
-    elif program_name == 'ana.py':
-      print('plot file for data analysis\n')
-    sys.exit()
+    if program_name in _PROGRAM_MESSAGES:
+      print('\nUsage: python %s INPUT_FILE\n' % program_name)
+      print('INPUT_FILE: %s' % _PROGRAM_MESSAGES[program_name])
+      sys.exit()
+    else:
+      raise ValueError('Program name not recognized: %s' % program_name)
+  
+  input_file = sys.argv[1]
+  if os.path.isfile(input_file):
+    return input_file
   else:
-      infile_name = sys.argv[1]
-  return infile_name
+    raise ValueError('Specified input is not a file: %s' % input_file)

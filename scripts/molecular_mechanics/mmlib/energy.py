@@ -119,7 +119,6 @@ def GetEBoundI(k_box, bound, coords, origin, boundtype):
       e_bound_i += (scale * k_box * (abs(coords[j] - origin[j]) - bound)**2)
   elif (boundtype == 'sphere'):
     r_io = geomcalc.GetRij(origin, coords)
-    u_io = geomcalc.GetUij(origin, coords)
     scale = 1.0 if (r_io >= bound) else 0.0
     e_bound_i += scale * k_box * (r_io - bound)**2
   return e_bound_i

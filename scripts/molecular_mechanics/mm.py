@@ -17,7 +17,7 @@ __date__ = '2016-02-15'
 
 if __name__ == '__main__':
   # check input syntax
-  infile_name = mmlib.fileio.GetInput()
+  infile_name = mmlib.fileio.ValidateInput(__file__)
 
   # read in molecular geometry and topology
   mol = mmlib.molecule.Molecule(infile_name)

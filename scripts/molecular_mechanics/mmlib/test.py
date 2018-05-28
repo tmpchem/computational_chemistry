@@ -9,6 +9,10 @@ from mmlib import energy_test
 from mmlib import geomcalc_test
 from mmlib import param_test
 
+# Message to print at conclusion of test suite.
+_SUCCESS_MESSAGE = '\nAll tests succeeded. mmlib is ready for use.'
+_FAILURE_MESSAGE = '\nSome tests failed. Results may not be reliable.'
+
 def RunTests():
   """Executes test suites for all mmlib modules."""
   test_suites = [
@@ -20,9 +24,10 @@ def RunTests():
   result = unittest.TextTestRunner().run(combo_suite)
 
   if (result.wasSuccessful()):
-    print('\nAll tests succeeded. mmlib is ready for use.')
+    print(_SUCCESS_MESSAGE)
   else:
-    print('\nSome tests failed. Results may not be reliable.')
+    print(_FAILURE_MESSAGE)
+
 
 def assertListAlmostEqual(test_case, test_vector, reference_vector):
   """Supplemental function for near equality comparison of float vectors."""
