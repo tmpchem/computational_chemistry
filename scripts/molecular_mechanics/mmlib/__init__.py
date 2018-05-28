@@ -15,6 +15,7 @@ from mmlib import gradient
 from mmlib import molecule
 from mmlib import optimize
 from mmlib import param
+from mmlib import param_test
 from mmlib import simulate
 from mmlib import test
 from mmlib import topology

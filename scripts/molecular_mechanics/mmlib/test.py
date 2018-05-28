@@ -7,12 +7,14 @@ import unittest
 
 from mmlib import energy_test
 from mmlib import geomcalc_test
+from mmlib import param_test
 
 def RunTests():
   """Executes test suites for all mmlib modules."""
   test_suites = [
       geomcalc_test.suite(),
-      energy_test.suite()]
+      energy_test.suite(),
+      param_test.suite()]
 
   combo_suite = unittest.TestSuite(test_suites)
   result = unittest.TextTestRunner().run(combo_suite)
