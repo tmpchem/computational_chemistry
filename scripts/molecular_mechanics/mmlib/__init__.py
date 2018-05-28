@@ -10,6 +10,7 @@ from mmlib import energy
 from mmlib import energy_test
 from mmlib import fileio
 from mmlib import geomcalc
+from mmlib import geomcalc_test
 from mmlib import gradient
 from mmlib import molecule
 from mmlib import optimize

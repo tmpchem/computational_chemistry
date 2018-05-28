@@ -23,6 +23,7 @@ def GetR2ij(coords_i, coords_j):
           (coords_j[1] - coords_i[1])**2 +
           (coords_j[2] - coords_i[2])**2)
 
+
 def GetRij(coords_i, coords_j):
   """Calculate distance between two 3d cartesian points.
   
@@ -37,6 +38,7 @@ def GetRij(coords_i, coords_j):
                    (coords_j[1] - coords_i[1])**2 +
                    (coords_j[2] - coords_i[2])**2)
 
+
 def GetUij(coords_i, coords_j, r_ij=None):
   """Calculate 3d unit vector from cartesian points i to j.
   
@@ -50,18 +52,24 @@ def GetUij(coords_i, coords_j, r_ij=None):
   Returns:
       u_ij (float*): 3 unit vector components from point i to j.
   """
+  u_ij = numpy.zeros(3)
   if not r_ij:
     r_ij = GetRij(coords_i, coords_j)
-  u_ij = numpy.zeros(3)
-  if r_ij > 0.0:
+  if r_ij:
     u_ij[0] = (coords_j[0] - coords_i[0]) / r_ij 
     u_ij[1] = (coords_j[1] - coords_i[1]) / r_ij 
     u_ij[2] = (coords_j[2] - coords_i[2]) / r_ij 
   return u_ij
 
+
 def GetUdp(uvec_i, uvec_j):
   """Calculate dot product between two 3d cartesian unit vectors.
   
+  WARNING: This function does *NOT* normalize the vectors. It assumes inputs
+  are unit vectors. A maximum absolute value of 1.0 is returned, primarily for
+  safety when passing the result into the arccosine function in the GetAijk
+  function.
+
   Args:
     coords_i (float*): 3 cartesian components of unit vector i.
     coords_j (float*): 3 cartesian components of unit vector j.
@@ -74,8 +82,14 @@ def GetUdp(uvec_i, uvec_j):
   udp += uvec_i[2] * uvec_j[2]
   return max(-1.0, min(1.0, udp))
 
+
 def GetUcp(uvec_i, uvec_j):
   """Calculate unit cross product between two 3d cartesian unit vectors.
+  
+  WARNING: This function does *NOT* normalize the vectors. It assumes inputs
+  are unit vectors. Normalization only occurs with respect to vector-vector
+  angle, not vector magnitude. Normalization is needed for correct use in
+  GetTijkl function.
   
   Args:
     coords_i (float*): 3 cartesian components of unit vector i.
@@ -87,11 +101,12 @@ def GetUcp(uvec_i, uvec_j):
   ucp = numpy.zeros(3)
   cos_ijk = GetUdp(uvec_i, uvec_j)
   sin_ijk = math.sqrt(1.0 - cos_ijk**2)
-  if sin_ijk > 0.0:
+  if sin_ijk:
     ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1]) / sin_ijk 
     ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2]) / sin_ijk 
     ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0]) / sin_ijk 
   return ucp
+
 
 def GetCp(uvec_i, uvec_j):
   """Calculate cross product between two 3d cartesian unit vectors.
@@ -104,13 +119,11 @@ def GetCp(uvec_i, uvec_j):
     cp (float*): Cross product between unit vectors i and j.
   """
   ucp = numpy.zeros(3)
-  cos_ijk = GetUdp(uvec_i, uvec_j)
-  sin_ijk = math.sqrt(1 - cos_ijk**2)
-  if sin_ijk > 0.0:
-    ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1])
-    ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2])
-    ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0])
+  ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1])
+  ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2])
+  ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0])
   return ucp
+
 
 def GetAijk(coords_i, coords_j, coords_k, r_ij=None, r_jk=None):
   """Calculate angle between 3 3d cartesian points.
@@ -130,6 +143,7 @@ def GetAijk(coords_i, coords_j, coords_k, r_ij=None, r_jk=None):
   dp_jijk = GetUdp(u_ji, u_jk)
   return const.RAD2DEG * math.acos(dp_jijk)
 
+
 def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
              r_kl=None):
   """Calculate torsion angle between 4 3d cartesian points.
@@ -142,6 +156,7 @@ def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
     r_ij (float): Distance between i and j (default None).
     r_jk (float): Distance between j and k (default None).
     r_kl (float): Distance between k and l (default None).
+
   Returns:
     t_ijkl (float): Signed angle [degrees] between planes ijk and jkl.
   """
@@ -153,6 +168,7 @@ def GetTijkl(coords_i, coords_j, coords_k, coords_l, r_ij=None, r_jk=None,
   dp_jijk_kjkl = GetUdp(u_jijk, u_kjkl)
   sign = 1.0 if GetUdp(u_jijk, u_kl) <= 0.0 else -1.0
   return const.RAD2DEG * sign * math.acos(dp_jijk_kjkl)
+
 
 def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
              r_kl=None):
@@ -176,6 +192,7 @@ def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
   u_kikj = GetUcp(u_ki, u_kj)
   dp_kikj_kl = GetUdp(u_kikj, u_kl)
   return const.RAD2DEG * math.asin(dp_kikj_kl)
+
 
 def GetVolume(mol):
   """Calculate volume of molecular system based on boundary type

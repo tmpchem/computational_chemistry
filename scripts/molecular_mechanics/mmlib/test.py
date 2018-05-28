@@ -6,11 +6,25 @@ WARNING: Incomplete. Work in progress. Subject to change at any time.
 import unittest
 
 from mmlib import energy_test
+from mmlib import geomcalc_test
 
 def RunTests():
+  """Executes test suites for all mmlib modules."""
   test_suites = [
+      geomcalc_test.suite(),
       energy_test.suite()]
 
   combo_suite = unittest.TestSuite(test_suites)
-  unittest.TextTestRunner().run(combo_suite)
+  result = unittest.TextTestRunner().run(combo_suite)
 
+  if (result.wasSuccessful()):
+    print('\nAll tests succeeded. mmlib is ready for use.')
+  else:
+    print('\nSome tests failed. Results may not be reliable.')
+
+def assertListAlmostEqual(test_case, test_vector, reference_vector):
+  """Supplemental function for near equality comparison of float vectors."""
+  test_case.assertEqual(len(test_vector), len(reference_vector))
+
+  for test_value, reference_value in zip(test_vector, reference_vector):
+    test_case.assertAlmostEqual(test_value, reference_value, places=6)
