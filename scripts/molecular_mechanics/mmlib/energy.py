@@ -24,6 +24,7 @@ def GetEBond(r_ij, r_eq, k_b):
   """
   return k_b * (r_ij - r_eq)**2
 
+
 def GetEAngle(a_ijk, a_eq, k_a):
   """Calculate angle bend energy between 3 bonded atoms.
   
@@ -36,6 +37,7 @@ def GetEAngle(a_ijk, a_eq, k_a):
     e_angle (float): Energy [kcal/mol] of angle ijk.
   """
   return k_a * (const.DEG2RAD * (a_ijk - a_eq) )**2
+
 
 def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
   """Calculate torsion strain energy between 4 bonded atoms.
@@ -52,6 +54,7 @@ def GetETorsion(t_ijkl, v_n, gamma, nfold, paths):
   """
   return v_n * (1.0 + math.cos(const.DEG2RAD * (nfold*t_ijkl - gamma))) / paths
 
+
 def GetEOutofplane(o_ijkl, v_n):
   """Calculate outofplane bend energy between 4 bonded atoms.
   
@@ -63,6 +66,7 @@ def GetEOutofplane(o_ijkl, v_n):
     e_outofplane (float): Energy [kcal/mol] of outofplane ijkl.
   """
   return v_n * (1.0 + math.cos(const.DEG2RAD * (2.0 * o_ijkl - 180.0)))
+
 
 def GetEVdwIJ(r_ij, eps_ij, ro_ij):
   """Calculate van der waals interaction energy between atom pair.
@@ -78,6 +82,7 @@ def GetEVdwIJ(r_ij, eps_ij, ro_ij):
   r6_ij = (ro_ij / r_ij)**6
   return eps_ij * ( r6_ij**2 - 2.0 * r6_ij )
 
+
 def GetEElstIJ(r_ij, q_i, q_j, epsilon):
   """Calculate electrostatic interaction energy between atom pair.
   
@@ -91,6 +96,7 @@ def GetEElstIJ(r_ij, q_i, q_j, epsilon):
     e_elst_ij (float): Electrostatic energy [kcal/mol] between pair ij.
   """
   return const.CEU2KCAL * q_i * q_j / (epsilon * r_ij)
+
 
 def GetEBoundI(k_box, bound, coords, origin, boundtype):
   """Calculate simulation boundary energy of an atom.
@@ -118,6 +124,7 @@ def GetEBoundI(k_box, bound, coords, origin, boundtype):
     e_bound_i += scale * k_box * (r_io - bound)**2
   return e_bound_i
 
+
 def GetEKineticI(mass, vels):
   """Calculate kinetic energy of an atom
   
@@ -132,6 +139,7 @@ def GetEKineticI(mass, vels):
   for i in range(const.NUMDIM):
     e_kin_i += 0.5 * const.KIN2KCAL * mass * vels[i]**2
   return e_kin_i
+
 
 def GetENonbonded(mol):
   """Calculate non-bonded interaction energy between all atoms.
@@ -155,6 +163,7 @@ def GetENonbonded(mol):
         mol.e_elst += GetEElstIJ(r_ij, at1.charge, at2.charge, mol.dielectric)
         mol.e_vdw += GetEVdwIJ(r_ij, eps_ij, ro_ij)
 
+
 def GetEBonds(mol):
   """Update bond length values and compute bond energy of system.
   
@@ -170,6 +179,7 @@ def GetEBonds(mol):
     b = mol.bonds[p]
     b.energy = GetEBond(b.r_ij, b.r_eq, b.k_b)
     mol.e_bonds += b.energy
+
 
 def GetEAngles(mol):
   """Update bond angle values and compute angle energy of system.
@@ -187,6 +197,7 @@ def GetEAngles(mol):
     a.energy = GetEAngle(a.a_ijk, a.a_eq, a.k_a)
     mol.e_angles += a.energy
 
+
 def GetETorsions(mol):
   """Update torsion angle values and compute torsion energy of system.
   
@@ -203,6 +214,7 @@ def GetETorsions(mol):
     t.energy = GetETorsion(t.t_ijkl, t.v_n, t.gam, t.n, t.paths)
     mol.e_torsions += t.energy
 
+
 def GetEOutofplanes(mol):
   """Update outofplane values and compute outofplane energy of system.
   
@@ -218,6 +230,7 @@ def GetEOutofplanes(mol):
     o = mol.outofplanes[p]
     o.e = GetEOutofplane(o.o_ijkl, o.v_n)
     mol.e_outofplanes += o.e
+
 
 def GetEBound(mol):
   """Compute total boundary energy of system.
@@ -239,6 +252,7 @@ def GetEBound(mol):
     at.e_bound = GetEBoundI(k, b, at.coords, orig, btype)
     mol.e_bound += at.e_bound
 
+
 def GetTemperature(mol):
   """Update kinetic temperature using current kinetic energy per atom.
   
@@ -247,6 +261,7 @@ def GetTemperature(mol):
         energy [kcal/mol].
   """
   mol.temp = (2.0 / const.NUMDIM) * mol.e_kinetic / (const.KB * mol.n_atoms)
+
 
 def GetEKinetic(mol, kintype):
   """Compute kinetic energy of all atoms in molecule.
@@ -275,6 +290,7 @@ def GetEKinetic(mol, kintype):
       e_kin = GetEKineticI(mass, vels)
       mol.e_kinetic += e_kin
   mol.GetTemperature()
+
 
 def GetETotals(mol):
   """Update total energy [kcal/mol] of system from pre-computed components.

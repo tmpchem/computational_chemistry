@@ -27,6 +27,11 @@ class TestGetEBond(unittest.TestCase):
     params = r_ij, r_eq, k_b = 1.5, 2.0, 5.0
     self.assertAlmostEqual(energy.GetEBond(*params), 1.25)
 
+  def testInfiniteBond(self):
+    """Asserts infinite energy for infinite bond length."""
+    params = r_ij, r_eq, k_b = float('inf'), 2.0, 1.0
+    self.assertAlmostEqual(energy.GetEBond(*params), float('inf'))
+
 
 class TestGetEAngle(unittest.TestCase):
   """Unit tests for mmlib.energy.GetEAngle method."""
@@ -133,6 +138,11 @@ class TestGetEVdwIJ(unittest.TestCase):
     params = r_ij, eps_ij, ro_ij = 2.5, 0.0, 2.0
     self.assertAlmostEqual(energy.GetEVdwIJ(*params), 0.0)
 
+  def testEquilibriumDistance(self):
+    """Asserts negative epsilon energy for equilibrium separation."""
+    params = r_ij, eps_ij, ro_ij = 2.5, 2.0, 2.5
+    self.assertAlmostEqual(energy.GetEVdwIJ(*params), -2.0)
+
   def testLargeDistance(self):
     """Asserts correct value for greater than equilibrium separation."""
     params = r_ij, eps_ij, ro_ij = 4.0, 3.0, 2.0
@@ -142,6 +152,11 @@ class TestGetEVdwIJ(unittest.TestCase):
     """Asserts correct value for smaller than equilibrium separation."""
     params = r_ij, eps_ij, ro_ij = 1.6, 3.0, 2.0
     self.assertAlmostEqual(energy.GetEVdwIJ(*params), 20.7675621)
+
+  def testInfiniteDistance(self):
+    """Asserts zero energy for infinite separation."""
+    params = r_ij, eps_ij, ro_ij = float('inf'), 1.0, 1.0
+    self.assertAlmostEqual(energy.GetEVdwIJ(*params), 0.0)
 
 
 class TestGetEElstIJ(unittest.TestCase):
@@ -161,6 +176,16 @@ class TestGetEElstIJ(unittest.TestCase):
     """Asserts correct value for unit charges and separation."""
     params = r_ij, q_i, q_j, epsilon = 1.0, 1.0, 1.0, 1.0
     self.assertAlmostEqual(energy.GetEElstIJ(*params), 332.0637500)
+
+  def testLargeDielectric(self):
+    """Asserts correct value for non-unit dielectric constant."""
+    params = r_ij, q_i, q_j, epsilon = 1.0, 1.0, 1.0, 10.0
+    self.assertAlmostEqual(energy.GetEElstIJ(*params), 33.2063750)
+
+  def testInfiniteDistance(self):
+    """Asserts zero elst energy when separation is infinite."""
+    params = r_ij, q_i, q_j, epsilon = float('inf'), 1.0, 1.0, 1.0
+    self.assertAlmostEqual(energy.GetEElstIJ(*params), 0.0)
 
   def testAllElstParams(self):
     """Asserts correct value for arbitrary combination of parameters."""
