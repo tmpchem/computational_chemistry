@@ -7,11 +7,12 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
+import mmlib
+
 __author__ = 'Trent M. Parker'
 __email__ = 'tmpchemistry@gmail.com'
-__status__ = 'Initial version as of 2017-02-22'
-
-import mmlib
+__status__ = 'Prototype'
+__date__ = '2017-02-22'
 
 if __name__ == '__main__':
   # check input syntax

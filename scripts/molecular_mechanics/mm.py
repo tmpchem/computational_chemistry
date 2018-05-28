@@ -8,11 +8,12 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
+import mmlib
+
 __author__ = 'Trent M. Parker'
 __email__ = 'tmpchemistry@gmail.com'
-__status__ = 'Initial version as of 2016-02-15'
-
-import mmlib
+__status__ = 'Prototype'
+__date__ = '2016-02-15'
 
 if __name__ == '__main__':
   # check input syntax
