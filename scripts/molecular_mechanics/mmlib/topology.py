@@ -39,6 +39,7 @@ def GetBondGraph(mol):
         mol.bond_graph[i][j] = r_12
         mol.bond_graph[j][i] = r_12
 
+
 def GetBonds(mol):
   """Determine covalently bonded atoms from bond graph and get parameters.
   
@@ -58,9 +59,9 @@ def GetBonds(mol):
         k_b, r_eq = param.GetBondParam(at1.type_, at2.type_)
         if k_b > 0.0:
           mol.bonds.append(molecule.Bond(i, j, r_ij, r_eq, k_b))
-  mol.bonds = sorted(mol.bonds, key=lambda b:b.at2)
-  mol.bonds = sorted(mol.bonds, key=lambda b:b.at1)
+  mol.bonds = sorted(mol.bonds, key=lambda b:(b.at1, b.at2))
   mol.n_bonds = len(mol.bonds)
+
 
 def GetAngles(mol):
   """Determine bond angle atom triplets from bond graph and get parameters.
@@ -87,10 +88,9 @@ def GetAngles(mol):
         k_a, a_eq = param.GetAngleParam(at1.type_, at2.type_, at3.type_)
         if k_a > 0.0:
             mol.angles.append(molecule.Angle(i, j, k, a_ijk, a_eq, k_a))
-  mol.angles = sorted(mol.angles, key=lambda a:a.at3)
-  mol.angles = sorted(mol.angles, key=lambda a:a.at2)
-  mol.angles = sorted(mol.angles, key=lambda a:a.at1)
+  mol.angles = sorted(mol.angles, key=lambda a:(a.at1, a.at2, a.at3))
   mol.n_angles = len(mol.angles)
+
     
 def GetTorsions(mol):
   """Determine torsion angle atom quartets and parameters from bond graph.
@@ -129,11 +129,10 @@ def GetTorsions(mol):
               if v_n > 0.0:
                 mol.torsions.append(molecule.Torsion(i, j, k, l, t_ijkl, v_n,
                                                      gamma, nfold, paths))
-  mol.torsions = sorted(mol.torsions, key=lambda t:t.at4)
-  mol.torsions = sorted(mol.torsions, key=lambda t:t.at3)
-  mol.torsions = sorted(mol.torsions, key=lambda t:t.at2)
-  mol.torsions = sorted(mol.torsions, key=lambda t:t.at1)
+  mol.torsions = sorted(mol.torsions,
+                        key=lambda t:(t.at1, t.at2, t.at3, t.at4))
   mol.n_torsions = len(mol.torsions)
+
 
 def GetOutofplanes(mol):
   """Determine outofplane atom quartets and parameters from bond graph.
@@ -169,11 +168,10 @@ def GetOutofplanes(mol):
               at1.type_, at2.type_, at3.type_, at4.type_)
           if v_n > 0.0:
             mol.outofplanes.append(molecule.Outofplane(i, j, k, l, o_ijkl, v_n))
-  mol.outofplanes = sorted(mol.outofplanes, key=lambda o:o.at4)
-  mol.outofplanes = sorted(mol.outofplanes, key=lambda o:o.at3)
-  mol.outofplanes = sorted(mol.outofplanes, key=lambda o:o.at2)
-  mol.outofplanes = sorted(mol.outofplanes, key=lambda o:o.at1)
+  mol.outofplanes = sorted(mol.outofplanes,
+                           key=lambda o:(o.at1, o.at2, o.at3, o.at4))
   mol.n_outofplanes = len(mol.outofplanes)
+
 
 def GetNonints(mol):
   """Determine which atomic pairs have bonded interactions.
@@ -202,6 +200,7 @@ def GetNonints(mol):
     mol.nonints[t.at1].add(t.at4)
     mol.nonints[t.at4].add(t.at1)
 
+
 def UpdateBonds(mol):
   """Update all bond lengths [Angstrom] within a molecule object.
   
@@ -215,6 +214,7 @@ def UpdateBonds(mol):
     b.r_ij = geomcalc.GetRij(c1, c2)
     mol.bond_graph[b.at1][b.at2] = b.r_ij
     mol.bond_graph[b.at2][b.at1] = b.r_ij
+
 
 def UpdateAngles(mol):
   """Update all bond angles [degrees] within a molecule object.
@@ -230,6 +230,7 @@ def UpdateAngles(mol):
     c2 = mol.atoms[a.at2].coords
     c3 = mol.atoms[a.at3].coords
     a.a_ijk = geomcalc.GetAijk(c1, c2, c3, r12, r23)
+
 
 def UpdateTorsions(mol):
   """Update all torsion angles [degrees] within a molecule object.
@@ -247,6 +248,7 @@ def UpdateTorsions(mol):
     c3 = mol.atoms[t.at3].coords
     c4 = mol.atoms[t.at4].coords
     t.t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4, r12, r23, r34)
+
 
 def UpdateOutofplanes(mol):
   """Update all outofplane angles [degrees] within a molecule object.

@@ -368,6 +368,7 @@ class Outofplane:
     """Get gradient (float) [kcal/(mol*A)]."""
     self.gradient = gradient.GetGOutofplane(self.o_ijkl, self.v_n)
 
+
 class Molecule:
   """
   Molecule class for molecular geometry / topology / energy data.
@@ -465,7 +466,7 @@ class Molecule:
     self.k_box = 250.0
     self.bound = 1.0E10
     self.boundtype = 'sphere'
-    self.origin = numpy.zeros(3)
+    self.origin = numpy.zeros(const.NUMDIM)
     self.vol = float('inf')
     self.temp = 0.0
     self.press = 0.0

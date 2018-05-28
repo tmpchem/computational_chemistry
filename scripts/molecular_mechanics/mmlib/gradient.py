@@ -26,6 +26,7 @@ def GetGBond(r_ij, r_eq, k_b):
   """
   return 2.0 * k_b * (r_ij - r_eq)
 
+
 def GetGAngle(a_ijk, a_eq, k_a):
   """Calculate energy gradient magnitude of angle bend.
   
@@ -38,6 +39,7 @@ def GetGAngle(a_ijk, a_eq, k_a):
     g_angle (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   return 2.0 * k_a * (const.DEG2RAD * (a_ijk - a_eq) )
+
 
 def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
   """Calculate energy gradient magnitude of torsion strain.
@@ -55,6 +57,7 @@ def GetGTorsion(t_ijkl, v_n, gamma, n_fold, paths):
   return -v_n * n_fold * math.sin(
       const.DEG2RAD * (n_fold * t_ijkl - gamma)) / paths
 
+
 def GetGOutofplane(o_ijkl, v_n):
   """Calculate energy gradient magnitude of outofplane bend.
   
@@ -66,6 +69,7 @@ def GetGOutofplane(o_ijkl, v_n):
     g_outofplane (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   return -2.0 * v_n * math.sin(const.DEG2RAD * (2.0 * o_ijkl - 180.0))
+
 
 def GetGVdwIJ(r_ij, eps_ij, ro_ij):
   """Calculate energy gradient magnitude of van der waals pair energy.
@@ -81,6 +85,7 @@ def GetGVdwIJ(r_ij, eps_ij, ro_ij):
   rrel_ij = ro_ij / r_ij
   return -12.0 * (eps_ij / ro_ij) * (rrel_ij**13 - rrel_ij**7)
 
+
 def GetGElstIJ(r_ij, q_i, q_j, epsilon):
   """Calculate energy gradient magnitude of electrostatic pair energy.
   
@@ -94,6 +99,7 @@ def GetGElstIJ(r_ij, q_i, q_j, epsilon):
     e_elst_ij (float): Magnitude of energy gradient [kcal/(mol*A)].
   """
   return -const.CEU2KCAL * q_i * q_j / (epsilon * r_ij**2)
+
 
 def GetGBoundI(k_box, bound, coord, origin, boundtype):
   """Calculate energy gradient magnitude of boundary energy.
@@ -122,6 +128,7 @@ def GetGBoundI(k_box, bound, coord, origin, boundtype):
     g_bound_i = 2.0 * scale * k_box * (r_io - bound) * u_io
   return g_bound_i
 
+
 def GetGdirInter(coords1, coords2, r_12=None):
   """Calculate direction of energy gradient between atom pair.
   
@@ -137,6 +144,7 @@ def GetGdirInter(coords1, coords2, r_12=None):
   gdir1 = geomcalc.GetUij(coords2, coords1, r_12)
   gdir2 = -1.0 * gdir1
   return gdir1, gdir2
+
 
 def GetGdirAngle(coords1, coords2, coords3, r_21=None, r_23=None):
   """Calculate direction of energy gradients between bond angle atoms.
@@ -163,6 +171,7 @@ def GetGdirAngle(coords1, coords2, coords3, r_21=None, r_23=None):
   gdir3 = geomcalc.GetUcp(cp, u_23) / r_23
   gdir2 = -1.0 * (gdir1 + gdir3)
   return gdir1, gdir2, gdir3
+
 
 def GetGdirTorsion(coords1, coords2, coords3, coords4, r_12=None,
                      r_23=None, r_34=None):
@@ -202,6 +211,7 @@ def GetGdirTorsion(coords1, coords2, coords3, coords4, r_12=None,
   gdir2 = (r_12/r_23*c_123 - 1.0)*gdir1 - (r_34/r_23*c_432)*gdir4
   gdir3 = (r_34/r_23*c_432 - 1.0)*gdir4 - (r_12/r_23*c_123)*gdir1
   return gdir1, gdir2, gdir3, gdir4
+
 
 def GetGdirOutofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
                       r_32=None, r_34=None):
@@ -247,6 +257,7 @@ def GetGdirOutofplane(coords1, coords2, coords3, coords4, oop, r_31=None,
   gdir3 = -1.0*(gdir1 + gdir2 + gdir4)
   return gdir1, gdir2, gdir3, gdir4
 
+
 def GetGBonds(mol):
   """Calculate bond length energy gradients for all bonds.
   
@@ -263,6 +274,7 @@ def GetGBonds(mol):
     dir1, dir2 = GetGdirInter(c1, c2, b.r_ij)
     mol.g_bonds[b.at1] += b.grad * dir1
     mol.g_bonds[b.at2] += b.grad * dir2
+
 
 def GetGAngles(mol):
   """Calculate angle bend energy gradients for all angles.
@@ -284,6 +296,7 @@ def GetGAngles(mol):
     mol.g_angles[a.at1] += a.grad * dir1
     mol.g_angles[a.at2] += a.grad * dir2
     mol.g_angles[a.at3] += a.grad * dir3
+
 
 def GetGTorsions(mol):
   """Calculate torsion strain energy gradients for all torsions.
@@ -309,6 +322,7 @@ def GetGTorsions(mol):
     mol.g_torsions[t.at3] += t.grad * dir3
     mol.g_torsions[t.at4] += t.grad * dir4
 
+
 def GetGOutofplanes(mol):
   """Calculate outofplane bend energy gradients for all outofplanes.
   
@@ -333,6 +347,7 @@ def GetGOutofplanes(mol):
     mol.g_outofplanes[o.at2] += o.grad * dir2
     mol.g_outofplanes[o.at3] += o.grad * dir3
     mol.g_outofplanes[o.at4] += o.grad * dir4
+
 
 def GetGNonbonded(mol):
     """Calculate vdw and elst energy gradients for all nonbonded atom pairs.
@@ -360,6 +375,7 @@ def GetGNonbonded(mol):
           mol.g_elst[i] += g_elst * dir1
           mol.g_elst[j] += g_elst * dir2
 
+
 def GetGBound(mol):
   """Calculate boundary energy gradients for all atoms.
   
@@ -375,6 +391,7 @@ def GetGBound(mol):
   for i in range(mol.n_atoms):
     coords = mol.atoms[i].coords
     mol.g_bound[i] = GetGBoundI(k_box, bound, coords, origin, boundtype)
+
 
 def GetGTotals(mol):
   """Update total analytic energy gradient [kcal/(mol*A)] of all atoms.
@@ -395,6 +412,7 @@ def GetGTotals(mol):
           mol.g_bonded[i][j] + mol.g_nonbonded[i][j] + mol.g_bound[i][j])
   mol.GetPressure()
 
+
 def _GetVirial(mol):
   """Clausius virial function for all atoms, force,s and coordinates.
   
@@ -407,6 +425,7 @@ def _GetVirial(mol):
     for j in range(const.NUMDIM):
       mol.virial += -mol.atoms[i].coords[j] * mol.g_total[i][j]
 
+
 def GetPressure(mol):
   """Update total pressure of a system of molecules with boundary.
   
@@ -418,6 +437,7 @@ def GetPressure(mol):
   pv = mol.n_atoms * const.KB * mol.temp
   pv += mol.virial / 3.0
   mol.press = const.KCALAMOL2PA * pv / mol.vol
+
 
 def GetGNumerical(mol):
   """Update total numerical energy gradient [kcal/(mol*A)] of all atoms.
