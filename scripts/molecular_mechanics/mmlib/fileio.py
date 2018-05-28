@@ -280,7 +280,7 @@ def GetPrm(mol):
     'torsion': _GetTorsion,
     'outofplane': _GetOutofplane}
 
-  mol.bond_graph = [{} for i in range(mol.n_atoms)]
+  mol.bond_graph = {i:{} for i in range(mol.n_atoms)}
   for i in range(len(infile_array)):
     record = infile_array[i]
     record_type = record[0].lower()

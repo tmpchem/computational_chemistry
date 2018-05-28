@@ -6,6 +6,7 @@ components, and total energy member data for mmlib.molecule.Molecule
 objects.
 """
 
+import itertools
 import math
 
 from mmlib import constants as const
@@ -115,11 +116,11 @@ def GetEBoundI(k_box, bound, coords, origin, boundtype):
   e_bound_i = 0.0
   if (boundtype == 'cube'):
     for j in range(const.NUMDIM):
-      scale = 1.0 if (abs(coords[j] - origin[j]) >= bound) else 0.0
-      e_bound_i += (scale * k_box * (abs(coords[j] - origin[j]) - bound)**2)
+      scale = float(abs(coords[j] - origin[j]) >= bound)
+      e_bound_i += scale * k_box * (abs(coords[j] - origin[j]) - bound)**2
   elif (boundtype == 'sphere'):
     r_io = geomcalc.GetRij(origin, coords)
-    scale = 1.0 if (r_io >= bound) else 0.0
+    scale = float(r_io >= bound)
     e_bound_i += scale * k_box * (r_io - bound)**2
   return e_bound_i
 
@@ -151,16 +152,15 @@ def GetENonbonded(mol):
         cartesian coordinates and molecular mechanics parameters
   """
   mol.e_nonbonded, mol.e_vdw, mol.e_elst = 0.0, 0.0, 0.0
-  for i in range(mol.n_atoms):
-    at1 = mol.atoms[i]
-    for j in range(i+1, mol.n_atoms):
-      if not j in mol.nonints[i]:
-        at2 = mol.atoms[j]
-        r_ij = geomcalc.GetRij(at1.coords, at2.coords)
-        eps_ij = at1.sreps * at2.sreps
-        ro_ij = at1.ro + at2.ro
-        mol.e_elst += GetEElstIJ(r_ij, at1.charge, at2.charge, mol.dielectric)
-        mol.e_vdw += GetEVdwIJ(r_ij, eps_ij, ro_ij)
+  for i, j in itertools.combinations(range(mol.n_atoms), 2):
+    if (i, j) in mol.nonints:
+      continue
+    at1, at2 = mol.atoms[i], mol.atoms[j]
+    r_ij = geomcalc.GetRij(at1.coords, at2.coords)
+    eps_ij = at1.sreps * at2.sreps
+    ro_ij = at1.ro + at2.ro
+    mol.e_elst += GetEElstIJ(r_ij, at1.charge, at2.charge, mol.dielectric)
+    mol.e_vdw += GetEVdwIJ(r_ij, eps_ij, ro_ij)
 
 
 def GetEBonds(mol):

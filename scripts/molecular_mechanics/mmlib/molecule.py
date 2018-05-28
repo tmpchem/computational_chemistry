@@ -398,7 +398,9 @@ class Molecule:
     angles (mmlib.molecule.Angle*): Array of Atom objects.
     torsions (mmlib.molecule.Torsion*): Array of Torsion objects.
     outofplanes (mmlib.molecule.Outofplane*): Array of Outofplane objects.
-    nonints (int**): Array of covalently bonded atomic indices.
+    nonints (set(int, int)): Array of covalently bonded atomic indices.
+    bond_graph (dict(int:dict(int: float))): Nested dictionary keyed by atom
+        pair indices with bond length as value.
 
     n_atoms (int): Number of atoms.
     n_bonds (int): Number of bonds.
@@ -448,12 +450,15 @@ class Molecule:
     self.indir = os.path.dirname(self.infile)
     self.filetype = self.infile.split('.')[-1]
     self.name = os.path.splitext(os.path.basename(self.infile))[0]
+
     self.atoms = []
     self.bonds = []
     self.angles = []
     self.torsions = []
     self.outofplanes = []
-    self.nonints = []
+
+    self.nonints = set()
+    self.bond_graph = dict()
     
     self.n_atoms = 0
     self.n_bonds = 0
