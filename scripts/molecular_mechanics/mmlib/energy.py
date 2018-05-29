@@ -271,9 +271,7 @@ def GetEBound(atoms, k_box, boundary, origin, boundary_type):
   """
   e_bound = 0.0
   for atom in atoms:
-    atom.e_bound = GetEBoundI(k_box, boundary, atom.coords, origin,
-                              boundary_type)
-    e_bound += atom.e_bound
+    e_bound += GetEBoundI(k_box, boundary, atom.coords, origin, boundary_type)
   return e_bound
 
 

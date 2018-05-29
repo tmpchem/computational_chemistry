@@ -71,8 +71,8 @@ _PROGRAM_MESSAGES = {
   'opt.py': 'optimization file for energy minimization\n',
   'ana.py': 'plot file for data analysis\n'}
 
-def _GetFileStringArray(infile_name):
-  """Create a 2-d array of strings from input file name.
+def GetFileStringArray(infile_name):
+  """Creates a 2d array of strings from input file name.
 
   Each newline character creates a separate line element in the array.
   Each line is split by whitespace into an array of strings.
@@ -87,212 +87,148 @@ def _GetFileStringArray(infile_name):
   if not os.path.exists(infile_name):
     raise ValueError(
         'attempted to read from file which does not exist: %s' % (infile_name))
-  infile = open(infile_name, 'r')
-  infile_data = infile.readlines()
-  infile.close()
 
-  infile_array = []
-  for line in infile_data:
-    infile_array.append(line.split())
-  return infile_array
+  with open(infile_name, 'r') as infile:
+    lines = infile.readlines()
+
+  return [line.split() for line in lines]
 
 
-def GetElement(at_type):
-  """Infer atomic element from atom type.
-
-  If atom type is a single character, or second character is uppercase,
-  return uppercase first letter. Otherwise, return capitalized first two
-  characters.
+def GetGeom(input_rows):
+  """Reads in molecular geometry data from molecule xyzq file.
+  
+  First line contains (int) number of atoms. Second line is ignored comment.
+  Each line afterward (3 to [n+2]) contains atom type, (float) 3 xyz Cartesian
+  coordinates [Angstrom], and (float) charge [e].
 
   Args:
-    at_type (str): Atom type.
+    input_file (str**): 2d array of string from xyzq input file.
 
   Returns:
-    at_element (str): Atomic element.
+    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
   """
-  if len(at_type) == 1 or not at_type[1].islower():
-    return at_type[0].upper()
-  else:
-    return at_type[0:2].capitalize()
+  atoms = []
+  n_atoms = int(input_rows[0][0])
+  for row in input_rows[2:n_atoms+2]:
+    at_type = row[0]
+    at_coords = numpy.array(list(map(float, row[1:1+const.NUMDIM])))
+    at_charge = float(row[4])
+    atoms.append(molecule.Atom(at_type, at_coords, at_charge))
+  return atoms
 
-
-def GetGeom(mol):
-  """Read in molecular geometry data from molecule xyzq file.
-  
-  Parse 2-d array of strings from xyzq file into atomic data. First line
-  contains (int) number of atoms. Second line is ignored comment. Each line
-  after (3 to [n+2]) contains atom type, (float) 3 xyz cartesian coordinates
-  [Angstrom], and (float) charge [e].
-  
-  Args:
-    mol (mmlib.molecule.Molecule): molecule with an associated xyzq input file.
-  """
-  infile_array = _GetFileStringArray(mol.infile)
-  mol.n_atoms = int(infile_array[0][0])
-  for i in range(mol.n_atoms):
-    at_type = infile_array[i+2][0]
-    at_coords = numpy.array(
-        list(map(float, infile_array[i+2][1:1+const.NUMDIM])))
-    at_charge = float(infile_array[i+2][4])
-
-    at_element = GetElement(at_type)
-    at_mass = param.GetAtMass(at_element)
-    at_ro, at_eps = param.GetVdwParam(at_type)
-    atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
-    atom.SetCovRad(param.GetCovRad(at_element))
-    mol.atoms.append(atom)
-    mol.mass += at_mass
-
-
-def _GetAtom(mol, record):
-  """Parse atom record into an atom object and append to molecule.
-
-  Appends mmlib.molecule.Atom object to mmlib.molecule.Molecule object. Contents
-  of atom object include (float*) xyz cartesian coordinates [Angstrom], (float)
-  partial charge [e], (float) van der Waals radius [Angstrom], (float) van der
-  Waals epsilon [kcal/mol], (str) atom type, (str) atomic element, (float)
-  covalent radius, [Angstrom], and (float) mass [amu].
+def GetAtoms(records):
+  """Parses atom records into an array of Atom objects.
 
   Args:
-    mol (mmlib.molecule.Molecule): Molecule to append atom.
-    record (str*): Array of strings from line of prm file.
+    records (str**): 2d array of strings from lines of prm file.
+
+  Returns:
+    atoms (mmlib.molecule.Atom*): Array of Atom object with parameters from
+        records.
   """
-  at_type = record[2]
-  at_coords = numpy.array(list(map(float, record[3:3+const.NUMDIM])))
-  at_charge, at_ro, at_eps = list(map(float, record[6:9]))
+  atoms = []
+  for record in records:
+    if not record[0].upper() == 'ATOM':
+      continue
+    at_type = record[2]
+    at_coords = numpy.array(list(map(float, record[3:3+const.NUMDIM])))
+    at_charge, at_ro, at_eps = list(map(float, record[6:9]))
+    atoms.append(molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps))
+  return atoms
 
-  at_element = GetElement(at_type)
-  at_mass = param.GetAtMass(at_element)
-  atom = molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps, at_mass)
-  atom.SetCovRad(param.GetCovRad(at_element))
-  mol.atoms.append(atom)
-  mol.mass += at_mass
 
-
-def _GetBond(mol, record):
-  """Parse bond record into a bond object and append to molecule.
-  
-  Appends mmlib.molecule.Bond object to mmlib.molecule.Molecule object. Contents
-  of bond object include (int) 2 atomic indices, (float) spring constant
-  [kcal/(mol*A^2)], (float) equilibrium bond length [Angstrom], (float) bond
-  length [Angstrom].
+def GetBonds(records, atoms):
+  """Parses bond records into an array of Bond objects.
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule to append bond.
-    record (str*): Array of strings from line of prm file.
+    records (str**): 2d array of strings from lines of prm file.
+    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    bonds (mmlib.molecule.Bond*): Array of Bond objects with parameters from
+        records.
   """
-  at1, at2 = [x-1 for x in list(map(int, record[1:3]))]
-  k_b, r_eq = list(map(float, record[3:5]))
-  c1, c2 = [mol.atoms[i].coords for i in [at1, at2]]
+  bonds = []
+  for record in records:
+    if not record[0].upper() == 'BOND':
+      continue
+    at1, at2 = [x-1 for x in list(map(int, record[1:3]))]
+    k_b, r_eq = list(map(float, record[3:5]))
+    c1, c2 = [atoms[i].coords for i in [at1, at2]]
+    r_ij = geomcalc.GetRij(c1, c2)
+    bonds.append(molecule.Bond(at1, at2, r_ij, r_eq, k_b))
+  return bonds
 
-  r_ij = geomcalc.GetRij(c1, c2)
-  bond = molecule.Bond(at1, at2, r_ij, r_eq, k_b)
-  mol.bonds.append(bond)
-  mol.bond_graph[at1][at2] = r_ij
-  mol.bond_graph[at2][at1] = r_ij
 
-
-def _GetAngle(mol, record):
-  """Parse angle record into an angle object and append to molecule.
-  
-  Appends mmlib.molecule.Angle object to mmlib.molecule.Molecule object.
-  Contents of angle object include (int) 3 atomic indices, (float) spring
-  constant [kcal/(mol*radian^2)], (float) equilibrium bond angle [degrees], and
-  (float) bond angle [degrees].
+def GetAngles(records, atoms):
+  """Parses angle records into an array of Angle objects.
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule to append angle.
-    record (str*): Array of strings from line of prm file.
+    records (str**): 2d array of strings from lines of prm file.
+    atom (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    angles (mmlib.molecule.Angle): Array of Angle objects with parameters from
+        records.
   """
-  at1, at2, at3 = [x-1 for x in list(map(int, record[1:4]))]
-  k_a, a_eq = list(map(float, record[4:6]))
-  c1, c2, c3 = [mol.atoms[i].coords for i in [at1, at2, at3]]
+  angles = []
+  for record in records:
+    if not record[0].upper() == 'ANGLE':
+      continue
+    at1, at2, at3 = [x-1 for x in list(map(int, record[1:4]))]
+    k_a, a_eq = list(map(float, record[4:6]))
+    c1, c2, c3 = [atoms[i].coords for i in [at1, at2, at3]]
+    a_ijk = geomcalc.GetAijk(c1, c2, c3)
+    angles.append(molecule.Angle(at1, at2, at3, a_ijk, a_eq, k_a))
+  return angles
 
-  a_ijk = geomcalc.GetAijk(c1, c2, c3)
-  angle = molecule.Angle(at1, at2, at3, a_ijk, a_eq, k_a)
-  mol.angles.append(angle)
 
-
-def _GetTorsion(mol, record):
-  """Parse torsion record into a torsion object and append to molecule.
-  
-  Appends mmlib.molecule.Torsion object to mmlib.molecule.Molecule object.
-  Contents of torsion object include (int) 4 atomic indices, (float)
-  half-barrier height [kcal/mol], (float) barrier offset [degrees], (int)
-  barrier frequency, (int) barrier paths, and (float) torsion angle [degrees].
+def GetTorsions(records, atoms):
+  """Parses torsion records into an array of Torsion objects.
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule to append torsion.
-    record (str*): Array of strings from line of prm file.
+    records (str**): 2d array of strings from lines of prm file.
+    atom (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    torsions (mmlib.molecule.Torsion*): Array of Torsion objects with parameters
+        from record.
   """
-  at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
-  v_n, gamma = list(map(float, record[5:7]))
-  nfold, paths = list(map(int, record[7:9]))
-  c1, c2, c3, c4 = [mol.atoms[i].coords for i in [at1, at2, at3, at4]]
+  torsions = []
+  for record in records:
+    if not record[0].upper() == 'TORSION':
+      continue
+    at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
+    v_n, gamma = list(map(float, record[5:7]))
+    nfold, paths = list(map(int, record[7:9]))
+    c1, c2, c3, c4 = [atoms[i].coords for i in [at1, at2, at3, at4]]
+    t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4)
+    torsions.append(
+        molecule.Torsion(at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths))
+  return torsions
 
-  t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4)
-  tors = molecule.Torsion(at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths)
-  mol.torsions.append(tors)
 
-
-def _GetOutofplane(mol, record):
-  """Parse outofplane record into object and append to molecule.
-  
-  Appends mmlib.molecule.Outofplane object to mmlib.molecule.Molecule object.
-  Contents of outofplane object include (int) 4 atomic indices, (float) barrier
-  height [kcal/mol], and (float) outofplane angle [degrees].
+def GetOutofplanes(records, atoms):
+  """Parses outofplane record into Outofplane object.
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule to append outofplane.
-    record (str*): Array of string from line of prm file.
+    records (str**): 2d array of strings from lines of prm file.
+    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    outofplanes (mmlib.molecule.Outofplane*): Array of Outofplane objects with
+        parameters from record.
   """
-  at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
-  v_n = float(record[5])
-  c1, c2, c3, c4 = [mol.atoms[i].coords for i in [at1, at2, at3, at4]]
-
-  o_ijkl = geomcalc.GetOijkl(c1, c2, c3, c4) 
-  outofplane = molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n)
-  mol.outofplanes.append(outofplane)
-
-
-def GetPrm(mol):
-  """Parse contents of prm file into molecular topology / geometry data.
-  
-  Reads in and organizes contents of a prm parameter file into given
-  mmlib.molecule.Molecule object. Contents of molecule object include Atom
-  objects, Bond objects, Angle objects, Torsion objects, and Outofplane objects
-  and associated parameters and values.
-  
-  Args:
-    mol (mmlib.molecule.Molecule): Molecule to append data
-  """
-  infile_array = _GetFileStringArray(mol.infile)
-  for i in range(len(infile_array)):
-    record = infile_array[i]
-    rec_type = record[0].lower()
-    if rec_type == 'atom':
-      _GetAtom(mol, record)
-  mol.n_atoms = len(mol.atoms)
-
-  parse_functions = {
-    'bond': _GetBond,
-    'angle': _GetAngle,
-    'torsion': _GetTorsion,
-    'outofplane': _GetOutofplane}
-
-  mol.bond_graph = {i:{} for i in range(mol.n_atoms)}
-  for i in range(len(infile_array)):
-    record = infile_array[i]
-    record_type = record[0].lower()
-    if record_type in parse_functions:
-      parse_function = parse_functions[record_type]
-      parse_function(mol, record)
-
-  mol.n_bonds = len(mol.bonds)
-  mol.n_angles = len(mol.angles)
-  mol.n_torsions = len(mol.torsions)
-  mol.n_outofplanes = len(mol.outofplanes)
-  topology.GetNonints(mol)
+  outofplanes = []
+  for record in records:
+    if not record[0].upper() == 'OUTOFPLANE':
+      continue
+    at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
+    v_n = float(record[5])
+    c1, c2, c3, c4 = [atoms[i].coords for i in [at1, at2, at3, at4]]
+    o_ijkl = geomcalc.GetOijkl(c1, c2, c3, c4) 
+    outofplanes.append(molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n))
+  return outofplanes
 
 
 def GetSimData(sim):
@@ -308,7 +244,7 @@ def GetSimData(sim):
   Args:
     sim (mmlib.simulate.Simulation): Simulation object to append data.
   """
-  infile_array = _GetFileStringArray(sim.infile)
+  infile_array = GetFileStringArray(sim.infile)
   cwd = os.getcwd()
   os.chdir(sim.indir)
   for q in range(len(infile_array)):
@@ -375,7 +311,7 @@ def GetOptData(opt):
   Args:
     opt (mmlib.optimize.Optimization): Optimization object to append data.
   """
-  infile_array = _GetFileStringArray(opt.infile)
+  infile_array = GetFileStringArray(opt.infile)
   cwd = os.getcwd()
   os.chdir(opt.indir)
   for q in range(len(infile_array)):
@@ -422,7 +358,7 @@ def GetAnalysisData(ana):
   Args:
     ana (mmlib.analyze.Analysis): Analysis object to append data.
   """
-  infile_array = _GetFileStringArray(ana.infile)
+  infile_array = GetFileStringArray(ana.infile)
   cwd = os.getcwd()
   os.chdir(ana.indir)
   for q in range(len(infile_array)):
@@ -463,7 +399,7 @@ def GetProperties(prop_file):
     prop (float**): Dictionary of property keys with array values from each
         configuration of molecule during trajectory.
   """
-  prop_array = _GetFileStringArray(prop_file)
+  prop_array = GetFileStringArray(prop_file)
   n_lines = len(prop_array)
   prop_keys = const.PROPERTYKEYS
   key1 = prop_keys[2]
@@ -507,7 +443,7 @@ def GetTrajectory(traj_file):
     traj (float***): Array of xyz-coordinates at each configuration of molecule
         during trajectory.
   """
-  traj_array = _GetFileStringArray(traj_file)
+  traj_array = GetFileStringArray(traj_file)
   n_lines = len(traj_array)
   n_atoms = int(traj_array[0][0])
   n_confs = int(math.floor(n_lines / (n_atoms+2)))
@@ -926,6 +862,7 @@ def ValidateInput(program_name):
 
   Raises:
     ValueError: If program_name not recognized.
+    FileNotFoundError: If input file is not in file system path.
   """
   if (len(sys.argv) < 2):
     if program_name in _PROGRAM_MESSAGES:
@@ -939,4 +876,4 @@ def ValidateInput(program_name):
   if os.path.isfile(input_file):
     return input_file
   else:
-    raise ValueError('Specified input is not a file: %s' % input_file)
+    raise FileNotFoundError('Specified input is not a file: %s' % input_file)

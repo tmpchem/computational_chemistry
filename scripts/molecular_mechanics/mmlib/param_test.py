@@ -12,34 +12,34 @@ _CT_CT_N_C_TORSION_PARAMS = [
     (0.00, 180.0, -2, 1),
     (0.53,   0.0,  1, 1)]
 
-class TestGetAtMass(unittest.TestCase):
-  """Unit tests for mmlib.param.GetAtMass method."""
+class TestGetMass(unittest.TestCase):
+  """Unit tests for mmlib.param.GetMass method."""
 
   def testEmptyInput(self):
     """Asserts raise of ValueError for empty string input."""
     with self.assertRaises(ValueError) as e:
-      param.GetAtMass('')
+      param.GetMass('')
 
     self.assertEqual(str(e.exception), 'No atomic mass found for element: ')
 
   def testBadInput(self):
     """Asserts raise of ValueError for missing string input."""
     with self.assertRaises(ValueError) as e:
-      param.GetAtMass('AA')
+      param.GetMass('AA')
 
     self.assertEqual(str(e.exception), 'No atomic mass found for element: AA')
 
   def testDummyInput(self):
     """Asserts zero mass for dummy atom input."""
-    self.assertEqual(param.GetAtMass('X'), 0.0)
+    self.assertEqual(param.GetMass('X'), 0.0)
 
   def testHydrogen(self):
     """Asserts correct mass for hydrogen atom."""
-    self.assertEqual(param.GetAtMass('H'), 1.00794)
+    self.assertEqual(param.GetMass('H'), 1.00794)
 
   def testHeaviestAtom(self):
     """Asserts correct mass for heaviest present atom."""
-    self.assertEqual(param.GetAtMass('Kr'), 83.7980)
+    self.assertEqual(param.GetMass('Kr'), 83.7980)
 
 
 class TestGetCovRad(unittest.TestCase):
@@ -235,7 +235,7 @@ def suite():
   """Builds a test suite of all unit tests in param_test module."""
   test_classes = (
       TestGetVdwParam,
-      TestGetAtMass,
+      TestGetMass,
       TestGetCovRad,
       TestGetBondParam,
       TestGetAngleParam,

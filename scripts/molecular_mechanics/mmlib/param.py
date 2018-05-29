@@ -281,7 +281,26 @@ _OUTOFPLANE_1234_PARAMETERS = {
     ('NA', 'CW', 'CC', 'CT'): 1.1, ('NA', 'NC', 'CA', 'N2'): 1.1,
     ('NB', 'CW', 'CC', 'CT'): 1.1}
 
-def GetAtMass(element):
+def GetElement(at_type):
+  """Infer atomic element from atom type.
+
+  If atom type is a single character, or second character is uppercase,
+  return uppercase first letter. Otherwise, return capitalized first two
+  characters.
+
+  Args:
+    at_type (str): Atom type.
+
+  Returns:
+    at_element (str): Atomic element.
+  """
+  if len(at_type) == 1 or not at_type[1].islower():
+    return at_type[0].upper()
+  else:
+    return at_type[0:2].capitalize()
+
+
+def GetMass(element):
   """Find the mass of an atom of a given element (periodic table avg).
   
   Args:

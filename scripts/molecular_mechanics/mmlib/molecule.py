@@ -38,16 +38,20 @@ class Atom:
     pvels (float*): 3 previous 'vels' [Angstrom/ps].
     paccs (float*): 3 previous 'accs' [Angstrom/(ps^2)].
   """
-  def __init__(self, type_, coords, charge, ro, eps, mass):
-    self.type_ = type_
-    self.element = fileio.GetElement(type_)
-
+  def __init__(self, type_, coords, charge, ro=None, eps=None):
+    self.SetType(type_)
     self.SetCoords(coords)
     self.SetCharge(charge)
+
+    if not (ro and eps):
+      ro, eps = param.GetVdwParam(self.type_)
     self.SetRo(ro)
     self.SetEps(eps)
-    self.SetMass(mass)
+
+    self.SetElement(param.GetElement(type_))
+    self.SetMass(param.GetMass(self.element))
     self.SetCovRad(param.GetCovRad(self.element))
+
     self.SetVels(numpy.zeros(const.NUMDIM))
     self.SetAccs(numpy.zeros(const.NUMDIM))
     self.SetPVels(numpy.zeros(const.NUMDIM))
@@ -65,10 +69,6 @@ class Atom:
     """Set new (float) ith coordinate [Angstrom]."""
     self.coords[index] = coords
 
-  def SetMass(self, mass):
-    """Set new (float) atomic mass [g/mol]."""
-    self.mass = mass
-
   def SetCharge(self, charge):
     """Set new (float) partial charge [e]."""
     self.charge = charge
@@ -85,6 +85,10 @@ class Atom:
   def SetElement(self, element):
     """Set new (str) atomic element."""
     self.element = element
+
+  def SetMass(self, mass):
+    """Set new (float) atomic mass [g/mol]."""
+    self.mass = mass
 
   def SetCovRad(self, covrad):
     """Set new (float) covalent radius [Angstrom]."""
@@ -510,11 +514,28 @@ class Molecule:
 
   def ReadInXYZQ(self):
     """Read in xyzq data from .xyzq input file."""
-    fileio.GetGeom(self)
+    input_rows = fileio.GetFileStringArray(self.infile)
+    self.atoms = fileio.GetGeom(input_rows)
+    self.n_atoms = len(self.atoms)
 
   def ReadInPrm(self):
     """Read in prm data from .prm input file."""
-    fileio.GetPrm(self)
+    input_rows = fileio.GetFileStringArray(self.infile)
+
+    self.atoms = fileio.GetAtoms(input_rows)
+    self.bonds = fileio.GetBonds(input_rows, self.atoms)
+    self.angles = fileio.GetAngles(input_rows, self.atoms)
+    self.torsions = fileio.GetTorsions(input_rows, self.atoms)
+    self.outofplanes = fileio.GetOutofplanes(input_rows, self.atoms)
+
+    self.n_atoms = len(self.atoms)
+    self.n_bonds = len(self.bonds)
+    self.n_angles = len(self.angles)
+    self.n_torsions = len(self.torsions)
+    self.n_outofplanes = len(self.outofplanes)
+
+    self.bond_graph = topology.GetBondGraphFromBonds(self.bonds, self.n_atoms)
+    self.nonints = topology.GetNonints(self.bonds, self.angles, self.torsions)
 
   def GetTopology(self):
     """Determine bonded topology of molecules from coordinates."""

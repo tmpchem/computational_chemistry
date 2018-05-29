@@ -41,6 +41,27 @@ def GetBondGraph(atoms):
       bond_graph[i][j] = bond_graph[j][i] = r_12
   return bond_graph
 
+
+def GetBondGraphFromBonds(bonds, n_atoms):
+  """Builds graph of which atoms are covalently bonded from list of bonds.
+
+  Iterate over all bonds and add each atom pair to the dictionary of bond
+  connectivity in the bond graph.
+
+  Args:
+    bonds (mmlib.molecule.Bond*): Array of molecule's Bond objects.
+    n_atoms (int): Numer of atoms in molecule.
+
+  Returns:
+    bond_graph (int:(int:float)): Dictionary of bond connectivity.
+  """
+  bond_graph = {i:{} for i in range(n_atoms)}
+  for bond in bonds:
+    bond_graph[bond.at1][bond.at2] = bond.r_ij
+    bond_graph[bond.at2][bond.at1] = bond.r_ij
+  return bond_graph
+
+
 def GetBonds(atoms, bond_graph):
   """Determine covalently bonded atoms from bond graph and get parameters.
   
