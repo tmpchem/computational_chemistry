@@ -398,6 +398,7 @@ class Molecule:
     angles (mmlib.molecule.Angle*): Array of Atom objects.
     torsions (mmlib.molecule.Torsion*): Array of Torsion objects.
     outofplanes (mmlib.molecule.Outofplane*): Array of Outofplane objects.
+
     nonints (set(int, int)): Array of covalently bonded atomic indices.
     bond_graph (dict(int:dict(int: float))): Nested dictionary keyed by atom
         pair indices with bond length as value.
@@ -517,23 +518,45 @@ class Molecule:
 
   def GetTopology(self):
     """Determine bonded topology of molecules from coordinates."""
-    topology.GetBondGraph(self)
-    topology.GetBonds(self)
-    topology.GetAngles(self)
-    topology.GetTorsions(self)
-    topology.GetOutofplanes(self)
-    topology.GetNonints(self)
+    self.bond_graph = topology.GetBondGraph(self.atoms)
+    self.bonds = topology.GetBonds(self.atoms, self.bond_graph)
+    self.angles = topology.GetAngles(self.atoms, self.bond_graph)
+    self.torsions = topology.GetTorsions(self.atoms, self.bond_graph)
+    self.outofplanes = topology.GetOutofplanes(self.atoms, self.bond_graph)
+    self.nonints = topology.GetNonints(self.bonds, self.angles, self.torsions)
+
+    self.n_bonds = len(self.bonds)
+    self.n_angles = len(self.angles)
+    self.n_torsions = len(self.torsions)
+    self.n_outofplanes = len(self.outofplanes)
 
   def GetEnergy(self, kintype):
     """Calculate (float) energy [kcal/mol] and all energy components."""
-    energy.GetEBonds(self)
-    energy.GetEAngles(self)
-    energy.GetETorsions(self)
-    energy.GetEOutofplanes(self)
-    energy.GetENonbonded(self)
-    energy.GetEBound(self)
-    energy.GetEKinetic(self, kintype)
-    energy.GetETotals(self)
+    self.e_bonds = energy.GetEBonds(self.bonds)
+    self.e_angles = energy.GetEAngles(self.angles)
+    self.e_torsions = energy.GetETorsions(self.torsions)
+    self.e_outofplanes = energy.GetEOutofplanes(self.outofplanes)
+    self.e_vdw, self.e_elst = energy.GetENonbonded(self.atoms, self.nonints,
+                                                   self.dielectric)
+    self.e_bound = energy.GetEBound(self.atoms, self.k_box, self.bound,
+                                    self.origin, self.boundtype)
+    self.e_kinetic = energy.GetEKinetic(self.atoms, kintype)
+
+    self.e_bonded = (
+        self.e_bonds +
+        self.e_angles +
+        self.e_torsions + 
+        self.e_outofplanes)
+    self.e_nonbonded = (
+        self.e_vdw +
+        self.e_elst)
+    self.e_potential = (
+        self.e_bonded +
+        self.e_nonbonded +
+        self.e_bound)
+    self.e_total = (
+        self.e_potential +
+        self.e_kinetic)
 
   def GetGradient(self, grad_type):
     """Calculate analytical or numerical gradient of energy.
@@ -569,14 +592,14 @@ class Molecule:
 
   def UpdateInternals(self):
     """Update current values of internal degrees of freedom."""
-    topology.UpdateBonds(self)
-    topology.UpdateAngles(self)
-    topology.UpdateTorsions(self)
-    topology.UpdateOutofplanes(self)
+    topology.UpdateBonds(self.bonds)
+    topology.UpdateAngles(self.angles)
+    topology.UpdateTorsions(self.torsions)
+    topology.UpdateOutofplanes(self.outofplanes)
 
   def GetTemperature(self):
     """Calculate instantaneous kinetic temperature [K] of system."""
-    energy.GetTemperature(self)
+    energy.GetTemperature(self.e_kinetic, self.n_atoms)
 
   def GetPressure(self):
     """Calculate instantaneous kinetic pressure [Pa] of system."""

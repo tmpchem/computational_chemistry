@@ -141,167 +141,178 @@ def GetEKineticI(mass, vels):
   return e_kin_i
 
 
-def GetENonbonded(mol):
-  """Calculate non-bonded interaction energy between all atoms.
-  
-  Computes van der waals and electrostatic energy [kcal/mol] components
-  between all pairs of non-bonded atoms in a system.
-  
-  Args:
-    mol (mmlib.molecule.Molecule): Molecule object with Atom objects containing
-        cartesian coordinates and molecular mechanics parameters
-  """
-  mol.e_nonbonded, mol.e_vdw, mol.e_elst = 0.0, 0.0, 0.0
-  for i, j in itertools.combinations(range(mol.n_atoms), 2):
-    if (i, j) in mol.nonints:
-      continue
-    at1, at2 = mol.atoms[i], mol.atoms[j]
-    r_ij = geomcalc.GetRij(at1.coords, at2.coords)
-    eps_ij = at1.sreps * at2.sreps
-    ro_ij = at1.ro + at2.ro
-    mol.e_elst += GetEElstIJ(r_ij, at1.charge, at2.charge, mol.dielectric)
-    mol.e_vdw += GetEVdwIJ(r_ij, eps_ij, ro_ij)
-
-
-def GetEBonds(mol):
+def GetEBonds(bonds):
   """Update bond length values and compute bond energy of system.
   
   For all bonds in a molecule, update the distance between atoms ij, and add the
       energy to the total molecular bond energy [kcal/mol].
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with Bond objects containing
-        atomic indices and molecular mechanics parameters.
+    bonds (mmlib.molecule.Bond*): Array of Bond objects containing atomic
+        indices and molecular mechanics parameters.
+
+  Returns:
+    e_bonds (float): Bond energy [kcal/mol] of all bonds.
   """
-  mol.e_bonds = 0.0
-  for p in range(mol.n_bonds):
-    b = mol.bonds[p]
-    b.energy = GetEBond(b.r_ij, b.r_eq, b.k_b)
-    mol.e_bonds += b.energy
+  e_bonds = 0.0
+  for bond in bonds:
+    bond.energy = GetEBond(bond.r_ij, bond.r_eq, bond.k_b)
+    e_bonds += bond.energy
+  return e_bonds
 
 
-def GetEAngles(mol):
+def GetEAngles(angles):
   """Update bond angle values and compute angle energy of system.
   
   For all angles in a molecule, update the angle between atoms ijk, and add the
   energy to the total molecular angle energy [kcal/mol].
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with Angle objects containing
-        atomic indices and molecular mechanics parameters.
+    angles (mmlib.molecule.Angle*): Array of Angle objects containing atomic
+        indices and molecular mechanics parameters.
+
+  Returns:
+    e_angles (float): Angle energy [kcal/mol] of all bond angles.
   """
-  mol.e_angles = 0.0
-  for p in range(mol.n_angles):
-    a = mol.angles[p]
-    a.energy = GetEAngle(a.a_ijk, a.a_eq, a.k_a)
-    mol.e_angles += a.energy
+  e_angles = 0.0
+  for angle in angles:
+    angle.energy = GetEAngle(angle.a_ijk, angle.a_eq, angle.k_a)
+    e_angles += angle.energy
+  return e_angles
 
 
-def GetETorsions(mol):
+def GetETorsions(torsions):
   """Update torsion angle values and compute torsion energy of system.
   
   For all torsions in a molecule, update the torsion between atoms ijkl, and add
   the energy to the total molecular torsion energy [kcal/mol].
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with Torsion objects
-        containing atomic indices and molecular mechanics parameters.
+    torsions (mmlib.molecule.Torsion*): Array of Torsion objects containing
+        atomic indices and molecular mechanics parameters.
+
+  Returns:
+    e_torsions (float): Torsion energy [kcal/mol] of all torsion angles.
   """
-  mol.e_torsions = 0.0
-  for p in range(mol.n_torsions):
-    t = mol.torsions[p]
-    t.energy = GetETorsion(t.t_ijkl, t.v_n, t.gam, t.n, t.paths)
-    mol.e_torsions += t.energy
+  e_torsions = 0.0
+  for torsion in torsions:
+    torsion.energy = GetETorsion(torsion.t_ijkl, torsion.v_n, torsion.gam,
+                                 torsion.n, torsion.paths)
+    e_torsions += torsion.energy
+  return e_torsions
 
 
-def GetEOutofplanes(mol):
+def GetEOutofplanes(outofplanes):
   """Update outofplane values and compute outofplane energy of system.
   
   For all outofplanes in molecule, update outofplane between atoms ijkl, and add
   the energy to the total molecular outofplane energy [kcal/mol].
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with Outofplane objects
+    outofplanes (mmlib.molecule.Outofplane*): Array of Outofplane objects
         containing atomic indices and molecular mechanics parameters.
+
+  Return:
+    e_outofplanes (float): Outofplane [kcal/mol] of all outofplane angles.
   """
-  mol.e_outofplanes = 0.0
-  for p in range(mol.n_outofplanes):
-    o = mol.outofplanes[p]
-    o.e = GetEOutofplane(o.o_ijkl, o.v_n)
-    mol.e_outofplanes += o.e
+  e_outofplanes = 0.0
+  for outofplane in outofplanes:
+    outofplane.energy = GetEOutofplane(outofplane.o_ijkl, outofplane.v_n)
+    e_outofplanes += outofplane.energy
+  return e_outofplanes
 
 
-def GetEBound(mol):
+def GetENonbonded(atoms, nonints, dielectric):
+  """Calculate non-bonded interaction energy between all atoms.
+  
+  Computes van der waals and electrostatic energy [kcal/mol] components
+  between all pairs of non-bonded atoms in a system.
+  
+  Args:
+    atoms (mmlib.molecule.Atom*): Array of Atom objects containing Cartesian
+        coordinates and molecular mechanics parameters.
+    nonints (set(int, int)): Set of atomic index pairs of atoms without
+        nonbonded interactions due to covalent (near-)adjacency.
+    dielectric (float): Dielectric constant of molecule.
+
+  Returns:
+    e_vdw (float): Van der waals energy [kcal/mol] of molecule.
+    e_elst (float): Electrostatic energy [kcal/mol] of molecule.
+  """
+  e_vdw, e_elst = 0.0, 0.0
+  for i, j in itertools.combinations(range(len(atoms)), 2):
+    if (i, j) in nonints:
+      continue
+    at1, at2 = atoms[i], atoms[j]
+    r_ij = geomcalc.GetRij(at1.coords, at2.coords)
+    eps_ij = at1.sreps * at2.sreps
+    ro_ij = at1.ro + at2.ro
+    e_elst += GetEElstIJ(r_ij, at1.charge, at2.charge, dielectric)
+    e_vdw += GetEVdwIJ(r_ij, eps_ij, ro_ij)
+  return e_vdw, e_elst
+
+
+def GetEBound(atoms, k_box, boundary, origin, boundary_type):
   """Compute total boundary energy of system.
   
   For all atoms in molecule, add the boundary energy to the total boundary
   energy [kcal/mol].
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with boundary parameters and
-        Atom objects containing cartesian coordinates.
+    atoms (mmlib.molecule.Atom*): Array of Atom objects containing Cartesian
+        coordinates.
+    k_box (float): Spring constant [kcal/(mol*A^2)] of molecule boundary.
+    boundary (float): Distance [Angstrom] from origin to molecule boundary.
+    origin (float*): Cartesian coordinates of molecule origin.
+    boundary_type (str): Molecular boundary type ('sphere' or 'cube').
+
+  Returns:
+    e_bound (float): Boundary energy [kcal/mol] of molecule.
   """
-  mol.e_bound = 0.0
-  k = mol.k_box
-  b = mol.bound
-  orig = mol.origin
-  btype = mol.boundtype
-  for i in range(mol.n_atoms):
-    at = mol.atoms[i]
-    at.e_bound = GetEBoundI(k, b, at.coords, orig, btype)
-    mol.e_bound += at.e_bound
+  e_bound = 0.0
+  for atom in atoms:
+    atom.e_bound = GetEBoundI(k_box, boundary, atom.coords, origin,
+                              boundary_type)
+    e_bound += atom.e_bound
+  return e_bound
 
 
-def GetTemperature(mol):
-  """Update kinetic temperature using current kinetic energy per atom.
-  
-  Args:
-    mol (mmlib.molecule.Molecule): Molecule object with current (float) kinetic
-        energy [kcal/mol].
-  """
-  mol.temp = (2.0 / const.NUMDIM) * mol.e_kinetic / (const.KB * mol.n_atoms)
-
-
-def GetEKinetic(mol, kintype):
+def GetEKinetic(atoms, kintype):
   """Compute kinetic energy of all atoms in molecule.
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule objects with Atom objects containing
-        (float) 3 cartesian velocities [Angstrom/ps].
+    atoms (mmlib.molecule.Atom*): Array of Atom objects containing (float) 3
+        cartesian velocities [Angstrom/ps].
     kintype (str): Type of kinetic energy to be computed:
       'nokinetic': Do nothing (ke = 0.0).
       'leapfrog': Average of current and previous velocities.
       [default]: Use current velocities.
+
+  Returns:
+    e_kinetic (float): Kinetic energy [kcal/mol] of molecule.
   """
-  mol.e_kinetic = 0.0
   if kintype == 'nokinetic':
-    pass
-  elif kintype == 'leapfrog':
-    for p in range(mol.n_atoms):
-      mass = mol.atoms[p].mass
-      vels = 0.5*(mol.atoms[p].vels + mol.atoms[p].pvels)
-      e_kin = GetEKineticI(mass, vels)
-      mol.e_kinetic += e_kin
-  else:
-    for p in range(mol.n_atoms):
-      mass = mol.atoms[p].mass
-      vels = mol.atoms[p].vels
-      e_kin = GetEKineticI(mass, vels)
-      mol.e_kinetic += e_kin
-  mol.GetTemperature()
-
-
-def GetETotals(mol):
-  """Update total energy [kcal/mol] of system from pre-computed components.
+    return 0.0
   
-  Fundamental components include bonds, angles, torsions, outofplanes,
-  boundary, van der waals, and electrostatics.
+  e_kinetic = 0.0
+  if kintype == 'leapfrog':
+    for atom in atoms:
+      vels = 0.5*(atom.vels + atoms.pvels)
+      e_kinetic += GetEKineticI(atom.mass, vels)
+  else:
+    for atom in atoms:
+      e_kinetic += GetEKineticI(atom.mass, atom.vels)
+  return e_kinetic
+
+
+def GetTemperature(e_kinetic, n_atoms):
+  """Update kinetic temperature using current kinetic energy per atom.
   
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with energy component data
-        [kcal/mol].
+    e_kinetic (float): Kinetic energy [kcal/mol] of molecule.
+    n_aotms (int): Number of atoms in molecule.
+
+  Returns:
+    temperature (float): Temperature [Kelvin] of molecule.
   """
-  mol.e_bonded = mol.e_bonds + mol.e_angles + mol.e_torsions + mol.e_outofplanes
-  mol.e_nonbonded = mol.e_vdw + mol.e_elst
-  mol.e_potential = mol.e_bonded + mol.e_nonbonded + mol.e_bound
-  mol.e_total = mol.e_kinetic + mol.e_potential
+  return (2.0 / const.NUMDIM) * e_kinetic / (const.KB * n_atoms)
