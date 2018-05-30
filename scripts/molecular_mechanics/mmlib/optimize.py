@@ -394,7 +394,8 @@ class Optimization:
   def PrintStatus(self):
     """Print xyz-format geometry of system to trajectory file."""
     comment = 'iter %i' % (self.n_iter)
-    fileio.PrintCoordsFile(self.gfile, self.mol, comment, 14, 8)
+    self.gfile.write(fileio.GetPrintCoordsXyzString(
+        self.mol.atoms, comment, 14, 8))
     self.PrintEnergy(self.n_iter)
     self.gfile.flush()
     self.efile.flush()

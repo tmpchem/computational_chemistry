@@ -100,11 +100,12 @@ class Simulation:
   def _PrintGeom(self):
     """Print xyz-format geometry of system to trajectory file."""
     if self.simtype == 'md':
-      pstr = '%.4f ps' % (self.time)
+      comment = '%.4f ps' % (self.time)
     elif self.simtype == 'mc':
-      pstr = 'conf %i' % (self.conf)
-    fileio.PrintCoordsFile(
-        self.gfile, self.mol, pstr, self.gprintchar, self.gprintdig)
+      comment = 'conf %i' % (self.conf)
+
+    self.gfile.write(fileio.GetPrintCoordsXyzString(
+        self.mol.atoms, comment, self.gprintchar, self.gprintdig))
 
   def _PrintVal(self, totstr, decstr, val, ptype='f', n_space=1):
     """Write specified file to energy output file in indicated format.

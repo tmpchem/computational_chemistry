@@ -43,7 +43,7 @@ class Atom:
     self.SetCoords(coords)
     self.SetCharge(charge)
 
-    if not (ro and eps):
+    if ro == None or eps == None:
       ro, eps = param.GetVdwParam(self.type_)
     self.SetRo(ro)
     self.SetEps(eps)
@@ -632,37 +632,38 @@ class Molecule:
 
   def PrintData(self):
     """Print energy / geometry / topology data of molecule to screen."""
-    fileio.PrintEnergy(self)
-    fileio.PrintGeom(self)
-    fileio.PrintBonds(self)
-    fileio.PrintAngles(self)
-    fileio.PrintTorsions(self)
-    fileio.PrintOutofplanes(self)
+    self.PrintEnergy()
+    self.PrintGeom()
+    self.PrintBonds()
+    self.PrintAngles()
+    self.PrintTorsions()
+    self.PrintOutofplanes()
 
   def PrintEnergy(self):
     """Print energy and component data of molecule to screen."""
-    fileio.PrintEnergy(self)
+    print(fileio.GetPrintEnergyString(self))
 
   def PrintGeom(self):
     """Print geometry data of molecule to screen."""
-    fileio.PrintGeom(self)
+    print(fileio.GetPrintGeomString(self.atoms))
 
   def PrintBonds(self):
     """Print bond data of molecule to screen."""
-    fileio.PrintBonds(self)
+    print(fileio.GetPrintBondsString(self.bonds, self.atoms))
 
   def PrintAngles(self):
     """Print angle data of molecule to screen."""
-    fileio.PrintAngles(self)
+    print(fileio.GetPrintAnglesString(self.angles, self.atoms))
 
   def PrintTorsions(self):
     """Print torsion data of molecule to screen."""
-    fileio.PrintTorsions(self)
+    print(fileio.GetPrintTorsionsString(self.torsions, self.atoms))
 
   def PrintOutofplanes(self):
     """Print outofplane data of molecule to screen."""
-    fileio.PrintOutofplanes(self)
+    print(fileio.GetPrintOutofplanesString(self.outofplanes, self.atoms))
 
   def PrintGradient(self):
     """Print gradient data to screen."""
-    fileio.PrintGradient(self.g_total, mol.grad_type + ' total gradient')
+    comment = mol.grad_type + ' total gradient'
+    print(fileio.GetPrintGradientString(mol.atoms, self.g_total, comment))
