@@ -214,7 +214,7 @@ def GetNonints(bonds, angles, torsions):
   return nonints
 
 
-def UpdateBonds(bonds):
+def UpdateBonds(mol):
   """Update all bond lengths [Angstrom] within a molecule object.
   
   Args:
@@ -228,7 +228,7 @@ def UpdateBonds(bonds):
     mol.bond_graph[bond.at2][bond.at1] = bond.r_ij
 
 
-def UpdateAngles(angles):
+def UpdateAngles(mol):
   """Update all bond angles [degrees] within a molecule object.
   
   Args:
@@ -243,7 +243,7 @@ def UpdateAngles(angles):
     angle.a_ijk = geomcalc.GetAijk(c1, c2, c3, r12, r23)
 
 
-def UpdateTorsions(torsions):
+def UpdateTorsions(mol):
   """Update all torsion angles [degrees] within a molecule object.
   
   Args:
@@ -260,7 +260,7 @@ def UpdateTorsions(torsions):
     torsion.t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4, r12, r23, r34)
 
 
-def UpdateOutofplanes(outofplanes):
+def UpdateOutofplanes(mol):
   """Update all outofplane angles [degrees] within a molecule object.
   
   Args:

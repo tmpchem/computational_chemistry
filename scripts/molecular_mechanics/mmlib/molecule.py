@@ -613,10 +613,10 @@ class Molecule:
 
   def UpdateInternals(self):
     """Update current values of internal degrees of freedom."""
-    topology.UpdateBonds(self.bonds)
-    topology.UpdateAngles(self.angles)
-    topology.UpdateTorsions(self.torsions)
-    topology.UpdateOutofplanes(self.outofplanes)
+    topology.UpdateBonds(self)
+    topology.UpdateAngles(self)
+    topology.UpdateTorsions(self)
+    topology.UpdateOutofplanes(self)
 
   def GetTemperature(self):
     """Calculate instantaneous kinetic temperature [K] of system."""
