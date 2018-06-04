@@ -147,8 +147,8 @@ class Optimization:
 
     self.ReadInData()
     self.GetOptCriteria()
-    self.UpdateEnergy()
-    self.UpdateGradient()
+    self._UpdateEnergy()
+    self._UpdateGradient()
     self.traj = Trajectory(self.mol)
 
   def ReadInData(self):
@@ -157,7 +157,7 @@ class Optimization:
 
   def Optimize(self):
     """Displace molecule to minimum energy molecular coordinates."""
-    self.OpenOutputFiles()
+    self._OpenOutputFiles()
     while self.n_iter < self.n_maxiter and not self.is_converged:
       self.n_iter += 1
       self._ChooseStepDirection(self.opt_type)
@@ -186,7 +186,7 @@ class Optimization:
       raise ValueError('Unexpected optimization type: %s\n'
                        'Use \'sd\' or \'cg\'.' % (opt_type))
 
-  def GetSDStepDir(self):
+  def _GetSDStepDir(self):
     """Steepest descent optimization step direction vector."""
     self.step_dir = self.mol.g_total
 
@@ -251,9 +251,9 @@ class Optimization:
     self.n_subiter = 0
     while (disp_sign_same):
       self.n_subiter += 1
-      self.DisplaceCoords(+1.0 * disp_mag, disp_vector)
+      self._DisplaceCoords(+1.0 * disp_mag, disp_vector)
       self.GetDispDeriv(disp_mag, disp_vector)
-      self.DisplaceCoords(-1.0 * disp_mag, disp_vector)
+      self._DisplaceCoords(-1.0 * disp_mag, disp_vector)
       if self.mol.e_total > ref_energy:
         disp_mag *= 0.5
         break
@@ -270,16 +270,16 @@ class Optimization:
     for i in range(const.NUMLINESEARCHSTEPS):
       self.n_subiter += 1
       test_disp = disp_mag * numer / denom
-      self.DisplaceCoords(+1.0 * test_disp, disp_vector)
+      self._DisplaceCoords(+1.0 * test_disp, disp_vector)
       self.GetDispDeriv(disp_mag / (2**(-i)), disp_vector)
-      self.DisplaceCoords(-1.0 * test_disp, disp_vector)
+      self._DisplaceCoords(-1.0 * test_disp, disp_vector)
       direc = 1.0 if self.disp_deriv < 0.0 else -1.0
       numer = 2*numer + direc
       denom = 2*denom
     disp_mag *= numer / denom
 
     # final line search energy minimized molecular coordinates
-    self.DisplaceCoords(+1.0 * disp_mag, disp_vector)
+    self._DisplaceCoords(+1.0 * disp_mag, disp_vector)
 
   def GetOptCriteria(self):
     """Dictionary of reference values of convergence criteria.
@@ -391,7 +391,7 @@ class Optimization:
     pstr += ' %9.3e%s' % (drms, conv_str[4])
     e.write('%s\n' % (pstr))
 
-  def PrintStatus(self):
+  def _PrintStatus(self):
     """Print xyz-format geometry of system to trajectory file."""
     comment = 'iter %i' % (self.n_iter)
     self.gfile.write(fileio.GetPrintCoordsXyzString(

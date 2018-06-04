@@ -137,8 +137,8 @@ def GetEKineticI(mass, vels):
   """
   e_kin_i = 0.0
   for i in range(const.NUMDIM):
-    e_kin_i += 0.5 * const.KIN2KCAL * mass * vels[i]**2
-  return e_kin_i
+    e_kin_i += mass * vels[i]**2
+  return 0.5 * const.KIN2KCAL * e_kin_i
 
 
 def GetEBonds(bonds):
@@ -156,7 +156,7 @@ def GetEBonds(bonds):
   """
   e_bonds = 0.0
   for bond in bonds:
-    bond.energy = GetEBond(bond.r_ij, bond.r_eq, bond.k_b)
+    bond.GetEnergy()
     e_bonds += bond.energy
   return e_bonds
 
@@ -176,7 +176,7 @@ def GetEAngles(angles):
   """
   e_angles = 0.0
   for angle in angles:
-    angle.energy = GetEAngle(angle.a_ijk, angle.a_eq, angle.k_a)
+    angle.GetEnergy()
     e_angles += angle.energy
   return e_angles
 
@@ -196,8 +196,7 @@ def GetETorsions(torsions):
   """
   e_torsions = 0.0
   for torsion in torsions:
-    torsion.energy = GetETorsion(torsion.t_ijkl, torsion.v_n, torsion.gam,
-                                 torsion.n, torsion.paths)
+    torsion.GetEnergy()
     e_torsions += torsion.energy
   return e_torsions
 
@@ -217,13 +216,13 @@ def GetEOutofplanes(outofplanes):
   """
   e_outofplanes = 0.0
   for outofplane in outofplanes:
-    outofplane.energy = GetEOutofplane(outofplane.o_ijkl, outofplane.v_n)
+    outofplane.GetEnergy()
     e_outofplanes += outofplane.energy
   return e_outofplanes
 
 
 def GetENonbonded(atoms, nonints, dielectric):
-  """Calculate non-bonded interaction energy between all atoms.
+  """Calculate non-bonded interaction energy between all atom pairs.
   
   Computes van der waals and electrostatic energy [kcal/mol] components
   between all pairs of non-bonded atoms in a system.
@@ -243,11 +242,11 @@ def GetENonbonded(atoms, nonints, dielectric):
   for i, j in itertools.combinations(range(len(atoms)), 2):
     if (i, j) in nonints:
       continue
-    at1, at2 = atoms[i], atoms[j]
-    r_ij = geomcalc.GetRij(at1.coords, at2.coords)
-    eps_ij = at1.sreps * at2.sreps
-    ro_ij = at1.ro + at2.ro
-    e_elst += GetEElstIJ(r_ij, at1.charge, at2.charge, dielectric)
+    atom1, atom2 = atoms[i], atoms[j]
+    r_ij = geomcalc.GetRij(atom1.coords, atom2.coords)
+    eps_ij = atom1.sreps * atom2.sreps
+    ro_ij = atom1.ro + atom2.ro
+    e_elst += GetEElstIJ(r_ij, atom1.charge, atom2.charge, dielectric)
     e_vdw += GetEVdwIJ(r_ij, eps_ij, ro_ij)
   return e_vdw, e_elst
 
@@ -275,7 +274,7 @@ def GetEBound(atoms, k_box, boundary, origin, boundary_type):
   return e_bound
 
 
-def GetEKinetic(atoms, kintype):
+def GetEKinetic(atoms, kintype=None):
   """Compute kinetic energy of all atoms in molecule.
   
   Args:
@@ -295,7 +294,7 @@ def GetEKinetic(atoms, kintype):
   e_kinetic = 0.0
   if kintype == 'leapfrog':
     for atom in atoms:
-      vels = 0.5*(atom.vels + atoms.pvels)
+      vels = 0.5 * (atom.vels + atom.pvels)
       e_kinetic += GetEKineticI(atom.mass, vels)
   else:
     for atom in atoms:
@@ -308,9 +307,10 @@ def GetTemperature(e_kinetic, n_atoms):
   
   Args:
     e_kinetic (float): Kinetic energy [kcal/mol] of molecule.
-    n_aotms (int): Number of atoms in molecule.
+    n_atoms (int): Number of atoms in molecule.
 
   Returns:
     temperature (float): Temperature [Kelvin] of molecule.
   """
+  
   return (2.0 / const.NUMDIM) * e_kinetic / (const.KB * n_atoms)

@@ -52,14 +52,11 @@ def GetUij(coords_i, coords_j, r_ij=None):
   Returns:
       u_ij (float*): 3 unit vector components from point i to j.
   """
-  u_ij = numpy.zeros(3)
   if not r_ij:
     r_ij = GetRij(coords_i, coords_j)
-  if r_ij:
-    u_ij[0] = (coords_j[0] - coords_i[0]) / r_ij 
-    u_ij[1] = (coords_j[1] - coords_i[1]) / r_ij 
-    u_ij[2] = (coords_j[2] - coords_i[2]) / r_ij 
-  return u_ij
+  if not r_ij:
+    return numpy.zeros(3)
+  return (coords_j - coords_i) / r_ij
 
 
 def GetUdp(uvec_i, uvec_j):
@@ -109,20 +106,20 @@ def GetUcp(uvec_i, uvec_j):
 
 
 def GetCp(uvec_i, uvec_j):
-  """Calculate cross product between two 3d cartesian unit vectors.
+  """Calculate cross product between two 3d Cartesian vectors.
 
   Args:
-    coords_i (float*): 3 cartesian components of unit vector i.
-    coords_j (float*): 3 cartesian components of unit vector j.
+    coords_i (float*): 3 cartesian components of vector i.
+    coords_j (float*): 3 cartesian components of vector j.
 
   Returns:
-    cp (float*): Cross product between unit vectors i and j.
+    cp (float*): Cross product between vectors i and j.
   """
-  ucp = numpy.zeros(3)
-  ucp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1])
-  ucp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2])
-  ucp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0])
-  return ucp
+  cp = numpy.zeros(3)
+  cp[0] = (uvec_i[1]*uvec_j[2] - uvec_i[2]*uvec_j[1])
+  cp[1] = (uvec_i[2]*uvec_j[0] - uvec_i[0]*uvec_j[2])
+  cp[2] = (uvec_i[0]*uvec_j[1] - uvec_i[1]*uvec_j[0])
+  return cp
 
 
 def GetAijk(coords_i, coords_j, coords_k, r_ij=None, r_jk=None):
@@ -194,18 +191,26 @@ def GetOijkl(coords_i, coords_j, coords_k, coords_l, r_ki=None, r_kj=None,
   return const.RAD2DEG * math.asin(dp_kikj_kl)
 
 
-def GetVolume(mol):
+def GetVolume(boundary, boundary_type):
   """Calculate volume of molecular system based on boundary type
   
   Boundary may be 'cube' (V=l**3) or 'sphere' (V=4/3pi*l**3). Units
   assumed to be [Angstrom].
 
   Args:
-    mol (mmlib.molecule.Molecule): Molecule object with boundary data.
+    boundary (float): Maximum extent of system away from origin.
+    boundary_type (str): Type of boundary shape.
+
+  Returns:
+    volume (float): Accessible volume of system.
+
+  Raises:
+    ValueError: If boundary_type is not 'cube' or 'sphere'.
   """
-  if mol.boundtype == 'cube':
-    mol.vol = 8.0 * mol.bound**3
-  elif mol.boundtype == 'sphere':
-    mol.vol = 4.0/3.0 * math.pi * mol.bound**3
+  if boundary_type == 'cube':
+    return 8.0 * boundary**3
+  elif boundary_type == 'sphere':
+    return 4.0/3.0 * math.pi * boundary**3
   else:
-    mol.vol = float('inf')
+    raise ValueError('Unexpected boundary type: %s\n.'
+                     "Use 'cube' or 'sphere'\n" % boundary_type)

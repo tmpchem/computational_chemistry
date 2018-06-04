@@ -35,8 +35,8 @@ class Simulation:
           'md': Molecular dynamics.
           'mc': Metropolis Monte-Carlo.
     mol (mmlib.molecule.Molecule): Molecule object from input file.
-    temp (float): Desired temperature [K].
-    press (float): Desired pressure [bar].
+    temperature (float): Desired temperature [K].
+    pressure (float): Desired pressure [bar].
     geomout (str): Geometry printing output file path.
     energyout (str): Energy printing output file path.
     statustime (float): Clock time between printing status to standard output
@@ -52,8 +52,8 @@ class Simulation:
     self.infile = os.path.realpath(infile_name)
     self.indir = os.path.dirname(self.infile)
     self.mol = []
-    self.temp = 298.15
-    self.press = 1.0
+    self.temperature = 298.15
+    self.pressure = 1.0
     self.geomout = 'geom.xyz'
     self.energyout = 'energy.dat'
     self.statustime = 60.0
@@ -69,7 +69,7 @@ class Simulation:
     """Read in simulation data from input file."""
     fileio.GetSimData(self)
     # zero divison error workaround
-    self.temp += 1.0E-20
+    self.temperature += 1.0E-20
 
   def _OpenOutputFiles(self):
     """Open output files for energy and geometry data printing."""
@@ -209,14 +209,14 @@ class MolecularDynamics(Simulation):
     """
     self._OpenOutputFiles()
     self._InitializeVels()
-    self.mol.GetEnergy('standard')
-    self.mol.GetGradient('analytic')
+    self.mol.GetEnergy()
+    self.mol.GetGradient()
     self._UpdateAccs()
-    self._CheckPrint(0.0, True)
+    self._CheckPrint(0.0, print_all=True)
     self._UpdateVels(0.5*self.timestep)
     while self.time < self.tottime:
       self._UpdateCoords(self.timestep)
-      self.mol.GetGradient('analytic')
+      self.mol.GetGradient()
       self._UpdateAccs()
       self._UpdateVels(self.timestep)
       self.mol.GetEnergy('leapfrog')
@@ -235,18 +235,20 @@ class MolecularDynamics(Simulation):
     distribution. Then rescales velocities to match specified desired
     temperature.
     """
-    if self.temp > 0.0:
-      self.etemp = self.temp
+    if self.temperature:
+      self.etemp = self.temperature
       numpy.random.seed(self.random_seed)
-      sigma_base = math.sqrt(2.0 * const.RGAS * self.temp / const.NUMDIM)
-      for i in range(self.mol.n_atoms):
-        sigma = sigma_base * self.mol.atoms[i].mass**(-0.5)
-        self.mol.atoms[i].vels = numpy.random.normal(0.0, sigma, const.NUMDIM)
-      self.mol.GetEnergy('standard')
-      vscale = math.sqrt(self.temp / self.mol.temp)
-      for i in range(self.mol.n_atoms):
-        for j in range(const.NUMDIM):
-          self.mol.atoms[i].vels[j] *= vscale
+      sigma_base = math.sqrt(2.0 * const.RGAS * self.temperature / const.NUMDIM)
+      for atom in self.mol.atoms:
+        sigma = sigma_base * atom.mass**(-0.5)
+        atom.vels = numpy.random.normal(0.0, sigma, const.NUMDIM)
+
+      self.mol.GetEnergy()
+      self.mol.GetTemperature()
+
+      vscale = math.sqrt(self.temperature / self.mol.temperature)
+      for atom in self.mol.atoms:
+        atom.vels *= vscale
 
   def _EquilibrateTemp(self):
     """Adjust velocities to equilibrate energy to set temperature.
@@ -257,8 +259,8 @@ class MolecularDynamics(Simulation):
     """
     tscale = self.timestep / max(self.timestep, self.eqrate)
     tweight = 10.0 * self.timestep
-    self.etemp = (self.etemp + tweight * self.mol.temp)/(1.0 + tweight)
-    velscale = 1.0 + tscale * (math.sqrt(self.temp / self.etemp) - 1.0)
+    self.etemp = (self.etemp + tweight * self.mol.temperature)/(1.0 + tweight)
+    velscale = 1.0 + tscale * (math.sqrt(self.temperature / self.etemp) - 1.0)
     for i in range(self.mol.n_atoms):
       for j in range(const.NUMDIM):
         self.mol.atoms[i].vels[j] *= velscale
@@ -332,10 +334,10 @@ class MolecularDynamics(Simulation):
     e.write('\n# ENERGYOUT %s' % (self.energyout))
     e.write('\n# GEOMOUT %s' % (self.geomout))
     e.write('\n# RANDOMSEED %i' % (self.random_seed))
-    e.write('\n# TEMPERATURE %.6f K' % (self.temp))
-    e.write('\n# BOUNDARY %.6f A' % (self.mol.bound))
+    e.write('\n# TEMPERATURE %.6f K' % (self.temperature))
+    e.write('\n# BOUNDARY %.6f A' % (self.mol.boundary))
     e.write('\n# BOUNDARYSPRING %.6f kcal/(mol*A^2)' % (self.mol.k_box))
-    e.write('\n# BOUNDARYTYPE %s' % (self.mol.boundtype))
+    e.write('\n# BOUNDARYTYPE %s' % (self.mol.boundary_type))
     e.write('\n# STATUSTIME %.6f s' % (self.statustime))
     e.write('\n# ENERGYTIME %.6f ps' % (self.energytime))
     e.write('\n# GEOMTIME %.6f ps' % (self.geomtime))
@@ -403,19 +405,19 @@ class MonteCarlo(Simulation):
     self._ZeroVels()
     numpy.random.seed(self.random_seed)
     self.mol.GetEnergy('standard')
-    self._CheckPrint(0, True)
-    penergy = self.mol.e_total
+    self._CheckPrint(0, print_all=True)
+    previous_energy = self.mol.e_total
     while self.conf < self.totconf:
       self._GetRandDisp()
       self._DispCoords(self.rand_disp)
       self.mol.GetEnergy('standard')
-      delta_e = self.mol.e_total - penergy
-      bf = math.exp(min(1.0, -delta_e / (const.KB * self.temp)))
+      delta_e = self.mol.e_total - previous_energy
+      bf = math.exp(min(1.0, -delta_e / (const.KB * self.temperature)))
       if bf >= numpy.random.random():
         self._CheckPrint(1)
         self.conf += 1
         self.n_accept += 1
-        penergy = self.mol.e_total
+        previous_energy = self.mol.e_total
       else:
         self._DispCoords(-self.rand_disp)
         self.n_reject += 1
@@ -498,10 +500,10 @@ class MonteCarlo(Simulation):
     e.write('\n# ENERGYOUT %s' % (self.energyout))
     e.write('\n# GEOMOUT %s' % (self.geomout))
     e.write('\n# RANDOMSEED %i' % (self.random_seed))
-    e.write('\n# TEMPERATURE %.6f K' % (self.temp))
-    e.write('\n# BOUNDARY %.6f A' % (self.mol.bound))
+    e.write('\n# TEMPERATURE %.6f K' % (self.temperature))
+    e.write('\n# BOUNDARY %.6f A' % (self.mol.boundary))
     e.write('\n# BOUNDARYSPRING %.6f kcal/(mol*A^2)' % (self.mol.k_box))
-    e.write('\n# BOUNDARYTYPE %s' % (self.mol.boundtype))
+    e.write('\n# BOUNDARYTYPE %s' % (self.mol.boundary_type))
     e.write('\n# STATUSTIME %.6f s' % (self.statustime))
     e.write('\n# ENERGYCONF %i' % (self.energyconf))
     e.write('\n# GEOMCONF %i' % (self.geomconf))

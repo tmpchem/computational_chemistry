@@ -72,7 +72,8 @@ PROPERTYDICTIONARY = {
 # Physical property keys for output file data labels.
 PROPERTYKEYS = [
     'e_total', 'e_kin', 'e_pot', 'e_nonbond', 'e_bonded', 'e_boundary',
-    'e_vdw', 'e_elst', 'e_bond', 'e_angle', 'e_tors', 'e_oop', 'temp', 'press']
+    'e_vdw', 'e_elst', 'e_bond', 'e_angle', 'e_tors', 'e_oop', 'temperature',
+    'pressure']
 
 # Conversion from radians to degrees.
 RAD2DEG = 180.0 / math.pi

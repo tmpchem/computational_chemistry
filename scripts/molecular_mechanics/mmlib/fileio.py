@@ -99,7 +99,7 @@ def GetFileStringArray(infile_name):
   return [line.split() for line in lines]
 
 
-def GetGeom(input_rows):
+def GetAtomsFromXyzq(input_rows):
   """Reads in molecular geometry data from molecule xyzq file.
   
   First line contains (int) number of atoms. Second line is ignored comment.
@@ -117,11 +117,26 @@ def GetGeom(input_rows):
   for row in input_rows[2:n_atoms+2]:
     at_type = row[0]
     at_coords = numpy.array(list(map(float, row[1:1+const.NUMDIM])))
-    at_charge = float(row[4])
+    at_charge = float(row[1+const.NUMDIM])
     atoms.append(molecule.Atom(at_type, at_coords, at_charge))
   return atoms
 
-def GetAtoms(records):
+def _IsCorrectRecordType(record, type_):
+  """Determines whether row from prm file matches a specified record type.
+  
+  Args:
+    record (str*): Array of strings from a row of a prm file.
+    type_ (str): String of record type from prm row. Allowed values include:
+        'ATOM', 'BOND', 'ANGLE', 'TORSION', and 'OUTOFPLANE'.
+  
+  Returns:
+    is_correct_type (bool): Whether or not the record matches the type.
+  """
+  if not record:
+    return False
+  return record[0].upper() == type_
+
+def GetAtomsFromPrm(records):
   """Parses atom records into an array of Atom objects.
 
   Args:
@@ -133,16 +148,16 @@ def GetAtoms(records):
   """
   atoms = []
   for record in records:
-    if not record[0].upper() == 'ATOM':
+    if not _IsCorrectRecordType(record, 'ATOM'):
       continue
-    at_type = record[2]
-    at_coords = numpy.array(list(map(float, record[3:3+const.NUMDIM])))
-    at_charge, at_ro, at_eps = list(map(float, record[6:9]))
-    atoms.append(molecule.Atom(at_type, at_coords, at_charge, at_ro, at_eps))
+    type_ = record[2]
+    coords = numpy.array(list(map(float, record[3:3+const.NUMDIM])))
+    charge, ro, eps = list(map(float, record[6:9]))
+    atoms.append(molecule.Atom(type_, coords, charge, ro, eps))
   return atoms
 
 
-def GetBonds(records, atoms):
+def GetBondsFromPrm(records, atoms):
   """Parses bond records into an array of Bond objects.
   
   Args:
@@ -155,7 +170,7 @@ def GetBonds(records, atoms):
   """
   bonds = []
   for record in records:
-    if not record[0].upper() == 'BOND':
+    if not _IsCorrectRecordType(record, 'BOND'):
       continue
     at1, at2 = [x-1 for x in list(map(int, record[1:3]))]
     k_b, r_eq = list(map(float, record[3:5]))
@@ -165,7 +180,7 @@ def GetBonds(records, atoms):
   return bonds
 
 
-def GetAngles(records, atoms):
+def GetAnglesFromPrm(records, atoms):
   """Parses angle records into an array of Angle objects.
   
   Args:
@@ -178,7 +193,7 @@ def GetAngles(records, atoms):
   """
   angles = []
   for record in records:
-    if not record[0].upper() == 'ANGLE':
+    if not _IsCorrectRecordType(record, 'ANGLE'):
       continue
     at1, at2, at3 = [x-1 for x in list(map(int, record[1:4]))]
     k_a, a_eq = list(map(float, record[4:6]))
@@ -188,7 +203,7 @@ def GetAngles(records, atoms):
   return angles
 
 
-def GetTorsions(records, atoms):
+def GetTorsionsFromPrm(records, atoms):
   """Parses torsion records into an array of Torsion objects.
   
   Args:
@@ -201,7 +216,7 @@ def GetTorsions(records, atoms):
   """
   torsions = []
   for record in records:
-    if not record[0].upper() == 'TORSION':
+    if not _IsCorrectRecordType(record, 'TORSION'):
       continue
     at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
     v_n, gamma = list(map(float, record[5:7]))
@@ -213,7 +228,7 @@ def GetTorsions(records, atoms):
   return torsions
 
 
-def GetOutofplanes(records, atoms):
+def GetOutofplanesFromPrm(records, atoms):
   """Parses outofplane record into Outofplane object.
   
   Args:
@@ -226,7 +241,7 @@ def GetOutofplanes(records, atoms):
   """
   outofplanes = []
   for record in records:
-    if not record[0].upper() == 'OUTOFPLANE':
+    if not _IsCorrectRecordType(record, 'OUTOFPLANE'):
       continue
     at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
     v_n = float(record[5])
@@ -261,16 +276,16 @@ def GetSimData(sim):
     if kwarg == 'molecule':
       sim.mol = molecule.Molecule(os.path.realpath(kwargval))
     elif kwarg == 'temperature':
-      sim.temp = float(kwargval)
+      sim.temperature = float(kwargval)
     elif kwarg == 'pressure':
-      sim.press = float(kwargval)
+      sim.pressure = float(kwargval)
     elif kwarg == 'boundaryspring':
       sim.mol.k_box = float(kwargval)
     elif kwarg == 'boundary':
-      sim.mol.bound = float(kwargval)
+      sim.mol.boundary = float(kwargval)
       sim.mol.GetVolume()
     elif kwarg == 'boundarytype':
-      sim.mol.boundtype = kwargval.lower()
+      sim.mol.boundary_type = kwargval.lower()
       sim.mol.GetVolume()
     elif kwarg == 'origin':
       sim.mol.origin = list(map(float, kwargarr[:const.NUMDIM]))

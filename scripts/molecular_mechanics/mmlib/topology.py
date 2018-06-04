@@ -31,10 +31,9 @@ def GetBondGraph(atoms):
     bond_graph (int:(int:float)): Dictionary of bond connectivity.
   """
   bond_graph = {i:{} for i in range(len(atoms))}
-  bond_threshold = const.BONDTHRESHOLD
   for i, j in itertools.combinations(range(len(atoms)), 2):
     at1, at2 = atoms[i], atoms[j]
-    threshold = bond_threshold * (at1.covrad + at2.covrad)
+    threshold = const.BONDTHRESHOLD * (at1.covrad + at2.covrad)
     r2_12 = geomcalc.GetR2ij(at1.coords, at2.coords)
     if r2_12 < threshold**2:
       r_12 = math.sqrt(r2_12)
@@ -78,7 +77,7 @@ def GetBonds(atoms, bond_graph):
   bonds = []
   for i, at1 in enumerate(atoms):
     for j in bond_graph[i]:
-      if i >= j:
+      if i > j:
         continue
       at2 = atoms[j]
       r_ij = bond_graph[i][j]
@@ -106,6 +105,8 @@ def GetAngles(atoms, bond_graph):
   angles = []
   for j, at2 in enumerate(atoms):
     for i, k in itertools.combinations(bond_graph[j], 2):
+      if i > k:
+        continue
       at1, at3 = atoms[i], atoms[k]
       a_ijk = geomcalc.GetAijk(at1.coords, at2.coords, at3.coords)
       k_a, a_eq = param.GetAngleParam(at1.type_, at2.type_, at3.type_)
@@ -230,12 +231,13 @@ def UpdateBonds(bonds, atoms, bond_graph):
     bond_graph[bond.at2][bond.at1] = bond.r_ij
 
 
-def UpdateAngles(angles, atoms):
+def UpdateAngles(angles, atoms, bond_graph):
   """Update all bond angles [degrees] within a molecule object.
   
   Args:
     angles (mmlib.molecule.Angle*): Array of molecule's Angle objects.
     atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    bond_graph (int:(int:float)): Dictionary of bond connectivity.
   """
   for angle in angles:
     r12 = bond_graph[angle.at1][angle.at2]
@@ -246,12 +248,13 @@ def UpdateAngles(angles, atoms):
     angle.a_ijk = geomcalc.GetAijk(c1, c2, c3, r12, r23)
 
 
-def UpdateTorsions(torsions, atoms):
+def UpdateTorsions(torsions, atoms, bond_graph):
   """Update all torsion angles [degrees] within a molecule object.
   
   Args:
     torsions (mmlib.molecule.Torsion*): Array of molecule's Torsion objects.
     atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    bond_graph (int:(int:float)): Dictionary of bond connectivity.
   """
   for torsion in torsions:
     r12 = bond_graph[torsion.at1][torsion.at2]
@@ -264,13 +267,14 @@ def UpdateTorsions(torsions, atoms):
     torsion.t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4, r12, r23, r34)
 
 
-def UpdateOutofplanes(outofplanes, atoms):
+def UpdateOutofplanes(outofplanes, atoms, bond_graph):
   """Update all outofplane angles [degrees] within a molecule object.
   
   Args:
     outofplanes (mmlib.molecule.Outofplane*): Array of molecule's Outofplane
         objects.
     atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    bond_graph (int:(int:float)): Dictionary of bond connectivity.
   """
   for outofplane in outofplanes:
     r31 = bond_graph[outofplane.at3][outofplane.at1]
