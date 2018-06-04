@@ -12,7 +12,7 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
-import mmlib
+from mmlib import test
 
 __author__ = 'Trent M. Parker'
 __email__ = 'tmpchemistry@gmail.com'
@@ -20,5 +20,5 @@ __status__ = 'Development'
 __date__ = '2018-05-20'
 
 if __name__ == '__main__':
-  # run all tests
-  mmlib.test.RunTests()
+  # Run all unit tests.
+  test.RunTests()

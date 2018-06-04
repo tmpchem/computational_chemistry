@@ -9,7 +9,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
-import mmlib
+from mmlib import fileio
+from mmlib import optimize
 
 __author__ = 'Trent M. Parker'
 __email__ = 'tmpchemistry@gmail.com'
@@ -17,11 +18,11 @@ __status__ = 'Prototype'
 __date__ = '2017-02-16'
 
 if __name__ == '__main__':
-  # check input syntax
-  infile_name = mmlib.fileio.ValidateInput(__file__)
+  # Check input syntax
+  input_file_name = fileio.ValidateInput(__file__)
 
-  # read in molecular and optimization data
-  opt = mmlib.optimize.Optimization(infile_name)
+  # Read in molecular and optimization data
+  optimization = optimize.Optimization(input_file_name)
 
-  # run energy minimization
-  opt.Optimize()
+  # Run energy minimization.
+  optimization.Optimize()

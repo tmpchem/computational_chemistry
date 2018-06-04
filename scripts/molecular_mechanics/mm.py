@@ -8,7 +8,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
-import mmlib
+from mmlib import fileio
+from mmlib import molecule
 
 __author__ = 'Trent M. Parker'
 __email__ = 'tmpchemistry@gmail.com'
@@ -16,14 +17,14 @@ __status__ = 'Prototype'
 __date__ = '2016-02-15'
 
 if __name__ == '__main__':
-  # check input syntax
-  infile_name = mmlib.fileio.ValidateInput(__file__)
+  # Check input syntax.
+  input_file_name = fileio.ValidateInput(__file__)
 
-  # read in molecular geometry and topology
-  mol = mmlib.molecule.Molecule(infile_name)
+  # Read in molecular geometry and topology.
+  molecule = molecule.Molecule(input_file_name)
 
-  # calculate potential energy
-  mol.GetEnergy('nokinetic')
+  # Calculate potential energy.
+  molecule.GetEnergy('nokinetic')
 
-  # print results to screen
-  mol.PrintData()
+  # Print results to screen.
+  molecule.PrintData()

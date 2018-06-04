@@ -9,7 +9,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
-import mmlib
+from mmlib import fileio
+from mmlib import simulate
 
 __author__ = 'Trent M. Parker'
 __email__ = 'tmpchemistry@gmail.com'
@@ -17,11 +18,11 @@ __status__ = 'Prototype'
 __date__ = '2017-02-08'
 
 if __name__ == '__main__':
-  # check input syntax
-  infile_name = mmlib.fileio.ValidateInput(__file__)
+  # Check input syntax.
+  input_file_name = fileio.ValidateInput(__file__)
 
-  # read in molecular and simulation data
-  sim = mmlib.simulate.MonteCarlo(infile_name)
+  # Read in molecular and simulation data.
+  simulation = simulate.MonteCarlo(input_file_name)
 
-  # run molecular dynamics
-  sim.Run()
+  # Run molecular dynamics simulation.
+  simulation.Run()

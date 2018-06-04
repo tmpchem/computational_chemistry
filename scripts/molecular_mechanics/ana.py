@@ -7,7 +7,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
-import mmlib
+from mmlib import analyze
+from mmlib import fileio
 
 __author__ = 'Trent M. Parker'
 __email__ = 'tmpchemistry@gmail.com'
@@ -15,11 +16,11 @@ __status__ = 'Prototype'
 __date__ = '2017-02-22'
 
 if __name__ == '__main__':
-  # check input syntax
-  infile_name = mmlib.fileio.ValidateInput(__file__)
+  # Check input syntax.
+  input_file_name = fileio.ValidateInput(__file__)
 
-  # read in ensemble geometry and energy data
-  ana = mmlib.analyze.Analysis(infile_name)
+  # Read in ensemble geometry and energy analysis data.
+  analysis = analyze.Analysis(input_file_name)
 
-  # compute and plot ensemble properties
-  ana.RunAnalysis()
+  # Compute and plot ensemble properties.
+  analysis.RunAnalysis()
