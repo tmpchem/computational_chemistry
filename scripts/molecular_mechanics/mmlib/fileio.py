@@ -136,6 +136,91 @@ def _IsCorrectRecordType(record, type_):
     return False
   return record[0].upper() == type_
 
+
+def GetAtomFromPrm(record):
+  """Parses atom record into an Atom object.
+
+  Args:
+    record (str*): Array of strings from line of prm file.
+
+  Returns:
+    atom (mmlib.molecule.Atom): Atom object with attributes from record.
+  """
+  type_ = record[2]
+  coords = numpy.array(tuple(map(float, record[3:3+const.NUMDIM])))
+  charge, ro, eps = tuple(map(float, record[3+const.NUMDIM:6+const.NUMDIM]))
+  return molecule.Atom(type_, coords, charge, ro, eps)
+
+
+def GetBondFromPrm(record, atoms):
+  """Parses bond record into a Bond object.
+
+  Args:
+    record (str*): Array of strings from line of prm file.
+    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    bond (mmlib.molecule.Bond): Bond object with attributes from record.
+  """
+  at1, at2 = (x-1 for x in map(int, record[1:3]))
+  k_b, r_eq = tuple(map(float, record[3:5]))
+  c1, c2 = (atoms[i].coords for i in (at1, at2))
+  r_ij = geomcalc.GetRij(c1, c2)
+  return molecule.Bond(at1, at2, r_ij, r_eq, k_b)
+
+
+def GetAngleFromPrm(record, atoms):
+  """Parses angle record into an Angle object.
+
+  Args:
+    record (str*): Array of strings from line of prm file.
+    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    angle (mmlib.molecule.Angle): Angle object with attributes from record.
+  """
+  at1, at2, at3 = (x-1 for x in (map(int, record[1:4])))
+  k_a, a_eq = tuple(map(float, record[4:6]))
+  c1, c2, c3 = (atoms[i].coords for i in (at1, at2, at3))
+  a_ijk = geomcalc.GetAijk(c1, c2, c3)
+  return molecule.Angle(at1, at2, at3, a_ijk, a_eq, k_a)
+
+
+def GetTorsionFromPrm(record, atoms):
+  """Parses torsion record into an Torsion object.
+
+  Args:
+    record (str*): Array of strings from line of prm file.
+    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    torsion (mmlib.molecule.Torsion): Torsion object.
+  """
+  at1, at2, at3, at4 = (x-1 for x in map(int, record[1:5]))
+  v_n, gamma = tuple(map(float, record[5:7]))
+  nfold, paths = tuple(map(int, record[7:9]))
+  c1, c2, c3, c4 = (atoms[i].coords for i in (at1, at2, at3, at4))
+  t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4)
+  return molecule.Torsion(at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths)
+
+
+def GetOutofplaneFromPrm(record, atoms):
+  """Parses outofplane record into an Outofplane object.
+
+  Args:
+    record (str*): Array of strings from line of prm file.
+    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Returns:
+    outofplane (mmlib.molecule.Outofplane): Outofplane object.
+  """
+  at1, at2, at3, at4 = (x-1 for x in map(int, record[1:5]))
+  v_n = float(record[5])
+  c1, c2, c3, c4 = (atoms[i].coords for i in (at1, at2, at3, at4))
+  o_ijkl = geomcalc.GetOijkl(c1, c2, c3, c4)
+  return molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n)
+
+
 def GetAtomsFromPrm(records):
   """Parses atom records into an array of Atom objects.
 
@@ -150,10 +235,7 @@ def GetAtomsFromPrm(records):
   for record in records:
     if not _IsCorrectRecordType(record, 'ATOM'):
       continue
-    type_ = record[2]
-    coords = numpy.array(list(map(float, record[3:3+const.NUMDIM])))
-    charge, ro, eps = list(map(float, record[6:9]))
-    atoms.append(molecule.Atom(type_, coords, charge, ro, eps))
+    atoms.append(GetAtomFromPrm(record))
   return atoms
 
 
@@ -172,11 +254,7 @@ def GetBondsFromPrm(records, atoms):
   for record in records:
     if not _IsCorrectRecordType(record, 'BOND'):
       continue
-    at1, at2 = [x-1 for x in list(map(int, record[1:3]))]
-    k_b, r_eq = list(map(float, record[3:5]))
-    c1, c2 = [atoms[i].coords for i in [at1, at2]]
-    r_ij = geomcalc.GetRij(c1, c2)
-    bonds.append(molecule.Bond(at1, at2, r_ij, r_eq, k_b))
+    bonds.append(GetBondFromPrm(record, atoms))
   return bonds
 
 
@@ -195,11 +273,7 @@ def GetAnglesFromPrm(records, atoms):
   for record in records:
     if not _IsCorrectRecordType(record, 'ANGLE'):
       continue
-    at1, at2, at3 = [x-1 for x in list(map(int, record[1:4]))]
-    k_a, a_eq = list(map(float, record[4:6]))
-    c1, c2, c3 = [atoms[i].coords for i in [at1, at2, at3]]
-    a_ijk = geomcalc.GetAijk(c1, c2, c3)
-    angles.append(molecule.Angle(at1, at2, at3, a_ijk, a_eq, k_a))
+    angles.append(GetAngleFromPrm(record, atoms))
   return angles
 
 
@@ -218,13 +292,7 @@ def GetTorsionsFromPrm(records, atoms):
   for record in records:
     if not _IsCorrectRecordType(record, 'TORSION'):
       continue
-    at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
-    v_n, gamma = list(map(float, record[5:7]))
-    nfold, paths = list(map(int, record[7:9]))
-    c1, c2, c3, c4 = [atoms[i].coords for i in [at1, at2, at3, at4]]
-    t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4)
-    torsions.append(
-        molecule.Torsion(at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths))
+    torsions.append(GetTorsionFromPrm(record, atoms))
   return torsions
 
 
@@ -243,11 +311,7 @@ def GetOutofplanesFromPrm(records, atoms):
   for record in records:
     if not _IsCorrectRecordType(record, 'OUTOFPLANE'):
       continue
-    at1, at2, at3, at4 = [x-1 for x in list(map(int, record[1:5]))]
-    v_n = float(record[5])
-    c1, c2, c3, c4 = [atoms[i].coords for i in [at1, at2, at3, at4]]
-    o_ijkl = geomcalc.GetOijkl(c1, c2, c3, c4) 
-    outofplanes.append(molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n))
+    outofplanes.append(GetOutofplaneFromPrm(record, atoms))
   return outofplanes
 
 
