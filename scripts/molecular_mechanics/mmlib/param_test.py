@@ -93,7 +93,7 @@ class TestGetVdwParam(unittest.TestCase):
 
   def testDummyInput(self):
     """Asserts zero parameters for dummy atom type."""
-    self.assertEqual(param.GetVdwParam('X'), (0.0000, 0.00000))
+    self.assertEqual(param.GetVdwParam('X'), (0.0001, 0.00000))
 
   def testAromaticCarbon(self):
     """Asserts correct parameters for carbon atom type."""
@@ -122,10 +122,6 @@ class TestGetBondParam(unittest.TestCase):
 
     self.assertEqual(str(e.exception),
                      'No bond parameters found for atom type pair: AA, BB')
-
-  def testDummyInput(self):
-    """Asserts zero parameters for dummy atom types input."""
-    self.assertEqual(param.GetBondParam('X', 'X'), (0.0, 0.0))
 
   def testOxygenHydrogenBond(self):
     """Asserts correct parameters for water hydrogen-oxygen bond."""
@@ -156,10 +152,6 @@ class TestGetAngleParam(unittest.TestCase):
     self.assertEqual(
         str(e.exception),
         'No angle parameters found for atom type triplet: AA, BB, CC')
-
-  def testDummyInput(self):
-    """Asserts zero mass for dummy atom input."""
-    self.assertEqual(param.GetAngleParam('X', 'X', 'X'), (0.0, 0.0))
 
   def testHOHWater(self):
     """Asserts correct mass for hydrogen atom."""
