@@ -9,6 +9,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
+import sys
+
 from mmlib import fileio
 from mmlib import optimize
 
@@ -19,7 +21,7 @@ __date__ = '2017-02-16'
 
 if __name__ == '__main__':
   # Check input syntax
-  input_file_name = fileio.ValidateInput(__file__)
+  input_file_name = fileio.ValidateInput(__file__, sys.argv)
 
   # Read in molecular and optimization data
   optimization = optimize.Optimization(input_file_name)

@@ -305,7 +305,7 @@ def GetGTorsions(g_torsions, torsions, atoms, bond_graph):
     r12 = bond_graph[torsion.at1][torsion.at2]
     r23 = bond_graph[torsion.at2][torsion.at3]
     r34 = bond_graph[torsion.at3][torsion.at4]
-    dir1, dir2, dir3, dir4 = GetGdirTorsion(c1, c2, c3, c4, r12, r23, r34)
+    dir1, dir2, dir3, dir4 = GetGDirTorsion(c1, c2, c3, c4, r12, r23, r34)
     g_torsions[torsion.at1] += torsion.grad_mag * dir1
     g_torsions[torsion.at2] += torsion.grad_mag * dir2
     g_torsions[torsion.at3] += torsion.grad_mag * dir3
@@ -332,7 +332,7 @@ def GetGOutofplanes(g_outofplanes, outofplanes, atoms, bond_graph):
     r31 = bond_graph[outofplane.at3][outofplane.at1]
     r32 = bond_graph[outofplane.at3][outofplane.at2]
     r34 = bond_graph[outofplane.at3][outofplane.at4]
-    dir1, dir2, dir3, dir4 = GetGdirOutofplane(
+    dir1, dir2, dir3, dir4 = GetGDirOutofplane(
         c1, c2, c3, c4, outofplane.o_ijkl, r31, r32, r34)
     g_outofplanes[outofplane.at1] += outofplane.grad_mag * dir1
     g_outofplanes[outofplane.at2] += outofplane.grad_mag * dir2

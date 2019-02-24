@@ -9,6 +9,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
+import sys
+
 from mmlib import fileio
 from mmlib import simulate
 
@@ -19,7 +21,7 @@ __date__ = '2017-02-08'
 
 if __name__ == '__main__':
   # Check input syntax.
-  input_file_name = fileio.ValidateInput(__file__)
+  input_file_name = fileio.ValidateInput(__file__, sys.argv)
 
   # Read in molecular and simulation data.
   simulation = simulate.MonteCarlo(input_file_name)

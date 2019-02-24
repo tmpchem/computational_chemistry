@@ -53,6 +53,11 @@ _ENERGY_PRINT_BANNER_CHARS = 33
 _ENERGY_PRINT_PARAMS = ['component', '[kcal/mol]']
 _ENERGY_PRINT_SPACES = [3, 9]
 
+_AVERAGE_PRINT_HEADER = ' Energy Component Properties [kcal/mol] '
+_AVERAGE_PRINT_BANNER_CHARS = 68
+_AVERAGE_PRINT_PARAMS = ['component', 'avg', 'std', 'min', 'max']
+_AVERAGE_PRINT_SPACES = [3, 11, 9, 9, 9]
+
 # Formatting column headers and class attributes for energy components
 _ENERGY_PRINT_LABELS = [
     'Total', 'Kinetic', 'Potential', 'Non-bonded', 'Bonded', 'Boundary',
@@ -62,11 +67,6 @@ _ENERGY_PRINT_ATTRIBUTES = [
     'e_total', 'e_kinetic', 'e_potential', 'e_nonbonded', 'e_bonded',
     'e_bound', 'e_vdw', 'e_elst', 'e_bonds', 'e_angles', 'e_torsions',
     'e_outofplanes']
-
-_AVERAGE_PRINT_HEADER = ' Energy Component Properties [kcal/mol] '
-_AVERAGE_PRINT_BANNER_CHARS = 68
-_AVERAGE_PRINT_PARAMS = ['component', 'avg', 'std', 'min', 'max']
-_AVERAGE_PRINT_SPACES = [3, 11, 9, 9, 9]
 
 # Syntax use messages for programs within the molecular mechanics repository
 _PROGRAM_MESSAGES = {
@@ -99,219 +99,376 @@ def GetFileStringArray(infile_name):
   return [line.split() for line in lines]
 
 
-def GetAtomsFromXyzq(input_rows):
-  """Reads in molecular geometry data from molecule xyzq file.
+def _IsType(type, value):
+  """Determines if a value can be cast as given type.
+
+  Args:
+    type (type): Type to attempt casting to.
+    value (any): Value to attempt being casted.
+
+  Returns:
+    is_type (bool): Whether 'value' can be cast to 'type'.
+  """
+  try:
+    type(value)
+  except ValueError:
+    return False
+  return True
+
+
+def _AreAllType(type, values):
+  """Determines if an array of values can all be cast as given type.
+
+  Args:
+    type (type): Type to attempt casting to.
+    values (any*): Array of values to attempt being casted.
+
+  Returns:
+    are_type (bool): Whether all 'values' can be cast to 'type'.
+  """
+  for value in values:
+    if not _IsType(type, value):
+      return False
+  return True
+
+
+def GetAtomFromXyzq(row):
+  """Parses and validates a row of input from xyzq file into an Atom object.
+
+  Args:
+    row (str*): Array of strings from row of xyzq file.
+
+  Returns:
+    atom (mmlib.molecule.Atom): Atom object.
+
+  Raises:
+    IndexError: If insufficient number of fields.
+    ValueError: If incorrect data type of any field.
+  """
+  if len(row) < 2+const.NUMDIM:
+    raise IndexError('Insufficient columns to parse xyzq file row into Atom '
+                     'object: %s' % ' '.join(row))
+
+  type_ = row[0]
+  coords = row[1:1+const.NUMDIM]
+  charge = row[1+const.NUMDIM]
+
+  if not type_ or not type_[0].isalpha():
+    raise ValueError('Atom type must begin with letter: %s' % type_)
+  if not _AreAllType(float, coords):
+    raise ValueError(
+        'Atomic coordinates must be numeric values: %s' % ' '.join(coords))
+  if not _IsType(float, charge):
+    raise ValueError('Atomic charge must be numeric value: %s' % charge)
+
+  return molecule.Atom(type_, numpy.fromiter(coords, float), float(charge))
+
+
+def GetAtomsFromXyzq(rows):
+  """Parses molecular geometry data from xyzq file.
   
   First line contains (int) number of atoms. Second line is ignored comment.
   Each line afterward (3 to [n+2]) contains atom type, (float) 3 xyz Cartesian
   coordinates [Angstrom], and (float) charge [e].
 
   Args:
-    input_file (str**): 2d array of string from xyzq input file.
+    rows (str**): 2d array of string from xyzq input file.
 
   Returns:
     atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+
+  Raises:
+    EOFError: If input is empty or of insufficient size.
+    IndexError: If first line is empty.
   """
+  if not rows:
+    raise EOFError('XYZQ file is empty.')
+  if not rows[0]:
+    raise IndexError('First line of XYZQ file must be number of atoms.')
+
+  n_atoms = int(rows[0][0])
+
+  if n_atoms <= 0:
+    raise ValueError('Number of atoms must be positive: %i' % n_atoms)
+  if len(rows) < n_atoms+2:
+    raise EOFError('XYZQ file does not contain enough lines for stated number '
+                   'of atoms: %i' % n_atoms)
+
   atoms = []
-  n_atoms = int(input_rows[0][0])
-  for row in input_rows[2:n_atoms+2]:
-    at_type = row[0]
-    at_coords = numpy.array(list(map(float, row[1:1+const.NUMDIM])))
-    at_charge = float(row[1+const.NUMDIM])
-    atoms.append(molecule.Atom(at_type, at_coords, at_charge))
+  for row in rows[2:n_atoms+2]:
+    atoms.append(GetAtomFromXyzq(row))
   return atoms
 
-def _IsCorrectRecordType(record, type_):
-  """Determines whether row from prm file matches a specified record type.
-  
-  Args:
-    record (str*): Array of strings from a row of a prm file.
-    type_ (str): String of record type from prm row. Allowed values include:
-        'ATOM', 'BOND', 'ANGLE', 'TORSION', and 'OUTOFPLANE'.
-  
-  Returns:
-    is_correct_type (bool): Whether or not the record matches the type.
-  """
-  if not record:
-    return False
-  return record[0].upper() == type_
 
-
-def GetAtomFromPrm(record):
-  """Parses atom record into an Atom object.
+def GetAtomFromPrm(row):
+  """Parses atom row into an Atom object.
 
   Args:
-    record (str*): Array of strings from line of prm file.
+    row (str*): Array of strings from line of prm file.
 
   Returns:
-    atom (mmlib.molecule.Atom): Atom object with attributes from record.
+    atom (mmlib.molecule.Atom): Atom object with attributes from row.
+
+  Raises:
+    IndexError: If insufficient number of fields.
+    ValueError: If incorrect data type of any field.
   """
-  type_ = record[2]
-  coords = numpy.array(tuple(map(float, record[3:3+const.NUMDIM])))
-  charge, ro, eps = tuple(map(float, record[3+const.NUMDIM:6+const.NUMDIM]))
-  return molecule.Atom(type_, coords, charge, ro, eps)
+  if len(row) < 6+const.NUMDIM:
+    raise IndexError('Insufficient columns to parse prm file row into Atom '
+                     'object: %s' % ' '.join(row))
+
+  type_ = row[2]
+  coords = row[3:3+const.NUMDIM]
+  charge, ro, eps = row[3+const.NUMDIM:6+const.NUMDIM]
+
+  if not type_ or not type_[0].isalpha():
+    raise ValueError('Atom type must begin with letter: %s' % type_)
+  if not _AreAllType(float, coords):
+    raise ValueError(
+        'Atomic coordinates must be numeric values: %s' % ' '.join(coords))
+  if not _IsType(float, charge):
+    raise ValueError('Atomic charge must be numeric value: %s' % charge)
+  if not _IsType(float, ro) or not float(ro) > 0.0:
+    raise ValueError(
+        'Atomic vdw radius must be positive numeric value: %s' % ro)
+  if not _IsType(float, eps) or not float(eps) >= 0.0:
+    raise ValueError(
+        'Atomic epsilon must be non-negative numeric value: %s' % eps)
+
+  return molecule.Atom(type_, numpy.fromiter(coords, float), float(charge), 
+                       float(ro), float(eps))
 
 
-def GetBondFromPrm(record, atoms):
-  """Parses bond record into a Bond object.
+def GetBondFromPrm(row):
+  """Parses bond row into a Bond object.
 
   Args:
-    record (str*): Array of strings from line of prm file.
-    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    row (str*): Array of strings from line of prm file.
 
   Returns:
-    bond (mmlib.molecule.Bond): Bond object with attributes from record.
+    bond (mmlib.molecule.Bond): Bond object with attributes from row.
+
+  Raises:
+    IndexError: If insufficient number of fields.
+    ValueError: If incorrect data type of any field.
   """
-  at1, at2 = (x-1 for x in map(int, record[1:3]))
-  k_b, r_eq = tuple(map(float, record[3:5]))
-  c1, c2 = (atoms[i].coords for i in (at1, at2))
-  r_ij = geomcalc.GetRij(c1, c2)
-  return molecule.Bond(at1, at2, r_ij, r_eq, k_b)
+  if len(row) < 5:
+    raise IndexError('Insufficient columns to parse prm file row into Bond '
+                     'object: %s' % ' '.join(row))
+
+  at1, at2, k_b, r_eq = row[1:5]
+
+  if not _IsType(int, at1) or not int(at1) > 0:
+    raise ValueError('Bond atom1 index must be positive integer: %s' % at1)
+  if not _IsType(int, at2) or not int(at2) > 0:
+    raise ValueError('Bond atom2 index must be positive integer: %s' % at2)
+  if not _IsType(float, k_b) or not float(k_b) > 0.0:
+    raise ValueError(
+        'Bond spring constant must be positive numeric value: %s' % k_b)
+  if not _IsType(float, r_eq) or not float(r_eq) > 0.0:
+    raise ValueError(
+        'Equilibrium bond length must be positive numeric value: %s' % r_eq)
+
+  return molecule.Bond(int(at1)-1, int(at2)-1, float(k_b), float(r_eq))
 
 
-def GetAngleFromPrm(record, atoms):
-  """Parses angle record into an Angle object.
+def GetAngleFromPrm(row):
+  """Parses angle row into an Angle object.
 
   Args:
-    record (str*): Array of strings from line of prm file.
-    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    row (str*): Array of strings from line of prm file.
 
   Returns:
-    angle (mmlib.molecule.Angle): Angle object with attributes from record.
+    angle (mmlib.molecule.Angle): Angle object with attributes from row.
+
+  Raises:
+    IndexError: If insufficient number of fields.
+    ValueError: If incorrect data type of any field.
   """
-  at1, at2, at3 = (x-1 for x in (map(int, record[1:4])))
-  k_a, a_eq = tuple(map(float, record[4:6]))
-  c1, c2, c3 = (atoms[i].coords for i in (at1, at2, at3))
-  a_ijk = geomcalc.GetAijk(c1, c2, c3)
-  return molecule.Angle(at1, at2, at3, a_ijk, a_eq, k_a)
+  if len(row) < 6:
+    raise IndexError('Insufficient columns to parse prm file row into Angle '
+                     'object: %s' % ' '.join(row))
+
+  at1, at2, at3, k_a, a_eq = row[1:6]
+
+  if not _IsType(int, at1) or not int(at1) > 0:
+    raise ValueError('Angle atom1 index must be positive integer: %s' % at1)
+  if not _IsType(int, at2) or not int(at2) > 0:
+    raise ValueError('Angle atom2 index must be positive integer: %s' % at2)
+  if not _IsType(int, at3) or not int(at3) > 0:
+    raise ValueError('Angle atom3 index must be positive integer: %s' % at3)
+  if not _IsType(float, k_a) or not float(k_a) > 0.0:
+    raise ValueError(
+        'Angle spring constant must be positive numeric value: %s' % k_a)
+  if not _IsType(float, a_eq) or not 0.0 <= float(a_eq) <= 180.0:
+    raise ValueError(
+        'Equilibrium bond angle must be between 0.0 and 180.0: %s' % a_eq)
+
+  return molecule.Angle(
+      int(at1)-1, int(at2)-1, int(at3)-1, float(k_a), float(a_eq))
 
 
-def GetTorsionFromPrm(record, atoms):
-  """Parses torsion record into an Torsion object.
+def GetTorsionFromPrm(row):
+  """Parses torsion row into an Torsion object.
 
   Args:
-    record (str*): Array of strings from line of prm file.
-    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    row (str*): Array of strings from line of prm file.
 
   Returns:
     torsion (mmlib.molecule.Torsion): Torsion object.
+
+  Raises:
+    IndexError: If insufficient number of fields.
+    ValueError: If incorrect data type of any field.
   """
-  at1, at2, at3, at4 = (x-1 for x in map(int, record[1:5]))
-  v_n, gamma = tuple(map(float, record[5:7]))
-  nfold, paths = tuple(map(int, record[7:9]))
-  c1, c2, c3, c4 = (atoms[i].coords for i in (at1, at2, at3, at4))
-  t_ijkl = geomcalc.GetTijkl(c1, c2, c3, c4)
-  return molecule.Torsion(at1, at2, at3, at4, t_ijkl, v_n, gamma, nfold, paths)
+  if len(row) < 9:
+    raise IndexError('Insufficient columns to parse prm file row into Torsion '
+                     'object: %s' % ' '.join(row))
+
+  at1, at2, at3, at4, v_n, gamma, nfold, paths = row[1:9]
+
+  if not _IsType(int, at1) or not int(at1) > 0:
+    raise ValueError('Torsion atom1 index must be positive integer: %s' % at1)
+  if not _IsType(int, at2) or not int(at2) > 0:
+    raise ValueError('Torsion atom2 index must be positive integer: %s' % at2)
+  if not _IsType(int, at3) or not int(at3) > 0:
+    raise ValueError('Torsion atom3 index must be positive integer: %s' % at3)
+  if not _IsType(int, at4) or not int(at4) > 0:
+    raise ValueError('Torsion atom4 index must be positive integer: %s' % at4)
+  if not _IsType(float, v_n) or not float(v_n) > 0.0:
+    raise ValueError(
+        'Torsion half-barrier must be positive numeric value: %s' % v_n)
+  if not _IsType(float, gamma) or not -180.0 <= float(gamma) <= 180.0:
+    raise ValueError(
+        'Torsion offset angle must be between -180.0 and 180.0: %s' % gamma) 
+  if not nfold.isdigit() or not int(nfold) > 0:
+    raise ValueError(
+        'Torsion barrier frequency must be positive integer: %s' % nfold)
+  if not paths.isdigit() or not int(paths) > 0:
+    raise ValueError(
+        'Torsion path number must be positive integer: %s' % paths)
+
+  return molecule.Torsion(
+      int(at1)-1, int(at2)-1, int(at3)-1, int(at4)-1, float(v_n), float(gamma),
+      int(nfold), int(paths))
 
 
-def GetOutofplaneFromPrm(record, atoms):
-  """Parses outofplane record into an Outofplane object.
+def GetOutofplaneFromPrm(row):
+  """Parses outofplane row into an Outofplane object.
 
   Args:
-    record (str*): Array of strings from line of prm file.
-    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    row (str*): Array of strings from line of prm file.
 
   Returns:
     outofplane (mmlib.molecule.Outofplane): Outofplane object.
   """
-  at1, at2, at3, at4 = (x-1 for x in map(int, record[1:5]))
-  v_n = float(record[5])
-  c1, c2, c3, c4 = (atoms[i].coords for i in (at1, at2, at3, at4))
-  o_ijkl = geomcalc.GetOijkl(c1, c2, c3, c4)
-  return molecule.Outofplane(at1, at2, at3, at4, o_ijkl, v_n)
+  if len(row) < 6:
+    raise IndexError('Insufficient columns to parse prm file row in Outofplane '
+                     'object: %s' % ' '.join(row))
+
+  at1, at2, at3, at4, v_n = row[1:6]
+
+  if not _IsType(int, at1) or not int(at1) > 0:
+    raise ValueError(
+        'Outofplane atom1 index must be positive integer: %s' % at1)
+  if not _IsType(int, at2) or not int(at2) > 0:
+    raise ValueError(
+        'Outofplane atom2 index must be positive integer: %s' % at2)
+  if not _IsType(int, at3) or not int(at3) > 0:
+    raise ValueError(
+        'Outofplane atom3 index must be positive integer: %s' % at3)
+  if not _IsType(int, at4) or not int(at4) > 0:
+    raise ValueError(
+        'Outofplane atom4 index must be positive integer: %s' % at4)
+  if not _IsType(float, v_n) or not float(v_n) > 0.0:
+    raise ValueError('Outofplane half-barrier must be numeric value: %s' % v_n)
+
+  return molecule.Outofplane(
+      int(at1)-1, int(at2)-1, int(at3)-1, int(at4)-1, float(v_n))
 
 
-def GetAtomsFromPrm(records):
-  """Parses atom records into an array of Atom objects.
+def GetAtomsFromPrm(rows):
+  """Parses atom rows into an array of Atom objects.
 
   Args:
-    records (str**): 2d array of strings from lines of prm file.
+    rows (str**): 2d array of strings from lines of prm file.
 
   Returns:
     atoms (mmlib.molecule.Atom*): Array of Atom object with parameters from
-        records.
+        rows.
   """
   atoms = []
-  for record in records:
-    if not _IsCorrectRecordType(record, 'ATOM'):
-      continue
-    atoms.append(GetAtomFromPrm(record))
+  for row in rows:
+    if row and row[0].upper() == 'ATOM':
+      atoms.append(GetAtomFromPrm(row))
   return atoms
 
 
-def GetBondsFromPrm(records, atoms):
-  """Parses bond records into an array of Bond objects.
+def GetBondsFromPrm(rows):
+  """Parses bond rows into an array of Bond objects.
   
   Args:
-    records (str**): 2d array of strings from lines of prm file.
-    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    rows (str**): 2d array of strings from lines of prm file.
 
   Returns:
     bonds (mmlib.molecule.Bond*): Array of Bond objects with parameters from
-        records.
+        rows.
   """
   bonds = []
-  for record in records:
-    if not _IsCorrectRecordType(record, 'BOND'):
-      continue
-    bonds.append(GetBondFromPrm(record, atoms))
+  for row in rows:
+    if row and row[0].upper() == 'BOND':
+      bonds.append(GetBondFromPrm(row))
   return bonds
 
 
-def GetAnglesFromPrm(records, atoms):
-  """Parses angle records into an array of Angle objects.
+def GetAnglesFromPrm(rows):
+  """Parses angle rows into an array of Angle objects.
   
   Args:
-    records (str**): 2d array of strings from lines of prm file.
-    atom (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    rows (str**): 2d array of strings from lines of prm file.
 
   Returns:
     angles (mmlib.molecule.Angle): Array of Angle objects with parameters from
-        records.
+        rows.
   """
   angles = []
-  for record in records:
-    if not _IsCorrectRecordType(record, 'ANGLE'):
-      continue
-    angles.append(GetAngleFromPrm(record, atoms))
+  for row in rows:
+    if row and row[0].upper() == 'ANGLE':
+      angles.append(GetAngleFromPrm(row))
   return angles
 
 
-def GetTorsionsFromPrm(records, atoms):
-  """Parses torsion records into an array of Torsion objects.
+def GetTorsionsFromPrm(rows):
+  """Parses torsion rows into an array of Torsion objects.
   
   Args:
-    records (str**): 2d array of strings from lines of prm file.
-    atom (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    rows (str**): 2d array of strings from lines of prm file.
 
   Returns:
     torsions (mmlib.molecule.Torsion*): Array of Torsion objects with parameters
-        from record.
+        from row.
   """
   torsions = []
-  for record in records:
-    if not _IsCorrectRecordType(record, 'TORSION'):
-      continue
-    torsions.append(GetTorsionFromPrm(record, atoms))
+  for row in rows:
+    if row and row[0].upper() == 'TORSION':
+      torsions.append(GetTorsionFromPrm(row))
   return torsions
 
 
-def GetOutofplanesFromPrm(records, atoms):
-  """Parses outofplane record into Outofplane object.
+def GetOutofplanesFromPrm(rows):
+  """Parses outofplane row into Outofplane object.
   
   Args:
-    records (str**): 2d array of strings from lines of prm file.
-    atoms (mmlib.molecule.Atom*): Array of molecule's Atom objects.
+    rows (str**): 2d array of strings from lines of prm file.
 
   Returns:
     outofplanes (mmlib.molecule.Outofplane*): Array of Outofplane objects with
-        parameters from record.
+        parameters from row.
   """
   outofplanes = []
-  for record in records:
-    if not _IsCorrectRecordType(record, 'OUTOFPLANE'):
-      continue
-    outofplanes.append(GetOutofplaneFromPrm(record, atoms))
+  for row in rows:
+    if row and row[0].upper() == 'OUTOFPLANE':
+      outofplanes.append(GetOutofplaneFromPrm(row))
   return outofplanes
 
 
@@ -487,6 +644,7 @@ def GetProperties(prop_file):
   n_lines = len(prop_array)
   prop_keys = const.PROPERTYKEYS
   key1 = prop_keys[2]
+
   key_line = 0
   for i in range(n_lines):
     if key1 in prop_array[i]:
@@ -494,6 +652,7 @@ def GetProperties(prop_file):
       break
   key1_col = prop_array[key_line].index(key1)
   n_keys = len(prop_array[key_line]) - 1
+
   n_confs = 0
   excluded_lines = []
   for i in range(len(prop_array)):
@@ -501,6 +660,7 @@ def GetProperties(prop_file):
       excluded_lines.append(i)
     else:   
       n_confs += 1
+
   prop = {}
   for j in range(n_keys):
     key = prop_array[key_line][j+1]
@@ -510,6 +670,7 @@ def GetProperties(prop_file):
       if not i in excluded_lines:
         prop[key][confnum] = float(prop_array[i][j])
         confnum += 1
+
   return prop
 
 
@@ -595,7 +756,7 @@ def GetPrintGradientString(atoms, gradient, comment, total_chars=12,
 
 def _GetBannerString(title, length, lines1, lines2):
   """Creates a string in the center of a banner with dashes on each side.
-  
+
   Args:
     title (str): Banner header title.
     length (int): Total number of characters in banner.
@@ -612,7 +773,7 @@ def _GetBannerString(title, length, lines1, lines2):
 
 def _GetPaddedString(fields, spacings):
   """Creates a string of an array of strings padded by spaces.
-  
+
   Args:
     fields (str*): Array of string fields to be printed.
     spacings (int*): Array of number of spaces to be printed prior to each
@@ -866,7 +1027,7 @@ def PrintAverages(ana):
         label, ana.eavg[key], ana.estd[key], ana.emin[key], ana.emax[key]))
   return '\n'.join(string)
 
-def ValidateInput(program_path):
+def ValidateInput(program_path, argv):
   """Checks for proper input argument syntax and return parsed result.
   
   Check that the command line input contains two strings or throw an error and
@@ -875,6 +1036,7 @@ def ValidateInput(program_path):
 
   Args:
     program_path (str): Path to main file calling this function.
+    argv (str*): Array of strings from command line input.
 
   Returns:
     infile_name (str): Name of input file given from command line.
@@ -883,7 +1045,7 @@ def ValidateInput(program_path):
     ValueError: If program_name not recognized.
     FileNotFoundError: If input file is not in file system path.
   """
-  if (len(sys.argv) < 2):
+  if (len(argv) < 2):
     program_name = program_path.split('/')[-1]
     if program_name in _PROGRAM_MESSAGES:
       print('\nUsage: python %s INPUT_FILE\n' % program_name)
@@ -892,7 +1054,7 @@ def ValidateInput(program_path):
     else:
       raise ValueError('Program name not recognized: %s' % program_name)
   
-  input_file = sys.argv[1]
+  input_file = argv[1]
   if os.path.isfile(input_file):
     return input_file
   else:

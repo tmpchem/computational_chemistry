@@ -28,8 +28,8 @@ _COVALENT_RADII = {
     'Kr': 1.03, 'X' : 0.00}
 
 # AMBER94 molecular mechanics van der waals parameters for atom types:
-#   1 -> (float) ro/2 [Angstrom], van der waals radius (divided by 2)
-#   2 -> (float) eps [kcal/mol], van der waals attraction magnitude
+#   * (float) ro/2 [Angstrom], van der waals radius (divided by 2)
+#   * (float) eps [kcal/mol], van der waals attraction magnitude
 _VAN_DER_WAALS_PARAMETERS = {
     'C' : (1.9080, 0.0860), 'CA': (1.9080, 0.0860), 'CM': (1.9080, 0.0860),
     'CC': (1.9080, 0.0860), 'CV': (1.9080, 0.0860), 'CW': (1.9080, 0.0860),
@@ -47,11 +47,11 @@ _VAN_DER_WAALS_PARAMETERS = {
     'SH': (2.0000, 0.2500), 'N' : (1.8240, 0.1700), 'NA': (1.8240, 0.1700),
     'NB': (1.8240, 0.1700), 'NC': (1.8240, 0.1700), 'N*': (1.8240, 0.1700),
     'N2': (1.8240, 0.1700), 'N3': (1.8750, 0.1700), 'He': (1.5800, 0.0112),
-    'Ar': (1.8436, 0.4466), 'HH': (1.5000, 0.0000), 'X' : (0.0000, 0.0000)}
+    'Ar': (1.8436, 0.4466), 'HH': (1.5000, 0.0000), 'X' : (0.0001, 0.0000)}
 
 # AMBER94 molecular mechanics bond parameters for atom type pairs:
-#   1 -> (float) k_b [kcal/(mol*A^2)], bond spring constant
-#   2 -> (float) r_eq [Angstrom], equilibrium bond length
+#   * (float) k_b [kcal/(mol*A^2)], bond spring constant
+#   * (float) r_eq [Angstrom], equilibrium bond length
 _BOND_LENGTH_PARAMETERS = {
     ('C' , 'CA'): (469.0, 1.409), ('C' , 'CB'): (447.0, 1.419),
     ('C' , 'CM'): (410.0, 1.444), ('C' , 'CT'): (317.0, 1.522),
@@ -97,8 +97,8 @@ _BOND_LENGTH_PARAMETERS = {
     ('HH', 'HH'): (100.0, 0.740), ('X' , 'X' ): (  0.0, 0.000)}
 
 # AMBER94 molecular mechanics angle parameters for atom type triplets:
-#   1 -> (float) k_a [kcal/(mol*rad^2)], angle spring constant
-#   2 -> (float) a_eq [degrees], equilibrium bond angle
+#   * (float) k_a [kcal/(mol*rad^2)], angle spring constant
+#   * (float) a_eq [degrees], equilibrium bond angle
 _BOND_ANGLE_PARAMETERS= {
     ('C' , 'CA', 'CA'): ( 63.0, 120.00), ('C' , 'CA', 'HA'): ( 35.0, 120.00),
     ('C' , 'CB', 'CB'): ( 63.0, 119.20), ('C' , 'CB', 'NB'): ( 70.0, 130.00),
@@ -197,10 +197,10 @@ _BOND_ANGLE_PARAMETERS= {
 
 # AMBER94 molecular mechanics torsion parameters for atom type quartets
 # where only the 2 central atom types are known:
-#   1 -> (float) vn/2 [kcal/mol], rotation barrier height
-#   2 -> (float) gamma [degrees], barrier minimum offset angle
-#   3 -> (int) n [unitless], frequency of barrier
-#   4 -> (int) paths [unitless], number of unique torsion paths
+#   * (float) vn/2 [kcal/mol], rotation barrier height
+#   * (float) gamma [degrees], barrier minimum offset angle
+#   * (int) n [unitless], frequency of barrier
+#   * (int) paths [unitless], number of unique torsion paths
 _TORSION_23_PARAMETERS = {
     ('C' , 'CA'): (14.50, 180.0, 2, 4), ('C' , 'CB'): (12.00, 180.0, 2, 4),
     ('C' , 'CM'): ( 8.70, 180.0, 2, 4), ('C' , 'CT'): ( 0.00,   0.0, 2, 4),
@@ -254,7 +254,7 @@ _TORSION_1234_PARAMETERS = {
 
 # AMBER94 molecular mechanics outofplane parameters for atom type
 # quartets where only final 2 atom types are known:
-# 1 -> (float) vn/2 [kcal/mol], rotation barrier height
+#   * (float) vn/2 [kcal/mol], rotation barrier height
 _OUTOFPLANE_34_PARAMETERS = {
     ('C' , 'O' ): 10.5, ('CA', 'H4'):  1.1, ('CA', 'H5'):  1.1,
     ('CA', 'HA'):  1.1, ('CK', 'H5'):  1.1, ('CM', 'H4'):  1.1,

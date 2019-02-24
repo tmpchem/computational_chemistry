@@ -83,7 +83,7 @@ def GetBonds(atoms, bond_graph):
       r_ij = bond_graph[i][j]
       k_b, r_eq = param.GetBondParam(at1.type_, at2.type_)
       if k_b:
-        bonds.append(molecule.Bond(i, j, r_ij, r_eq, k_b))
+        bonds.append(molecule.Bond(i, j, k_b, r_eq, r_ij))
   bonds.sort(key=lambda b:(b.at1, b.at2))
   return bonds
 
@@ -111,7 +111,7 @@ def GetAngles(atoms, bond_graph):
       a_ijk = geomcalc.GetAijk(at1.coords, at2.coords, at3.coords)
       k_a, a_eq = param.GetAngleParam(at1.type_, at2.type_, at3.type_)
       if k_a:
-        angles.append(molecule.Angle(i, j, k, a_ijk, a_eq, k_a))
+        angles.append(molecule.Angle(i, j, k, k_a, a_eq, a_ijk))
   angles.sort(key=lambda a:(a.at1, a.at2, a.at3))
   return angles
 
@@ -147,7 +147,7 @@ def GetTorsions(atoms, bond_graph):
         for v_n, gamma, nfold, paths in params:
           if v_n:
             torsions.append(
-                molecule.Torsion(i, j, k, l, t_ijkl, v_n, gamma, nfold, paths))
+                molecule.Torsion(i, j, k, l, v_n, gamma, nfold, paths, t_ijkl))
   torsions.sort(key=lambda t:(t.at1, t.at2, t.at3, t.at4))
   return torsions
 
@@ -179,7 +179,7 @@ def GetOutofplanes(atoms, bond_graph):
         o_ijkl = geomcalc.GetOijkl(*[atoms[x].coords for x in combo])
         v_n = param.GetOutofplaneParam(*[atoms[x].type_ for x in combo])
         if v_n:
-          outofplanes.append(molecule.Outofplane(*combo, o_ijkl, v_n))
+          outofplanes.append(molecule.Outofplane(*combo, v_n, o_ijkl))
   outofplanes.sort(key=lambda o:(o.at1, o.at2, o.at3, o.at4))
   return outofplanes
 

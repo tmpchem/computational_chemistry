@@ -8,6 +8,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
+import sys
+
 from mmlib import fileio
 from mmlib import molecule
 
@@ -18,7 +20,7 @@ __date__ = '2016-02-15'
 
 if __name__ == '__main__':
   # Check input syntax.
-  input_file_name = fileio.ValidateInput(__file__)
+  input_file_name = fileio.ValidateInput(__file__, sys.argv)
 
   # Read in molecular geometry and topology.
   molecule = molecule.Molecule(input_file_name)

@@ -9,6 +9,8 @@ No guarantees are made the the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
+import sys
+
 from mmlib import fileio
 from mmlib import simulate
 
@@ -19,7 +21,7 @@ __date__ = '2016-05-31'
 
 if __name__ == '__main__':
   # Check input syntax
-  infile_name = fileio.ValidateInput(__file__)
+  infile_name = fileio.ValidateInput(__file__, sys.argv)
 
   # Read in molecular and simulation data
   simulation = simulate.MolecularDynamics(infile_name)

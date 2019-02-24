@@ -7,6 +7,8 @@ No guarantees are made that the results of this program are correct and the
 author assumes no liability for their reliability.
 """
 
+import sys
+
 from mmlib import analyze
 from mmlib import fileio
 
@@ -17,7 +19,7 @@ __date__ = '2017-02-22'
 
 if __name__ == '__main__':
   # Check input syntax.
-  input_file_name = fileio.ValidateInput(__file__)
+  input_file_name = fileio.ValidateInput(__file__, sys.argv)
 
   # Read in ensemble geometry and energy analysis data.
   analysis = analyze.Analysis(input_file_name)
