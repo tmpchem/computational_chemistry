@@ -41,7 +41,7 @@ def get_file_string_array(file_name):
 # input syntax and usage warnings
 def get_input():
     if (not len(sys.argv) == 2):
-        print('\nUsage: zmat2xyz.py ZMAT_FILE\n')
+        print('\nUsage: %s ZMAT_FILE\n' % sys.argv[0])
         print('  ZMAT_FILE: z-matrix file of target molecule\n')
         sys.exit()
     else:

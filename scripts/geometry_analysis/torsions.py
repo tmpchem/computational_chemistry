@@ -51,7 +51,7 @@ def get_geom(xyz_file_name):
 # input syntax and usage warnings
 def get_inputs():
     if (not len(sys.argv) == 2):
-        print('Usage: torsions.py XYZ_FILE\n')
+        print('Usage: %s XYZ_FILE\n' % sys.argv[0])
         print('  XYZ_FILE: coordinates of target molecule\n')
         sys.exit()
     else:
